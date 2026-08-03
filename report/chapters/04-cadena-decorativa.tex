@@ -1,0 +1,197 @@
+% 04-cadena-decorativa.tex — Chapter 4: La Cadena Harris es Decorativa
+
+\chapter{La Cadena de Harris es Decorativa}
+\label{ch:cadena-decorativa}
+
+Presentamos once pruebas experimentales que demuestran que la din\'{a}mica de la cadena
+de Harris ---el punto de masa $\pstay \cdot \delta_{X_t}$ y la construcci\'{o}n de
+tiempo continuo--- no aporta poder predictivo. Llamamos a esta cadena ``decorativa'':
+est\'{a} presente en la formulaci\'{o}n matem\'{a}tica pero no contribuye a la
+cobertura predictiva.
+
+\section{Descomposici\'{o}n de cobertura}
+
+\textbf{Resultado clave:} SF-Harris Gibbs ($\varepsilon=0.1$) = Sim.\ Hist\'{o}rica =
+$\N(0, \tau^*)$ = 2.0\,pp (cobertura de rendimientos diarios).
+
+Los tres modelos producen AAD id\'{e}ntico para rendimientos diarios, lo que indica
+que toda la diferencia en la cobertura de $\log(\RV)$ proviene de la estimaci\'{o}n de
+$\tau^*$ y no de la din\'{a}mica temporal.
+
+\section{Calibraci\'{o}n de $\varepsilon$}
+
+El umbral $\varepsilon$ controla cu\'{a}ntas observaciones se clasifican como saltos.
+Variamos $\varepsilon$ desde $10^{-8}$ hasta $10^{0}$ (ocho \'{o}rdenes de magnitud):
+
+\begin{table}[h]
+\centering
+\caption{AAD vs.\ $\varepsilon$ con barras de d\'{o}lar y Gibbs.}
+\begin{tabular}{ccccccccc}
+\toprule
+$\varepsilon$ & $10^{-8}$ & $10^{-7}$ & $10^{-6}$ & $10^{-5}$ & $10^{-4}$ & $10^{-3}$ & $10^{-2}$ & $10^{0}$ \\
+\midrule
+AAD (d\'{o}lar) & 0.2 & 0.2 & 0.2 & 0.2 & 0.2 & 0.2 & 0.2 & 0.2 \\
+AAD (15\,min) & 0.3 & 0.3 & 0.3 & 0.5 & 0.5 & 0.5 & 0.5 & 0.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El AAD es \textbf{plano} en ocho \'{o}rdenes de magnitud. $\varepsilon$ no calibra nada:
+el muestreo emp\'{\'i}rico de $Q$ absorbe toda la variaci\'{o}n.
+
+\section{Comparaci\'{o}n de frecuencias}
+
+La cobertura de $\log(\RV)$ mejora al aumentar la frecuencia de muestreo:
+\begin{itemize}
+    \item 15\,min: AAD 0.3\,pp (ruido observacional $\sigma_{\text{obs}} \approx 1.04$)
+    \item 30\,min: AAD 0.5\,pp
+    \item 1\,hora: AAD 0.8\,pp
+    \item Diario: AAD 2.0+pp ($\sigma_{\text{obs}}$ domina)
+\end{itemize}
+
+El rendimiento est\'{a} determinado por el ruido en la medida de $\RV$, no por
+$\pstay$. A mayor frecuencia, menos ruido en la estimaci\'{o}n de $\tau^*$,
+mejor cobertura.
+
+\section{Datos mexicanos fuera de muestra}
+
+Evaluamos ocho activos financieros mexicanos con datos diarios (no hay datos
+intradiarios disponibles). La Sim.\ Hist\'{o}rica supera al SF-Harris en
+\textbf{todos} los activos:
+
+\begin{table}[h]
+\centering
+\caption{AAD diario en datos mexicanos (pp, menor es mejor).}
+\label{tab:mexican-aad}
+\begin{tabular}{lccccc}
+\toprule
+Activo & SF-Harris & GARCH(1,1) & Hist.\ Sim.\ & Normal & Ganador \\
+\midrule
+IPC & 8.5 & --- & \textbf{3.7} & 10.5 & Hist.\ Sim.\ \\
+Bimbo & 11.7 & --- & \textbf{3.1} & 12.8 & Hist.\ Sim.\ \\
+Grupo M\'{e}xico & 11.3 & --- & \textbf{2.2} & 11.9 & Hist.\ Sim.\ \\
+Walmart Mex & 10.4 & --- & \textbf{1.4} & 10.2 & Hist.\ Sim.\ \\
+FEMSA & 8.1 & --- & \textbf{3.3} & 9.8 & Hist.\ Sim.\ \\
+Cemex & 10.2 & --- & \textbf{1.6} & 11.5 & Hist.\ Sim.\ \\
+Banorte & 9.5 & --- & \textbf{2.0} & 10.1 & Hist.\ Sim.\ \\
+USD/MXN & 7.8 & --- & \textbf{1.5} & 9.3 & Hist.\ Sim.\ \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\small
+Nota: GARCH(1,1) no convergi\'{o} para varios activos mexicanos por colas pesadas
+y tama\~{n}os de muestra cortos. Datos diarios, sin intradiarios.
+\end{flushleft}
+\end{table}
+
+Las violaciones del VaR al 95\% confirman el resultado:
+
+\begin{table}[h]
+\centering
+\caption{Tasas de violaci\'{o}n del VaR 95\% en datos mexicanos (ideal: 5\%).}
+\label{tab:mexican-var}
+\begin{tabular}{lccc}
+\toprule
+Activo & SF-Harris & Hist.\ Sim.\ & Normal \\
+\midrule
+IPC & $\sim$7\% & $\sim$5\% & $\sim$3\% \\
+Bimbo & $\sim$8\% & $\sim$5\% & $\sim$2\% \\
+Grupo M\'{e}xico & $\sim$9\% & $\sim$4\% & $\sim$3\% \\
+Walmart Mex & $\sim$8\% & $\sim$5\% & $\sim$2\% \\
+USD/MXN & $\sim$7\% & $\sim$5\% & $\sim$4\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{?`Por qu\'{e} falla el SF-Harris en datos diarios?}
+\begin{enumerate}
+    \item \textbf{Estimador ruidoso:} $r_t^2$ a escala diaria tiene
+    $\sigma \approx 2.27$, haciendo que la distribuci\'{o}n de saltos del Gibbs
+    sea demasiado ancha. Con datos intradiarios (26 observaciones/d\'{\'i}a),
+    $\sigma \approx 1.04$, que es manejable.
+    \item \textbf{Baja $\pstay$:} A escala diaria, $\pstay \approx 0.37$ para
+    todos los activos. El 63\% de los d\'{\'i}as se clasifican como ``saltos'';
+    la cadena de Harris pierde memoria y se reduce a muestreo iid con ruido.
+    \item \textbf{Colas pesadas:} Los activos mexicanos (especialmente small-caps
+    como Bimbo, Grupo M\'{e}xico) tienen colas m\'{a}s pesadas que SPY,
+    amplificando el problema del ruido en $r_t^2$.
+\end{enumerate}
+
+\section{Fallo en detecci\'{o}n de crisis}
+
+Usamos la sorpresa predictiva del modelo como indicador de crisis.
+El AUC (\'{a}rea bajo la curva ROC) es 0.416 --- \textbf{anti-predictivo}.
+El modelo siempre espera colas pesadas, as\'{\'i} que nunca se sorprende
+por una crisis. Para comparaci\'{o}n, el VIX tiene AUC = 0.841.
+
+\section{Harris mezclado (doble exponencial)}
+
+A\~{n}adimos una segunda exponencial a $Q$: $Q = w \cdot \text{Exp}(\lambda_1) + (1-w) \cdot \text{Exp}(\lambda_2)$.
+El AAD mejora en \textbf{0.0\,pp}. La cola pesada ya est\'{a} capturada por la
+distribuci\'{o}n emp\'{\'i}rica; a\~{n}adir parametrizaci\'{o}n no ayuda.
+
+\section{Predicci\'{o}n estancia/salto}
+
+Si la cadena de Harris tuviera poder predictivo, podr\'{\'i}amos predecir si el
+pr\'{o}ximo paso es una estancia o un salto. El AUC de esta clasificaci\'{o}n binaria
+es 0.51 --- equivalente a azar. No hay se\~{n}al en los datos para distinguir
+estancia de salto.
+
+\section{Modelo de volado de moneda}
+
+El modelo de volado de moneda elimina el Gibbs y usa directamente:
+\begin{equation}
+    P(X_{t+1} \mid X_t) = \pstay \cdot \delta_{X_t} + (1 - \pstay) \cdot Q_{\text{emp}}
+\end{equation}
+sin denoising posterior. A $\pstay = 0.88$ (valor del ACF), el AAD es
+\textbf{50.49\,pp} sin ruido observacional y \textbf{11.66\,pp} con ruido.
+Sin denoising posterior, el punto de masa es destructivo.
+
+\section{Barrido de $\pstay$ sin Gibbs}
+
+Variamos $\pstay$ de 0 a 0.99 en el modelo de volado de moneda:
+
+\begin{table}[h]
+\centering
+\caption{AAD vs.\ $\pstay$ sin Gibbs (volado de moneda).}
+\begin{tabular}{cccccccc}
+\toprule
+$\pstay$ & 0.0 & 0.2 & 0.4 & 0.6 & 0.8 & 0.88 & 0.95 \\
+\midrule
+Sin ruido & 0.42 & 1.75 & 8.12 & 20.18 & 37.90 & 50.49 & 65.39 \\
+Con ruido & 18.51 & 18.37 & 17.35 & 15.61 & 13.06 & 11.66 & 10.12 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Sin Gibbs, $\pstay$ es \textbf{mon\'{o}tonamente destructivo}: a mayor $\pstay$,
+peor cobertura. Sin ruido observacional, concentra probabilidad en la observaci\'{o}n
+actual (ruidosa), creando un pico artificial. Con ruido, el efecto se diluye pero
+nunca mejora sobre $\pstay = 0$ (Sim.\ Hist\'{o}rica).
+
+\section{Barrido de $\pstay$ con Gibbs}
+
+Dentro del muestreador de Gibbs, variamos $\pstay$ de 0 a 0.95:
+
+\begin{table}[h]
+\centering
+\caption{AAD vs.\ $\pstay$ con Gibbs (par\'{a}metros fijos, sin ruido obs.).}
+\begin{tabular}{cccccccccc}
+\toprule
+$\pstay$ & 0.0 & 0.1 & 0.2 & 0.3 & 0.4 & 0.5 & 0.6 & 0.7 & 0.8 & 0.95 \\
+\midrule
+AAD & 0.41 & 0.41 & 0.41 & 0.42 & 0.43 & 0.44 & 0.47 & 0.49 & 0.52 & 0.54 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El AAD es \textbf{esencialmente plano} de 0.41 a 0.54\,pp. $\pstay$ no es
+informativo dentro del Gibbs: el muestreador produce denoising de los par\'{a}metros
+$(\mu, \sigma)$ independientemente del valor de $\pstay$.
+
+\section{Comparaci\'{o}n con filtro de Kalman}
+
+El filtro de Kalman (suavizado gaussiano AR(1)) da AAD = 16\,pp en $\log(\RV)$.
+La asunci\'{o}n gaussiana destruye la bimodalidad de la distribuci\'{o}n predictiva:
+cuando el proceso salta, la distribuci\'{o}n es bimodal (masa en el estado actual
+y en $Q$), pero el Kalman la reemplaza con una \'{u}nica gaussiana que cubre
+ambos modos con exceso de anchura.

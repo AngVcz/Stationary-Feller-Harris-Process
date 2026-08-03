@@ -1,0 +1,81 @@
+% preamble.tex — Packages, macros, and title page for SF-Harris report
+
+% ==============================================================================
+% Packages
+% ==============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{natbib}
+\usepackage{xcolor}
+
+\geometry{letterpaper, margin=1in, headheight=14.5pt}
+
+% Only show chapters in TOC (no sections)
+\setcounter{tocdepth}{0}
+
+% ==============================================================================
+% Theorem environments (Spanish names)
+% ==============================================================================
+\newtheorem{teorema}{Teorema}
+\newtheorem{proposicion}[teorema]{Proposici\'{o}n}
+\newtheorem{lema}[teorema]{Lema}
+\newtheorem{corolario}[teorema]{Corolario}
+\newtheorem{definicion}{Definici\'{o}n}
+\newtheorem{observacion}{Observaci\'{o}n}
+
+% ==============================================================================
+% Macros
+% ==============================================================================
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\iid}{\overset{\text{iid}}{\sim}}
+\newcommand{\pstay}{p_{\text{stay}}}
+\newcommand{\AAD}{\operatorname{AAD}}
+\newcommand{\RV}{\operatorname{RV}}
+\newcommand{\GIG}{\operatorname{GIG}}
+
+% ==============================================================================
+% Hyperref setup
+% ==============================================================================
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=green!50!black,
+    urlcolor=blue!70!black,
+}
+
+% ==============================================================================
+% Title page
+% ==============================================================================
+\title{
+    \vspace{-2cm}
+    \textbf{El Modelo SF-Harris: \\
+    Replicaci\'{o}n, An\'{a}lisis Cr\'{\'i}tico \\
+    y Reducci\'{o}n al Modelo Esencial}
+}
+\author{[Nombre del Autor] \\ \smallskip \small Universidad [Nombre] \\ Departamento de [Departamento]}
+\date{[Fecha]}
+
+% ==============================================================================
+% Headers
+% ==============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}

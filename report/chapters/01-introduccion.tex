@@ -1,0 +1,55 @@
+% 01-introduccion.tex — Chapter 1: Introducci\'{o}n
+
+\chapter{Introducci\'{o}n}
+
+\section{Motivaci\'{o}n}
+
+La volatilidad estoc\'{a}stica es un componente central de los modelos financieros modernos.
+Desde la opci\'{o}n de Black-Scholes hasta los modelos Heston y GARCH, la volatilidad
+se modela como un proceso latente que evoluciona en el tiempo.
+Sin embargo, la \emph{predicci\'{o}n de cobertura} ---qu\'{e} tan bien un modelo calibra
+intervalos de probabilidad para la volatilidad futura--- recibe menos atenci\'{o}n que
+la predicci\'{o}n puntual.
+
+El modelo SF-Harris (volatilidad estoc\'{a}stica con recurrencia de Harris) propuesto por
+Anzarut~\citep{anzarut2024} combina tres ingredientes: (1)~una cadena de Markov con
+punto de masa en el estado anterior (``estancia'') y saltos desde una distribuci\'{o}n
+invariante $Q$, (2)~un muestreador de Gibbs para estimar par\'{a}metros, y (3)~una
+distribuci\'{o}n GIG param\'{e}trica para $Q$.
+El modelo reporta una AAD de 0.8\,pp en la Tabla~3 de la tesis,
+superando a GARCH(1,1) con 3.4\,pp.
+
+\section{Pregunta de investigaci\'{o}n}
+
+Este trabajo se plantea la siguiente pregunta:
+
+\begin{center}
+\textit{?`Son necesarios los tres ingredientes del modelo SF-Harris para lograr
+una buena cobertura predictiva, o existe un modelo m\'{a}s simple con rendimiento comparable?}
+\end{center}
+
+Espec\'{\'i}ficamente, investigamos:
+\begin{enumerate}[label=(\roman*)]
+    \item ?`Es necesaria la cadena de Harris, o basta con muestreo iid de la distribuci\'{o}n emp\'{\'i}rica?
+    \item ?`Es necesaria la distribuci\'{o}n GIG param\'{e}trica, o la emp\'{\'i}rica funciona igual de bien?
+    \item ?`El par\'{a}metro $\pstay$ aporta informaci\'{o}n predictiva, o es simplemente ``andamiaje computacional''?
+\end{enumerate}
+
+\section{Objetivos}
+
+\begin{enumerate}
+    \item Replicar la Tabla~3 de Anzarut~\citep{anzarut2024} con datos intradiarios de IBM.
+    \item Evaluar cada componente del modelo SF-Harris mediante pruebas de ablaci\'{o}n.
+    \item Identificar el modelo m\'{\'i}nimo que reproduce el rendimiento del SF-Harris.
+    \item Caracterizar las aplicaciones financieras del modelo esencial.
+\end{enumerate}
+
+\section{Estructura de la tesis}
+
+El Cap\'{\'i}tulo~\ref{ch:marco-teorico} presenta el marco te\'{o}rico.
+El Cap\'{\'i}tulo~\ref{ch:modelo-sf-harris} describe el modelo SF-Harris y la replicaci\'{o}n de la Tabla~3.
+El Cap\'{\'i}tulo~\ref{ch:cadena-decorativa} presenta once pruebas experimentales que demuestran
+que la cadena de Harris es decorativa.
+El Cap\'{\'i}tulo~\ref{ch:modelo-esencial} identifica los dos ingredientes esenciales.
+El Cap\'{\'i}tulo~\ref{ch:aplicaciones} discute aplicaciones financieras.
+El Cap\'{\'i}tulo~\ref{ch:conclusiones} concluye.

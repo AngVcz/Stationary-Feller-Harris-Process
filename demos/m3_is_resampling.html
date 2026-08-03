@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3 — Importance Sampling y Resampling</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+        .grid canvas { width: 100%; height: 280px; }
+        .explanation { background: var(--surface); padding: 16px; border-radius: 8px; margin-top: 16px; }
+        .explanation p { color: var(--text); }
+        .math { font-family: 'Cambria Math', 'Latin Modern Math', serif; color: var(--accent); font-style: italic; }
+        .insight { border-left: 3px solid var(--success); padding-left: 12px; margin: 8px 0; }
+        .warning { border-left: 3px solid var(--warning); padding-left: 12px; margin: 8px 0; }
+        .stats { background: var(--surface); padding: 12px 16px; border-radius: 8px; margin: 8px 0; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        .stats span { color: var(--accent); }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .three-col canvas { width: 100%; height: 250px; }
+        .scheme-btns { display: flex; gap: 8px; margin: 8px 0; flex-wrap: wrap; }
+        .scheme-btns button { padding: 8px 16px; border: 2px solid var(--primary); background: transparent; color: var(--primary); border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .scheme-btns button.active { background: var(--primary); color: var(--bg); }
+        .scheme-btns button:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <h1>M3 — Importance Sampling y Resampling</h1>
+    <p class="subtitle">Observa cómo los pesos de importancia degeneran y el resampling concentra las partículas</p>
+
+    <div class="controls">
+        <label>N (partículas): <span id="N-val">100</span></label>
+        <input type="range" id="N-particles" min="20" max="500" step="10" value="100">
+
+        <label>σ_target: <span id="sigma-t-val">1.0</span></label>
+        <input type="range" id="sigma-target" min="0.2" max="3.0" step="0.1" value="1.0">
+
+        <label>σ_proposal: <span id="sigma-p-val">2.0</span></label>
+        <input type="range" id="sigma-proposal" min="0.5" max="5.0" step="0.1" value="2.0">
+
+        <label>μ_target: <span id="mu-t-val">0.0</span></label>
+        <input type="range" id="mu-target" min="-3" max="3" step="0.5" value="0">
+
+        <label>μ_proposal: <span id="mu-p-val">1.0</span></label>
+        <input type="range" id="mu-proposal" min="-3" max="3" step="0.5" value="1">
+
+        <button id="resample-btn" style="background: var(--accent); color: var(--bg);">Resample</button>
+        <button id="reset-btn">Reset</button>
+    </div>
+
+    <div class="scheme-btns">
+        <button class="active" data-scheme="systematic">Systematic</button>
+        <button data-scheme="stratified">Stratified</button>
+        <button data-scheme="residual">Residual</button>
+        <button data-scheme="multinomial">Multinomial</button>
+    </div>
+
+    <div class="grid">
+        <div>
+            <h3>Target vs Proposal + Partículas</h3>
+            <canvas id="particles-canvas"></canvas>
+        </div>
+        <div>
+            <h3>Pesos de importancia</h3>
+            <canvas id="weights-canvas"></canvas>
+        </div>
+    </div>
+
+    <div class="stats">
+        ESS: <span id="ess-val">—</span> / <span id="N-display">100</span> |
+        ESS/N: <span id="ess-ratio">—</span> |
+        Peso máximo: <span id="max-weight">—</span> |
+        Esquema: <span id="scheme-display">systematic</span>
+    </div>
+
+    <div class="explanation">
+        <h3>¿Qué estás viendo?</h3>
+        <p><strong>Panel izquierdo —</strong> La curva rosa es la distribución <span class="math">target</span> π(x) (lo que queremos muestrear). La curva azul es la <span class="math">proposal</span> q(x) (de donde muestreamos). Los puntos son las partículas, con tamaño proporcional a su peso.</p>
+
+        <p><strong>Panel derecho —</strong> Los pesos de importancia <span class="math">W_i = π(x_i) / q(x_i)</span>. Cuando la proposal no cubre bien la target, pocos pesos dominan y el ESS cae.</p>
+
+        <div class="insight">
+            <p><strong>ESS alto (≈ N):</strong> La proposal cubre bien la target. IS funciona.</p>
+            <p><strong>ESS bajo (≈ 1):</strong> Pocas partículas dominan. IS es ineficiente → necesitas resampling.</p>
+        </div>
+
+        <div class="warning">
+            <p><strong>Cuando σ_proposal >> σ_target</strong> o <strong>μ_proposal ≠ μ_target</strong>, los pesos degeneran. El resampling elimina las partículas con peso bajo y duplica las de peso alto.</p>
+        </div>
+
+        <h3>Esquemas de resampling</h3>
+        <p><strong>Multinomial:</strong> Cada índice se muestrea independientemente. Mayor varianza.</p>
+        <p><strong>Residual:</strong> Parte determinística + parte aleatoria. Menor varianza.</p>
+        <p><strong>Stratified:</strong> Un punto aleatorio por estrato. Menor varianza.</p>
+        <p><strong>Systematic:</strong> Un solo número aleatorio, puntos uniformemente espaciados. Menor varianza, el más usado en práctica.</p>
+    </div>
+
+    <script>
+    // --- State ---
+    let N = 100, sigmaT = 1.0, sigmaP = 2.0, muT = 0.0, muP = 1.0;
+    let scheme = 'systematic';
+    let particles = [];
+    let weights = [];
+    let normalizedWeights = [];
+    let ess = 0;
+    let rngState = 42;
+
+    // --- Seeded PRNG ---
+    function lcg() {
+        rngState = (rngState * 1664525 + 1013904223) & 0xFFFFFFFF;
+        return (rngState >>> 0) / 0xFFFFFFFF;
+    }
+    function randn() {
+        let u1 = lcg(), u2 = lcg();
+        while (u1 === 0) u1 = lcg();
+        return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
+
+    // --- Gaussian PDF ---
+    function gaussianPDF(x, mean, std) {
+        const z = (x - mean) / std;
+        return (1 / (std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
+    }
+
+    // --- Compute particles and weights ---
+    function computeIS() {
+        particles = [];
+        weights = [];
+        for (let i = 0; i < N; i++) {
+            particles.push(muP + sigmaP * randn());
+        }
+        // Compute importance weights
+        for (let i = 0; i < N; i++) {
+            const x = particles[i];
+            const targetVal = gaussianPDF(x, muT, sigmaT);
+            const proposalVal = gaussianPDF(x, muP, sigmaP);
+            weights.push(proposalVal > 0 ? targetVal / proposalVal : 0);
+        }
+        // Normalize
+        const total = weights.reduce((a, b) => a + b, 0);
+        normalizedWeights = weights.map(w => w / total);
+        // ESS
+        const sumW2 = weights.reduce((a, b) => a + b * b, 0);
+        const sumW = weights.reduce((a, b) => a + b, 0);
+        ess = sumW > 0 ? (sumW * sumW) / sumW2 : 0;
+    }
+
+    // --- Resampling ---
+    function cumulativeSum(arr) {
+        let cumsum = [];
+        let s = 0;
+        for (let i = 0; i < arr.length; i++) {
+            s += arr[i];
+            cumsum.push(s);
+        }
+        return cumsum;
+    }
+
+    function resample(schemeName) {
+        const n = normalizedWeights.length;
+        let indices = [];
+
+        if (schemeName === 'multinomial') {
+            const cumsum = cumulativeSum(normalizedWeights);
+            for (let i = 0; i < n; i++) {
+                const u = lcg();
+                let j = 0;
+                while (j < n - 1 && cumsum[j] < u) j++;
+                indices.push(j);
+            }
+        } else if (schemeName === 'residual') {
+            // Deterministic part
+            const copies = normalizedWeights.map(w => Math.floor(n * w));
+            let remaining = n - copies.reduce((a, b) => a + b, 0);
+            const residual = normalizedWeights.map((w, i) => n * w - copies[i]);
+            const resTotal = residual.reduce((a, b) => a + b, 0);
+            const resNorm = residual.map(r => r / resTotal);
+            const cumsum = cumulativeSum(resNorm);
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < copies[i]; j++) indices.push(i);
+            }
+            for (let i = 0; i < remaining; i++) {
+                const u = lcg();
+                let j = 0;
+                while (j < n - 1 && cumsum[j] < u) j++;
+                indices.push(j);
+            }
+            // Shuffle
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(lcg() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+        } else if (schemeName === 'stratified') {
+            const cumsum = cumulativeSum(normalizedWeights);
+            for (let i = 0; i < n; i++) {
+                const u = (i + lcg()) / n;
+                let j = 0;
+                while (j < n - 1 && cumsum[j] < u) j++;
+                indices.push(j);
+            }
+        } else if (schemeName === 'systematic') {
+            const cumsum = cumulativeSum(normalizedWeights);
+            const u0 = lcg() / n;
+            for (let i = 0; i < n; i++) {
+                const u = u0 + i / n;
+                let j = 0;
+                while (j < n - 1 && cumsum[j] < u) j++;
+                indices.push(j);
+            }
+        }
+
+        // Replace particles with resampled ones, equal weights
+        const newParticles = indices.map(i => particles[i]);
+        particles = newParticles;
+        weights = new Array(n).fill(1);
+        normalizedWeights = new Array(n).fill(1 / n);
+        ess = n;
+    }
+
+    // --- Drawing ---
+    function drawParticles() {
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        const W = canvas.offsetWidth, H = canvas.offsetHeight;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+        const plotW = W - margin.left - margin.right;
+        const plotH = H - margin.top - margin.bottom;
+
+        const xMin = Math.min(muT - 4*sigmaT, muP - 4*sigmaP, ...particles) - 0.5;
+        const xMax = Math.max(muT + 4*sigmaT, muP + 4*sigmaP, ...particles) + 0.5;
+        const yMax = Math.max(gaussianPDF(muT, muT, sigmaT), gaussianPDF(muP, muP, sigmaP)) * 1.2;
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+
+        // Target distribution (pink)
+        ctx.beginPath();
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 2.5;
+        let first = true;
+        for (let px = 0; px <= plotW; px++) {
+            const x = xMin + (px / plotW) * (xMax - xMin);
+            const y = gaussianPDF(x, muT, sigmaT);
+            const py = margin.top + plotH - (y / yMax) * plotH;
+            if (first) { ctx.moveTo(margin.left + px, py); first = false; }
+            else ctx.lineTo(margin.left + px, py);
+        }
+        ctx.stroke();
+
+        // Fill target
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(244, 114, 182, 0.08)';
+        ctx.fill();
+
+        // Proposal distribution (blue)
+        ctx.beginPath();
+        ctx.strokeStyle = '#60a5fa';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        first = true;
+        for (let px = 0; px <= plotW; px++) {
+            const x = xMin + (px / plotW) * (xMax - xMin);
+            const y = gaussianPDF(x, muP, sigmaP);
+            const py = margin.top + plotH - (y / yMax) * plotH;
+            if (first) { ctx.moveTo(margin.left + px, py); first = false; }
+            else ctx.lineTo(margin.left + px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Particles (circles, size proportional to weight)
+        const maxWeight = Math.max(...normalizedWeights);
+        for (let i = 0; i < N; i++) {
+            const x = particles[i];
+            const px = margin.left + ((x - xMin) / (xMax - xMin)) * plotW;
+            const size = 2 + 8 * (normalizedWeights[i] / maxWeight);
+            ctx.fillStyle = `rgba(96, 165, 250, ${0.3 + 0.7 * (normalizedWeights[i] / maxWeight)})`;
+            ctx.beginPath();
+            ctx.arc(px, margin.top + plotH - 15, size, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        // Legend
+        ctx.font = '12px system-ui';
+        ctx.fillStyle = '#f472b6';
+        ctx.fillText('— Target π(x)', margin.left + 10, margin.top + 15);
+        ctx.fillStyle = '#60a5fa';
+        ctx.fillText('--- Proposal q(x)', margin.left + 120, margin.top + 15);
+
+        // Stats
+        document.getElementById('ess-val').textContent = ess.toFixed(1);
+        document.getElementById('N-display').textContent = N;
+        document.getElementById('ess-ratio').textContent = (ess / N).toFixed(3);
+        document.getElementById('max-weight').textContent = Math.max(...normalizedWeights).toFixed(4);
+        document.getElementById('scheme-display').textContent = scheme;
+    }
+
+    function drawWeights() {
+        const canvas = document.getElementById('weights-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        const W = canvas.offsetWidth, H = canvas.offsetHeight;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+        const plotW = W - margin.left - margin.right;
+        const plotH = H - margin.top - margin.bottom;
+
+        const maxW = Math.max(...normalizedWeights);
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+
+        // ESS line
+        const essLine = margin.top + plotH - (ess / N) * plotH;
+        ctx.strokeStyle = '#fbbf24';
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, essLine);
+        ctx.lineTo(margin.left + plotW, essLine);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '11px system-ui';
+        ctx.textAlign = 'right';
+        ctx.fillText(`ESS/N = ${(ess/N).toFixed(2)}`, margin.left + plotW - 5, essLine - 5);
+
+        // Weight bars
+        const barWidth = Math.max(1, plotW / N - 1);
+        for (let i = 0; i < N; i++) {
+            const barH = (normalizedWeights[i] / maxW) * plotH;
+            const px = margin.left + (i / N) * plotW;
+            const color = normalizedWeights[i] > 1/N ? '#60a5fa' : '#475569';
+            ctx.fillStyle = color;
+            ctx.fillRect(px, margin.top + plotH - barH, barWidth, barH);
+        }
+
+        // Uniform weight line
+        const uniformLine = margin.top + plotH - (1/N / maxW) * plotH;
+        ctx.strokeStyle = '#34d399';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, uniformLine);
+        ctx.lineTo(margin.left + plotW, uniformLine);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.font = '11px system-ui';
+        ctx.fillStyle = '#34d399';
+        ctx.textAlign = 'left';
+        ctx.fillText('1/N (uniform)', margin.left + 5, uniformLine - 5);
+    }
+
+    function update() {
+        N = parseInt(document.getElementById('N-particles').value);
+        sigmaT = parseFloat(document.getElementById('sigma-target').value);
+        sigmaP = parseFloat(document.getElementById('sigma-proposal').value);
+        muT = parseFloat(document.getElementById('mu-target').value);
+        muP = parseFloat(document.getElementById('mu-proposal').value);
+        document.getElementById('N-val').textContent = N;
+        document.getElementById('sigma-t-val').textContent = sigmaT.toFixed(1);
+        document.getElementById('sigma-p-val').textContent = sigmaP.toFixed(1);
+        document.getElementById('mu-t-val').textContent = muT.toFixed(1);
+        document.getElementById('mu-p-val').textContent = muP.toFixed(1);
+
+        computeIS();
+        drawParticles();
+        drawWeights();
+    }
+
+    // --- Event listeners ---
+    document.getElementById('N-particles').addEventListener('input', update);
+    document.getElementById('sigma-target').addEventListener('input', update);
+    document.getElementById('sigma-proposal').addEventListener('input', update);
+    document.getElementById('mu-target').addEventListener('input', update);
+    document.getElementById('mu-proposal').addEventListener('input', update);
+
+    document.getElementById('resample-btn').addEventListener('click', () => {
+        resample(scheme);
+        drawParticles();
+        drawWeights();
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+        rngState = Math.floor(Math.random() * 100000);
+        update();
+    });
+
+    document.querySelectorAll('.scheme-btns button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.scheme-btns button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            scheme = btn.dataset.scheme;
+            document.getElementById('scheme-display').textContent = scheme;
+        });
+    });
+
+    // Initialize
+    update();
+
+    window.addEventListener('resize', () => { drawParticles(); drawWeights(); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M2 — Filtro de Kalman: Predicción y Actualización</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+        .grid canvas { width: 100%; height: 280px; }
+        .explanation { background: var(--surface); padding: 16px; border-radius: 8px; margin-top: 16px; }
+        .explanation p { color: var(--text); }
+        .math { font-family: 'Cambria Math', 'Latin Modern Math', serif; color: var(--accent); font-style: italic; }
+        .insight { border-left: 3px solid var(--success); padding-left: 12px; margin: 8px 0; }
+        .phase-label { font-size: 1.1em; font-weight: bold; margin: 8px 0; }
+        .phase-predict { color: var(--warning); }
+        .phase-update { color: var(--accent); }
+        .gain-display { background: var(--surface); padding: 12px 16px; border-radius: 8px; margin: 8px 0; font-family: 'Consolas', monospace; }
+        .summary-section { margin-top: 24px; }
+        .summary-section canvas { width: 100%; height: 300px; }
+        .hidden { display: none; }
+        button.skip { background: var(--accent); color: var(--bg); }
+        button.skip:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <h1>M2 — Filtro de Kalman: Predicción y Actualización</h1>
+    <p class="subtitle">Observa cómo el filtro de Kalman recupera el estado oculto combinando predicción (dinámica) y actualización (observación)</p>
+
+    <div class="controls" id="anim-controls">
+        <label>φ (phi): <span id="phi-val">0.95</span></label>
+        <input type="range" id="phi" min="0.1" max="0.99" step="0.05" value="0.95">
+
+        <label>σ<sub>v</sub> (ruido proceso): <span id="sigmav-val">0.30</span></label>
+        <input type="range" id="sigmav" min="0.05" max="1.0" step="0.05" value="0.3">
+
+        <label>σ<sub>w</sub> (ruido observación): <span id="sigmaw-val">1.00</span></label>
+        <input type="range" id="sigmaw" min="0.1" max="3.0" step="0.1" value="1.0">
+
+        <label>T (pasos): <span id="T-val">50</span></label>
+        <input type="range" id="T-steps" min="20" max="200" step="10" value="50">
+
+        <button id="play-btn">▶ Play</button>
+        <button id="pause-btn">⏸ Pausa</button>
+        <button id="step-btn">⏭ Paso</button>
+        <button id="reset-btn">Reset</button>
+        <button id="skip-btn" class="skip">Resultado final →</button>
+    </div>
+
+    <!-- Panel 1: Animation -->
+    <div id="animation-panel">
+        <div class="phase-label" id="phase-label">Paso 0: Estado inicial</div>
+
+        <div class="grid">
+            <div>
+                <h3>Distribuciones (paso actual)</h3>
+                <canvas id="dist-canvas"></canvas>
+                <div class="stats">
+                    Media predictiva: <span id="pred-mean">—</span> |
+                    Var predictiva: <span id="pred-var">—</span> |
+                    Media filtrada: <span id="filt-mean">—</span> |
+                    Var filtrada: <span id="filt-var">—</span>
+                </div>
+            </div>
+            <div>
+                <h3>Trayectoria (acumulada)</h3>
+                <canvas id="traj-canvas"></canvas>
+                <div class="stats">
+                    Estado verdadero: <span id="true-state">—</span> |
+                    Observación: <span id="obs-val">—</span> |
+                    Estimación filtrada: <span id="filt-state">—</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="gain-display">
+            Ganancia de Kalman K<sub>t</sub> = <span id="kalman-gain">—</span>
+            &nbsp;|&nbsp;
+            Innovación v<sub>t</sub> = <span id="innovation">—</span>
+        </div>
+
+        <div class="explanation">
+            <h3>Ecuaciones del filtro de Kalman</h3>
+            <p><span class="phase-predict math">Predict:</span> <span class="math">x̂<sub>t|t-1</sub> = A x̂<sub>t-1|t-1</sub></span>, &nbsp;
+            <span class="math">P<sub>t|t-1</sub> = A P<sub>t-1|t-1</sub> A' + Q</span></p>
+            <p><span class="phase-update math">Update:</span> <span class="math">K<sub>t</sub> = P<sub>t|t-1</sub> H' (H P<sub>t|t-1</sub> H' + R)<sup>-1</sup></span>, &nbsp;
+            <span class="math">x̂<sub>t|t</sub> = x̂<sub>t|t-1</sub> + K<sub>t</sub>(y<sub>t</sub> - H x̂<sub>t|t-1</sub>)</span>, &nbsp;
+            <span class="math">P<sub>t|t</sub> = (I - K<sub>t</sub> H) P<sub>t|t-1</sub></span></p>
+            <div class="insight">
+                <p><strong>Intuición:</strong> La ganancia K<sub>t</sub> determina cuánto confiar en la observación. Si R es pequeño (observación precisa), K<sub>t</sub> → 1 y la estimación se acerca a la observación. Si R es grande (observación ruidosa), K<sub>t</sub> → 0 y confiamos más en la predicción.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel 2: Static summary -->
+    <div id="summary-panel" class="hidden summary-section">
+        <h2>Resultado Final</h2>
+        <div class="grid">
+            <div>
+                <h3>Estado vs Estimación Filtrada</h3>
+                <canvas id="summary-canvas"></canvas>
+            </div>
+            <div>
+                <h3>Log-verosimilitud acumulada</h3>
+                <canvas id="ll-canvas"></canvas>
+            </div>
+        </div>
+        <div class="stats" style="margin-top: 12px;">
+            RMSE filtrada: <span id="rmse-filt">—</span> &nbsp;|&nbsp;
+            RMSE observaciones: <span id="rmse-obs">—</span> &nbsp;|&nbsp;
+            Log-verosimilitud total: <span id="total-ll">—</span>
+        </div>
+    </div>
+
+    <script>
+    // --- State ---
+    let phi = 0.95, sigmaV = 0.3, sigmaW = 1.0, T = 50;
+    let states = [], observations = [];
+    let filteredMeans = [], filteredVars = [];
+    let predictedMeans = [], predictedVars = [];
+    let kalmanGains = [], innovations = [];
+    let logLikelihoods = [];
+    let currentStep = 0;
+    let animPhase = 'predict'; // 'predict' or 'update'
+    let animInterval = null;
+    let rngState = 42;
+
+    // --- Seeded PRNG ---
+    function lcg() {
+        rngState = (rngState * 1664525 + 1013904223) & 0xFFFFFFFF;
+        return (rngState >>> 0) / 0xFFFFFFFF;
+    }
+    function randn() {
+        let u1 = lcg(), u2 = lcg();
+        while (u1 === 0) u1 = lcg();
+        return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
+
+    // --- Gaussian PDF ---
+    function gaussianPDF(x, mean, std) {
+        const z = (x - mean) / std;
+        return (1 / (std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
+    }
+
+    // --- Simulate SSM ---
+    function simulateSSM(nSteps, phi, sigmaV, sigmaW, x0) {
+        let states = [x0], obs = [x0 + sigmaW * randn()];
+        for (let t = 1; t < nSteps; t++) {
+            states.push(phi * states[t-1] + sigmaV * randn());
+            obs.push(states[t] + sigmaW * randn());
+        }
+        return { states, observations: obs };
+    }
+
+    // --- Kalman Filter (scalar) ---
+    function kalmanFilter(obs, phi, sigmaV, sigmaW) {
+        const Q = sigmaV * sigmaV, R = sigmaW * sigmaW;
+        let xFilt = 0, PFilt = 1; // prior
+        const results = [];
+        let totalLL = 0;
+
+        for (let t = 0; t < obs.length; t++) {
+            // Predict
+            const xPred = phi * xFilt;
+            const PPred = phi * phi * PFilt + Q;
+
+            // Update
+            const v = obs[t] - xPred; // innovation
+            const S = PPred + R; // innovation covariance (scalar)
+            const K = PPred / S; // Kalman gain (scalar)
+            xFilt = xPred + K * v;
+            PFilt = (1 - K) * PPred;
+
+            // Log-likelihood
+            const ll = -0.5 * (Math.log(2 * Math.PI * S) + (v * v) / S);
+            totalLL += ll;
+
+            results.push({ xPred, PPred, xFilt, PFilt, K, v, S, ll });
+        }
+        results.totalLL = totalLL;
+        return results;
+    }
+
+    // --- Run simulation ---
+    function runSimulation() {
+        rngState = 42;
+        const sim = simulateSSM(T, phi, sigmaV, sigmaW, 0);
+        states = sim.states;
+        observations = sim.observations;
+
+        const kf = kalmanFilter(observations, phi, sigmaV, sigmaW);
+        predictedMeans = kf.map(r => r.xPred);
+        predictedVars = kf.map(r => r.PPred);
+        filteredMeans = kf.map(r => r.xFilt);
+        filteredVars = kf.map(r => r.PFilt);
+        kalmanGains = kf.map(r => r.K);
+        innovations = kf.map(r => r.v);
+        logLikelihoods = kf.map(r => r.ll);
+
+        currentStep = 0;
+        animPhase = 'predict';
+        document.getElementById('summary-panel').classList.add('hidden');
+    }
+
+    // --- Drawing ---
+    function drawDistributions(step, phase) {
+        const canvas = document.getElementById('dist-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        const W = canvas.offsetWidth, H = canvas.offsetHeight;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+        const plotW = W - margin.left - margin.right;
+        const plotH = H - margin.top - margin.bottom;
+
+        // Determine x-range
+        const t = step;
+        const predMean = predictedMeans[t];
+        const predStd = Math.sqrt(Math.max(predictedVars[t], 0.01));
+        const filtMean = filteredMeans[t];
+        const filtStd = Math.sqrt(Math.max(filteredVars[t], 0.01));
+        const trueState = states[t];
+        const obs = observations[t];
+
+        const xMin = Math.min(predMean - 4*predStd, filtMean - 4*filtStd, trueState - 2, obs - 2) - 0.5;
+        const xMax = Math.max(predMean + 4*predStd, filtMean + 4*filtStd, trueState + 2, obs + 2) + 0.5;
+
+        const yMax = Math.max(
+            gaussianPDF(predMean, predMean, predStd),
+            gaussianPDF(filtMean, filtMean, filtStd)
+        ) * 1.2;
+
+        // Clear
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+
+        // x-axis labels
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '11px system-ui';
+        ctx.textAlign = 'center';
+        for (let v = Math.ceil(xMin); v <= Math.floor(xMax); v++) {
+            const px = margin.left + ((v - xMin) / (xMax - xMin)) * plotW;
+            ctx.fillText(v.toFixed(0), px, margin.top + plotH + 15);
+        }
+
+        // Predictive distribution (dashed, wider)
+        if (phase === 'update' || phase === 'predict') {
+            ctx.beginPath();
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            let first = true;
+            for (let px = 0; px <= plotW; px++) {
+                const x = xMin + (px / plotW) * (xMax - xMin);
+                const y = gaussianPDF(x, predMean, predStd);
+                const py = margin.top + plotH - (y / yMax) * plotH;
+                if (first) { ctx.moveTo(margin.left + px, py); first = false; }
+                else ctx.lineTo(margin.left + px, py);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Fill under predictive
+            ctx.lineTo(margin.left + plotW, margin.top + plotH);
+            ctx.lineTo(margin.left, margin.top + plotH);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(251, 191, 36, 0.08)';
+            ctx.fill();
+        }
+
+        // Filtered distribution (solid, narrower) — only in update phase
+        if (phase === 'update') {
+            ctx.beginPath();
+            ctx.strokeStyle = '#f472b6';
+            ctx.lineWidth = 2.5;
+            let first = true;
+            for (let px = 0; px <= plotW; px++) {
+                const x = xMin + (px / plotW) * (xMax - xMin);
+                const y = gaussianPDF(x, filtMean, filtStd);
+                const py = margin.top + plotH - (y / yMax) * plotH;
+                if (first) { ctx.moveTo(margin.left + px, py); first = false; }
+                else ctx.lineTo(margin.left + px, py);
+            }
+            ctx.stroke();
+
+            // Fill under filtered
+            ctx.lineTo(margin.left + plotW, margin.top + plotH);
+            ctx.lineTo(margin.left, margin.top + plotH);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(244, 114, 182, 0.12)';
+            ctx.fill();
+        }
+
+        // True state (green dot)
+        const trueX = margin.left + ((trueState - xMin) / (xMax - xMin)) * plotW;
+        ctx.fillStyle = '#34d399';
+        ctx.beginPath();
+        ctx.arc(trueX, margin.top + plotH - 10, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Observation (blue dot)
+        const obsX = margin.left + ((obs - xMin) / (xMax - xMin)) * plotW;
+        ctx.fillStyle = '#60a5fa';
+        ctx.beginPath();
+        ctx.arc(obsX, margin.top + plotH - 25, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Legend
+        ctx.font = '12px system-ui';
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText('— Predictiva', margin.left + 10, margin.top + 15);
+        if (phase === 'update') {
+            ctx.fillStyle = '#f472b6';
+            ctx.fillText('— Filtrada', margin.left + 120, margin.top + 15);
+        }
+        ctx.fillStyle = '#34d399';
+        ctx.fillText('● Estado', margin.left + 210, margin.top + 15);
+        ctx.fillStyle = '#60a5fa';
+        ctx.fillText('● Observación', margin.left + 290, margin.top + 15);
+
+        // Stats
+        document.getElementById('pred-mean').textContent = predMean.toFixed(3);
+        document.getElementById('pred-var').textContent = predictedVars[t].toFixed(3);
+        document.getElementById('filt-mean').textContent = phase === 'update' ? filtMean.toFixed(3) : '—';
+        document.getElementById('filt-var').textContent = phase === 'update' ? filteredVars[t].toFixed(3) : '—';
+    }
+
+    function drawTrajectory(step, phase) {
+        const canvas = document.getElementById('traj-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        const W = canvas.offsetWidth, H = canvas.offsetHeight;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+        const plotW = W - margin.left - margin.right;
+        const plotH = H - margin.top - margin.bottom;
+
+        const n = step + 1;
+        if (n < 1) return;
+
+        // Y range from all data up to current step
+        let yMin = Infinity, yMax = -Infinity;
+        for (let i = 0; i < n; i++) {
+            yMin = Math.min(yMin, states[i], observations[i], filteredMeans[i]);
+            yMax = Math.max(yMax, states[i], observations[i], filteredMeans[i]);
+        }
+        yMin -= 1; yMax += 1;
+
+        // Clear
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+
+        // Draw true state (green)
+        ctx.beginPath();
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < n; i++) {
+            const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+            const py = margin.top + plotH - ((states[i] - yMin) / (yMax - yMin)) * plotH;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Draw observations (blue dots)
+        ctx.fillStyle = '#60a5fa';
+        for (let i = 0; i < n; i++) {
+            const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+            const py = margin.top + plotH - ((observations[i] - yMin) / (yMax - yMin)) * plotH;
+            ctx.beginPath();
+            ctx.arc(px, py, 2, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        // Draw filtered estimate (pink line) — up to current step
+        if (phase === 'update' || currentStep > 0) {
+            ctx.beginPath();
+            ctx.strokeStyle = '#f472b6';
+            ctx.lineWidth = 1.5;
+            const endIdx = phase === 'update' ? n : Math.min(n, currentStep > 0 ? currentStep : 0);
+            for (let i = 0; i <= endIdx && i < n; i++) {
+                const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+                const py = margin.top + plotH - ((filteredMeans[i] - yMin) / (yMax - yMin)) * plotH;
+                if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+        }
+
+        // Stats
+        const t = step;
+        document.getElementById('true-state').textContent = states[t].toFixed(3);
+        document.getElementById('obs-val').textContent = observations[t].toFixed(3);
+        const filtIdx = phase === 'update' ? t : Math.max(t - 1, 0);
+        document.getElementById('filt-state').textContent = phase === 'update' ? filteredMeans[t].toFixed(3) : (t > 0 ? filteredMeans[t-1].toFixed(3) : '—');
+    }
+
+    // --- Animation ---
+    function updatePhaseLabel() {
+        const label = document.getElementById('phase-label');
+        if (currentStep === 0 && animPhase === 'predict') {
+            label.textContent = `Paso ${currentStep}: Predicción inicial`;
+            label.className = 'phase-label phase-predict';
+        } else if (animPhase === 'predict') {
+            label.textContent = `Paso ${currentStep}: Predict (difundir incertidumbre)`;
+            label.className = 'phase-label phase-predict';
+        } else {
+            label.textContent = `Paso ${currentStep}: Update (incorporar observación)`;
+            label.className = 'phase-label phase-update';
+        }
+    }
+
+    function stepAnimation() {
+        if (currentStep >= T) {
+            pauseAnimation();
+            return;
+        }
+
+        if (animPhase === 'predict') {
+            drawDistributions(currentStep, 'predict');
+            drawTrajectory(currentStep, 'predict');
+            document.getElementById('kalman-gain').textContent = '—';
+            document.getElementById('innovation').textContent = innovations[currentStep].toFixed(3);
+            animPhase = 'update';
+        } else {
+            drawDistributions(currentStep, 'update');
+            drawTrajectory(currentStep, 'update');
+            document.getElementById('kalman-gain').textContent = kalmanGains[currentStep].toFixed(4);
+            document.getElementById('innovation').textContent = innovations[currentStep].toFixed(3);
+            currentStep++;
+            animPhase = 'predict';
+        }
+        updatePhaseLabel();
+    }
+
+    function playAnimation() {
+        if (animInterval) return;
+        animInterval = setInterval(stepAnimation, 600);
+    }
+
+    function pauseAnimation() {
+        if (animInterval) {
+            clearInterval(animInterval);
+            animInterval = null;
+        }
+    }
+
+    function resetAnimation() {
+        pauseAnimation();
+        runSimulation();
+        drawDistributions(0, 'predict');
+        drawTrajectory(0, 'predict');
+        updatePhaseLabel();
+    }
+
+    // --- Summary Panel ---
+    function showSummary() {
+        pauseAnimation();
+        // Run through all steps
+        currentStep = T;
+        animPhase = 'predict';
+
+        document.getElementById('summary-panel').classList.remove('hidden');
+        drawSummaryChart();
+        drawLogLikelihoodChart();
+
+        const rmseFilt = Math.sqrt(filteredMeans.reduce((s, f, i) => s + (f - states[i]) ** 2, 0) / T);
+        const rmseObs = Math.sqrt(observations.reduce((s, o, i) => s + (o - states[i]) ** 2, 0) / T);
+        const totalLL = logLikelihoods.reduce((a, b) => a + b, 0);
+        document.getElementById('rmse-filt').textContent = rmseFilt.toFixed(4);
+        document.getElementById('rmse-obs').textContent = rmseObs.toFixed(4);
+        document.getElementById('total-ll').textContent = totalLL.toFixed(2);
+    }
+
+    function drawSummaryChart() {
+        const canvas = document.getElementById('summary-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        const W = canvas.offsetWidth, H = canvas.offsetHeight;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+        const plotW = W - margin.left - margin.right;
+        const plotH = H - margin.top - margin.bottom;
+
+        let yMin = Infinity, yMax = -Infinity;
+        for (let i = 0; i < T; i++) {
+            yMin = Math.min(yMin, states[i], observations[i], filteredMeans[i]);
+            yMax = Math.max(yMax, states[i], observations[i], filteredMeans[i]);
+        }
+        yMin -= 1; yMax += 1;
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+
+        // Confidence band (±2σ)
+        ctx.fillStyle = 'rgba(244, 114, 182, 0.1)';
+        ctx.beginPath();
+        for (let i = 0; i < T; i++) {
+            const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+            const py = margin.top + plotH - ((filteredMeans[i] + 2 * Math.sqrt(filteredVars[i]) - yMin) / (yMax - yMin)) * plotH;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        for (let i = T - 1; i >= 0; i--) {
+            const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+            const py = margin.top + plotH - ((filteredMeans[i] - 2 * Math.sqrt(filteredVars[i]) - yMin) / (yMax - yMin)) * plotH;
+            ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+        // True state (green)
+        ctx.beginPath();
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < T; i++) {
+            const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+            const py = margin.top + plotH - ((states[i] - yMin) / (yMax - yMin)) * plotH;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Observations (blue dots)
+        ctx.fillStyle = '#60a5fa';
+        for (let i = 0; i < T; i++) {
+            const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+            const py = margin.top + plotH - ((observations[i] - yMin) / (yMax - yMin)) * plotH;
+            ctx.beginPath();
+            ctx.arc(px, py, 1.5, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        // Filtered estimate (pink)
+        ctx.beginPath();
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < T; i++) {
+            const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+            const py = margin.top + plotH - ((filteredMeans[i] - yMin) / (yMax - yMin)) * plotH;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Legend
+        ctx.font = '12px system-ui';
+        ctx.fillStyle = '#34d399'; ctx.fillText('— Estado verdadero', margin.left + 10, margin.top + 15);
+        ctx.fillStyle = '#60a5fa'; ctx.fillText('● Observaciones', margin.left + 150, margin.top + 15);
+        ctx.fillStyle = '#f472b6'; ctx.fillText('— Filtro de Kalman', margin.left + 280, margin.top + 15);
+    }
+
+    function drawLogLikelihoodChart() {
+        const canvas = document.getElementById('ll-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        const W = canvas.offsetWidth, H = canvas.offsetHeight;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+        const plotW = W - margin.left - margin.right;
+        const plotH = H - margin.top - margin.bottom;
+
+        // Cumulative log-likelihood
+        const cumLL = [];
+        let sum = 0;
+        for (let i = 0; i < T; i++) {
+            sum += logLikelihoods[i];
+            cumLL.push(sum);
+        }
+
+        const yMin = Math.min(...cumLL) - 1;
+        const yMax = 0;
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+
+        // Zero line
+        const zeroY = margin.top + plotH - ((0 - yMin) / (yMax - yMin)) * plotH;
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, zeroY);
+        ctx.lineTo(margin.left + plotW, zeroY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Cumulative LL
+        ctx.beginPath();
+        ctx.strokeStyle = '#60a5fa';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < T; i++) {
+            const px = margin.left + (i / Math.max(T - 1, 1)) * plotW;
+            const py = margin.top + plotH - ((cumLL[i] - yMin) / (yMax - yMin)) * plotH;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        ctx.font = '12px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.textAlign = 'center';
+        ctx.fillText('Tiempo', margin.left + plotW / 2, margin.top + plotH + 20);
+        ctx.save();
+        ctx.translate(margin.left - 25, margin.top + plotH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Log-verosimilitud acumulada', 0, 0);
+        ctx.restore();
+    }
+
+    // --- Event listeners ---
+    document.getElementById('phi').addEventListener('input', (e) => {
+        phi = parseFloat(e.target.value);
+        document.getElementById('phi-val').textContent = phi.toFixed(2);
+        resetAnimation();
+    });
+    document.getElementById('sigmav').addEventListener('input', (e) => {
+        sigmaV = parseFloat(e.target.value);
+        document.getElementById('sigmav-val').textContent = sigmaV.toFixed(2);
+        resetAnimation();
+    });
+    document.getElementById('sigmaw').addEventListener('input', (e) => {
+        sigmaW = parseFloat(e.target.value);
+        document.getElementById('sigmaw-val').textContent = sigmaW.toFixed(2);
+        resetAnimation();
+    });
+    document.getElementById('T-steps').addEventListener('input', (e) => {
+        T = parseInt(e.target.value);
+        document.getElementById('T-val').textContent = T;
+        resetAnimation();
+    });
+    document.getElementById('play-btn').addEventListener('click', playAnimation);
+    document.getElementById('pause-btn').addEventListener('click', pauseAnimation);
+    document.getElementById('step-btn').addEventListener('click', stepAnimation);
+    document.getElementById('reset-btn').addEventListener('click', resetAnimation);
+    document.getElementById('skip-btn').addEventListener('click', showSummary);
+
+    // --- Initialize ---
+    runSimulation();
+    drawDistributions(0, 'predict');
+    drawTrajectory(0, 'predict');
+    updatePhaseLabel();
+
+    window.addEventListener('resize', () => {
+        if (currentStep < T) {
+            drawDistributions(currentStep > 0 ? currentStep - 1 : 0, animPhase);
+            drawTrajectory(currentStep > 0 ? currentStep - 1 : 0, animPhase);
+        }
+    });
+    </script>
+</body>
+</html>

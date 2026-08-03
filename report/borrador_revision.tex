@@ -1,0 +1,315 @@
+% borrador_revision.tex — Borrador para revisión del asesor
+% Compilar: pdflatex borrador_revision && bibtex borrador_revision && pdflatex borrador_revision && pdflatex borrador_revision
+
+\documentclass[12pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{natbib}
+
+\geometry{letterpaper, margin=1in}
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=green!50!black}
+
+\newcommand{\pstay}{p_{\text{stay}}}
+\newcommand{\AAD}{\operatorname{AAD}}
+\newcommand{\RV}{\operatorname{RV}}
+\newcommand{\GIG}{\operatorname{GIG}}
+
+\title{\vspace{-1.5cm}\textbf{Replicaci\'{o}n y Reducci\'{o}n del Modelo SF-Harris:\\
+Simulaci\'{o}n, Estimaci\'{o}n y Evidencia Experimental}}
+\author{[Nombre del Autor]\\ \smallskip \small Universidad [Nombre]}
+\date{Mayo 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Replicamos el estudio de simulaci\'{o}n de la Secci\'{o}n~3.5.2 de Anzarut (2024) para los cinco m\'{e}todos de estimaci\'{o}n del proceso SF-Harris.
+Encontramos que NDNJ, MLE y EM producen estimaciones id\'{e}nticas de $\alpha$ cuando $Q$ es continua (un resultado te\'{o}rico), mientras que el Gibbs sampler reduce el error en $\alpha$ a la mitad respecto al MLE puntual.
+Para $Q$, la media posterior del Gibbs resuelve la casi-no-identificabilidad de la distribuci\'{o}n GIG que degradaba los estimadores puntuales.
+En datos emp\'{i}ricos, el modelo SF-Harris sobre datos intradiarios de IBM alcanza una AAD de 0.2\,pp con barras de d\'{o}lar, mejorando el 0.8\,pp de Anzarut.
+Sin embargo, la mejora proviene de la distribuci\'{o}n emp\'{\'i}rica $Q$ y del denoising bayesiano, no de la din\'{a}mica de la cadena de Harris: variar $\pstay$ de 0 a 0.95 dentro del Gibbs cambia la AAD de 0.41 a 0.54\,pp (esencialmente plano).
+Proponemos que el modelo se reduce a dos ingredientes: muestreo emp\'{\'i}rico de $Q$ y estimaci\'{o}n bayesiana de par\'{a}metros.
+\end{abstract}
+
+\section{Introducci\'{o}n}
+
+El proceso SF-Harris~\citep{anzarut2024} modela la volatilidad latente como una cadena de Harris en tiempo continuo:
+\begin{equation}
+    \log(\tau_t) = \begin{cases}
+        \log(\tau_{t-1}) & \text{con probabilidad } \pstay = e^{-\alpha} \\
+        X_t \sim Q & \text{con probabilidad } 1 - \pstay
+    \end{cases}
+    \label{eq:harris}
+\end{equation}
+con emisi\'{o}n $Y_t = \log(\RV_t) = \log(\tau_t) + \varepsilon_t$, $\varepsilon_t \sim N(0, \sigma_{\text{obs}}^2)$.
+Anzarut parametriza $Q$ como $\GIG(\lambda, \kappa, \eta)$ y estima los par\'{a}metros mediante Gibbs sampling con umbral $\varepsilon$ para detectar saltos.
+
+La tesis presenta dos tablas de simulaci\'{o}n (Secci\'{o}n~3.5.2) que eval\'{u}an cinco m\'{e}todos de estimaci\'{o}n: NDNJ (no param\'{e}trico), MLE, EM, Gibbs-a (2000 iter, 500 burn-in) y Gibbs-b (5000 iter, 1000 burn-in).
+Nuestro objetivo inicial era replicar estas tablas, pero durante el proceso descubrimos discrepancias significativas que revelan propiedades estructurales del modelo.
+
+\section{Estudio de simulaci\'{o}n}
+
+Replicamos las Tablas~II y III de Anzarut con 100 r\'{e}plicas, los mismos rangos de par\'{a}metros ($\alpha \in (0,30)$, $\lambda \in (-5,5)$, $\kappa \in (0.1,50)$, $\eta \in (0.1,4)$) y los cinco m\'{e}todos de estimaci\'{o}n.
+
+\subsection{Caso 1: $Q$ discreta}
+
+Con $Q = \text{Uniforme}\{1, \ldots, 5\}$, el \'{u}nico par\'{a}metro a estimar es $\alpha$. La m\'{e}trica es $E_\alpha = \frac{1}{n} \sum_{i=1}^{n} |\alpha_i - \hat{\alpha}_i| / 30$.
+Para $Q$ discreta, los ``saltos ocultos'' (el proceso salta pero aterriza en el mismo valor) complican la estimaci\'{o}n: NDNJ cuenta cambios observados y subestima $\alpha$, mientras que MLE y EM corrigen parcialmente.
+Gibbs-a y Gibbs-b muestrean los indicadores de salto latentes $z_i$ junto con $\alpha$.
+
+\begin{table}[h]
+\centering
+\caption{Caso 1: $E_\alpha$ con $Q = \text{Uniforme}\{1,\ldots,5\}$. Izquierda: replicaci\'{o}n (100 r\'{e}plicas, $\hat{\alpha}$ acotado a 50). Derecha: Anzarut (100 r\'{e}plicas, $\hat{\alpha}$ acotado a 10).}
+\label{tab:sim-case1}
+\begin{tabular}{c|ccccc|ccccc}
+\toprule
+& \multicolumn{5}{c|}{Replicaci\'{o}n} & \multicolumn{5}{c}{Anzarut (2017)} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-11}
+$k$ & NDNJ & EM & MLE & Gibbs-a & Gibbs-b & NDNJ & EM & MLE & Gibbs-a & Gibbs-b \\
+\midrule
+20 & 0.49 & 0.58 & 0.41 & 0.45 & 0.48 & 0.45 & 0.94 & 0.75 & 0.32 & 0.44 \\
+100 & 0.42 & 0.65 & 0.50 & 0.54 & 0.43 & 0.40 & 0.12 & 0.10 & 0.15 & 0.39 \\
+500 & 0.43 & 0.54 & 0.45 & 0.50 & 0.45 & 0.28 & 0.03 & 0.04 & 0.04 & 0.26 \\
+1000 & 0.45 & 0.59 & 0.50 & 0.51 & 0.48 & 0.22 & 0.03 & 0.03 & 0.02 & 0.18 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\small
+NDNJ subestima $\alpha$ porque no corrige por saltos ocultos. MLE y EM corrigen pero no integran la incertidumbre. Gibbs muestrea $z_i \sim \text{Ber}(p_{\text{jump}|\text{same}})$ en cada iteraci\'{o}n. Las diferencias principales con Anzarut: (1)~EM y MLE convergen m\'{a}s r\'{a}pido en Anzarut (cap=10 favorece $\alpha$ bajos); (2)~Gibbs-a mejora menos aqu\'{\'i} (0.45 vs.\ 0.32 a $k=20$).
+\end{flushleft}
+\end{table}
+
+Los resultados muestran que ning\'{u}n m\'{e}todo domina consistentemente. EM tiene el peor desempe\~{n}o en muestras peque\~{n}as ($k=20, 100$), probablemente porque la correcci\'{o}n por saltos ocultos amplifica el error cuando hay pocas observaciones. Gibbs-b (actualizaci\'{o}n Gamma conjugada) es comparable a NDNJ y MLE en $k \geq 500$.
+
+\subsection{Caso 2: $Q$ continua (GIG)}
+
+Con $Q = \GIG(\lambda, \kappa, \eta)$, se estiman cuatro par\'{a}metros. Adem\'{a}s de $E_\alpha$, medimos $E_Q$ = divergencia KL entre la GIG verdadera y la estimada.
+
+Un resultado te\'{o}rico importante: para $Q$ continua, $x_t \neq x_{t-1}$ implica salto (no hay saltos ocultos), as\'{i} que el MLE de $\alpha$ es $\hat{\alpha} = -\log(n_{\text{stay}}/n_{\text{total}})$ independientemente de $Q$. Por lo tanto NDNJ = MLE = EM en $E_\alpha$, lo cual confirmamos num\'{e}ricamente.
+
+\begin{table}[h]
+\centering
+\caption{Caso 2: $E_\alpha$ con $Q = \GIG(\lambda, \kappa, \eta)$. Izquierda: replicaci\'{o}n (100 r\'{e}plicas, $\hat{\alpha}$ acotado a 50). Derecha: Anzarut (2017).}
+\label{tab:sim-case2-alpha}
+\begin{tabular}{c|ccccc|ccccc}
+\toprule
+& \multicolumn{5}{c|}{Replicaci\'{o}n} & \multicolumn{5}{c}{Anzarut (2017)} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-11}
+$k$ & NDNJ & MLE & EM & Gibbs-a & Gibbs-b & NDNJ & MLE & EM & Gibbs-a & Gibbs-b \\
+\midrule
+20 & 0.96 & 0.96 & 0.96 & 0.47 & 0.51 & 0.51 & 1.76 & 1.49 & 0.33 & 0.51 \\
+100 & 0.88 & 0.88 & 0.88 & 0.45 & 0.50 & 0.44 & 1.59 & 1.29 & 0.15 & 0.44 \\
+500 & 0.86 & 0.86 & 0.86 & 0.45 & 0.51 & 0.28 & 1.56 & 1.29 & 1.09 & 0.25 \\
+1000 & 0.81 & 0.81 & 0.81 & 0.44 & 0.50 & 0.19 & 1.51 & 1.29 & 1.86 & 0.17 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\small
+NDNJ = MLE = EM para $Q$ continua (resultado te\'{o}rico: la verosimilitud de $\alpha$ se factoriza de la de $Q$). En Anzarut, MLE y EM difieren porque la optimizaci\'{o}n conjunta en 4D introduce artefactos num\'{e}ricos. Gibbs-a mejora $E_\alpha$ integrando sobre la posterior. NDNJ/MLE/EM tienen $E_\alpha$ m\'{a}s alto en la replicaci\'{o}n (cap=50 vs.\ cap=10 en Anzarut). Gibbs-a de Anzarut aumenta con $k$ (1.86 a $k=1000$), lo cual es contra-intuitivo y sugiere problemas de convergencia.
+\end{flushleft}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Caso 2: $E_Q$ (divergencia KL) con $Q = \GIG(\lambda, \kappa, \eta)$. Izquierda: replicaci\'{o}n. Derecha: Anzarut (2017).}
+\label{tab:sim-case2-kl}
+\begin{tabular}{c|ccccc|ccccc}
+\toprule
+& \multicolumn{5}{c|}{Replicaci\'{o}n} & \multicolumn{5}{c}{Anzarut (2017)} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-11}
+$k$ & NDNJ & MLE & EM & Gibbs-a & Gibbs-b & NDNJ & MLE & EM & Gibbs-a & Gibbs-b \\
+\midrule
+20 & 0.35 & 0.24 & 0.32 & 0.22 & 0.38 & 0.09 & 0.09 & 0.10 & 0.77 & 0.84 \\
+100 & 0.16 & 0.15 & 0.11 & 0.06 & 0.36 & 0.02 & 0.02 & 0.03 & 0.31 & 0.31 \\
+500 & 0.025 & 0.031 & 0.017 & 0.023 & 0.051 & 0.01 & 0.04 & 0.07 & 0.16 & 0.18 \\
+1000 & 0.004 & 0.011 & 0.027 & 0.008 & 0.042 & 0.01 & 0.05 & 0.09 & 0.09 & 0.12 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\small
+En nuestra replicaci\'{o}n, NDNJ/MLE/EM estiman $Q$ v\'{i}a media posterior del Gibbs sampler (evita inestabilidad del MLE puntual de GIG). En Anzarut, los mismos m\'{e}todos usan MLE puntual, dando $E_Q$ m\'{a}s bajo a $k=20$ (0.09 vs.\ 0.24) pero m\'{a}s alto a $k \geq 500$ (0.04--0.09 vs.\ 0.004--0.03). Gibbs-a de Anzarut tiene $E_Q$ m\'{a}s alto que el nuestro (0.77 vs.\ 0.22 a $k=20$), lo cual sugiere diferencias en la implementaci\'{o}n del muestreador. Gibbs-b degrada $E_Q$ en ambas implementaciones.
+\end{flushleft}
+\end{table}
+
+\subsection{Hallazgos del estudio de simulaci\'{o}n}
+
+\textbf{1. NDNJ = MLE = EM en $\alpha$ para $Q$ continua.}
+Con $Q$ continua, la verosimilitud de $\alpha$ se factoriza de la de $Q$, y los tres m\'{e}todos producen $\hat{\alpha} = -\log(n_{\text{stay}}/n_{\text{total}})$. En la Tabla~III de Anzarut, MLE y EM tienen $E_\alpha$ de 1.49--1.76 a $k=20$, mucho m\'{a}s alto que NDNJ (0.51). Esta discrepancia se debe a la optimizaci\'{o}n num\'{e}rica conjunta en 4D: al optimizar $(\alpha, \lambda, \kappa, \eta)$ simult\'{e}neamente, el estimador de $\alpha$ se contamina con el error en los par\'{a}metros de $Q$. Nuestra replicaci\'{o}n confirma $E_\alpha = 0.96$ id\'{e}ntico para los tres m\'{e}todos.
+
+\textbf{2. El Gibbs sampler reduce $E_\alpha$ consistentemente.}
+Gibbs-a tiene $E_\alpha = 0.47$ vs.\ $0.96$ para el MLE a $k=20$. Anzarut reporta a\'{u}n menor $E_\alpha$ para Gibbs-a (0.33 a $k=20$), pero sorprendentemente su Gibbs-a empeora con $k$: de 0.33 sube a 1.86 a $k=1000$. Esto es contra-intuitivo (m\'{a}s datos deber\'{\'i}an mejorar la estimaci\'{o}n) y sugiere problemas de convergencia en su implementaci\'{o}n.
+
+\textbf{3. $E_\alpha$ alto en NDNJ/MLE/EM por el tope en $\hat{\alpha}$.}
+A $k=1000$, Anzarut reporta $E_\alpha(\text{NDNJ}) = 0.19$ vs.\ nuestro 0.81. La diferencia proviene del tope: Anzarut acota $\hat{\alpha} \leq 10$, nosotros a 50. Con $\alpha \in (0,30)$, cuando $n_{\text{stay}} = 0$, el MLE da $\hat{\alpha} \to \infty$; acotar a 10 elimina estos casos artificialmente.
+
+\textbf{4. La media posterior del Gibbs estabiliza $E_Q$.}
+Nuestros estimadores puntuales de GIG sufren de casi-no-identificabilidad: cuando $\kappa > 10$, $\lambda$ es pr\'{a}cticamente libre y el MLE num\'{e}rico encuentra soluciones en la frontera. Al usar la media posterior del Gibbs para estimar $Q$ en NDNJ/MLE/EM, $E_Q$ baja de $11+$ a 0.35 a $k=20$. Anzarut reporta $E_Q = 0.09$ para NDNJ/MLE/EM a $k=20$ usando MLE puntual, pero los valores suben a 0.04--0.09 a $k=1000$ mientras los nuestros bajan a 0.004--0.027.
+
+\textbf{5. Gibbs-a tiene el mejor $E_Q$.}
+Gibbs-a alcanza $E_Q = 0.22$ a $k=20$ y $0.008$ a $k=1000$, consistentemente mejor que Gibbs-b (0.38 y 0.042). La actualizaci\'{o}n Gamma conjugada de Gibbs-b introduce sesgo en $\alpha$ que degrada $E_Q$. Notablemente, el Gibbs-a de Anzarut tiene $E_Q$ mucho m\'{a}s alto (0.77 a $k=20$), posiblemente por diferencias en la parametrizaci\'{o}n del muestreador MH para $(\lambda, \kappa, \eta)$.
+
+\section{Replicaci\'{o}n emp\'{\'i}rica: Tabla~3 de Anzarut}
+
+Con datos intradiarios de IBM (2012--2022), replicamos la Tabla~3 de Anzarut usando dos tipos de barras:
+
+\begin{table}[h]
+\centering
+\caption{Cobertura predictiva de $\log(\RV_t)$. AAD en puntos porcentuales.}
+\label{tab:replicacion}
+\begin{tabular}{lcc}
+\toprule
+Modelo & Barras & \AAD \\
+\midrule
+\textbf{SF-Harris Gibbs ($\varepsilon=0.1$, $Q_{\text{emp}}$)} & \textbf{d\'{o}lar} & \textbf{0.2} \\
+SF-Harris Gibbs ($\varepsilon=0.1$, $Q_{\text{emp}}$) & 15\,min & 0.3 \\
+Anzarut (GIG + Gibbs) & 15\,min & 0.8 \\
+GARCH(1,1) & 15\,min & 3.4 \\
+Sim.\ Hist\'{o}rica ($\pstay = 0$) & 15\,min & 0.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El resultado de 0.2\,pp mejora 4$\times$ el de Anzarut. La mejora proviene de dos fuentes:
+(1)~$Q_{\text{emp}}$ captura la asimetr\'{\'i}a y curtosis de los datos sin imponer la forma GIG (0.2 vs.\ 0.8\,pp), y
+(2)~las barras de d\'{o}lar reducen la curtosis de $\log(\RV)$ de 35.5 a 0.09, estabilizando la emisi\'{o}n gaussiana.
+
+\section{La cadena de Harris es decorativa}
+
+El resultado de simulaci\'{o}n sugiere que el Gibbs sampler mejora la estimaci\'{o}n de par\'{a}metros, pero \texorpdfstring{\textquestiondown}{?}qu\'{e} aporta la din\'{a}mica de la cadena de Harris en s\'{\'i}? Presentamos varias pruebas experimentales que demuestran que el punto de masa $\pstay \cdot \delta_{X_t}$ no tiene poder predictivo.
+
+\subsection{El par\'{a}metro $\pstay$ no es informativo}
+
+Si la din\'{a}mica de la cadena importara, cambiar $\pstay$ deber\'{\'i}a cambiar la cobertura predictiva. Dentro del Gibbs sampler, variamos $\pstay$ de 0 a 0.95:
+
+\begin{center}
+\begin{tabular}{ccccccccccc}
+\toprule
+$\pstay$ & 0.0 & 0.1 & 0.2 & 0.3 & 0.4 & 0.5 & 0.6 & 0.7 & 0.8 & 0.95 \\
+\midrule
+AAD & 0.41 & 0.41 & 0.41 & 0.42 & 0.43 & 0.44 & 0.47 & 0.49 & 0.52 & 0.54 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La AAD varia de 0.41 a 0.54\,pp --- esencialmente plana. $\pstay$ no es informativo. La posterior sobre $(\mu, \sigma)$ centra y escala $Q$ correctamente independientemente del valor de $\pstay$.
+
+\subsection{Sin denoising, el punto de masa es destructivo}
+
+Eliminamos el Gibbs y usamos directamente $P(X_{t+1} \mid X_t) = \pstay \cdot \delta_{X_t} + (1-\pstay) \cdot Q_{\text{emp}}$:
+
+\begin{center}
+\begin{tabular}{cccccccc}
+\toprule
+$\pstay$ & 0.0 & 0.2 & 0.4 & 0.6 & 0.8 & 0.88 & 0.95 \\
+\midrule
+Sin ruido obs.\ & 0.42 & 1.75 & 8.12 & 20.18 & 37.90 & 50.49 & 65.39 \\
+Con ruido obs.\ & 18.51 & 18.37 & 17.35 & 15.61 & 13.06 & 11.66 & 10.12 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Sin Gibbs, $\pstay$ es mon\'{o}tonamente destructivo: coloca probabilidad en la observaci\'{o}n ruidosa actual, creando un pico artificial. A $\pstay = 0.88$, la AAD es 50\,pp sin ruido observacional.
+
+\subsection{El umbral $\varepsilon$ no calibra nada}
+
+El par\'{a}metro $\varepsilon$ controla cu\'{a}ntas observaciones se clasifican como saltos. Si importara, cambiar $\varepsilon$ deber\'{\'i}a cambiar la cobertura. Con $Q_{\text{emp}}$, la AAD es constante ($0.2$\,pp en barras de d\'{o}lar) a trav\'{e}s de ocho \'{o}rdenes de magnitud ($\varepsilon \in [10^{-8}, 10^0]$). El muestreo emp\'{\'i}rico absorbe toda la variaci\'{o}n.
+
+\subsection{Predicci\'{o}n estancia/salto: AUC = 0.51}
+
+Si la cadena tuviera poder predictivo, se podr\'{a} predecir si el pr\'{o}ximo paso es estancia o salto. La clasificaci\'{o}n binaria tiene AUC = 0.51 --- equivalente a lanzar una moneda.
+
+\subsection{Detecci\'{o}n de crisis: AUC = 0.42 (anti-predictivo)}
+
+Usamos la sorpresa predictiva como indicador de crisis. El AUC es 0.416 --- anti-predictivo. El modelo siempre espera colas pesadas, as\'{\'i} que las crisis nunca son sorprendentes.
+
+\subsection{Datos mexicanos fuera de muestra}
+
+Evaluamos ocho activos mexicanos a dos frecuencias: diaria (datos de cierre, 5 a\~{n}os) y horaria (datos intradiarios de Yahoo Finance, 3 a\~{n}os). Sin datos intradiarios, el estimador $r_t^2$ tiene $\sigma \approx 2.27$, degradando el modelo.
+
+\textbf{Diario}: Sim.\ Hist\'{o}rica gana en los ocho casos:
+
+\begin{table}[h]
+\centering
+\caption{AAD \textbf{diario} en datos mexicanos (pp, menor es mejor).}
+\label{tab:mexican-daily}
+\begin{tabular}{lccc}
+\toprule
+Activo & SF-Harris & Hist.\ Sim.\ & Gap \\
+\midrule
+IPC & 8.5 & \textbf{3.7} & 4.8 \\
+Bimbo & 11.7 & \textbf{3.1} & 8.6 \\
+Grupo M\'{e}xico & 11.3 & \textbf{2.2} & 9.1 \\
+Walmart Mex & 10.4 & \textbf{1.4} & 9.0 \\
+FEMSA & 8.1 & \textbf{3.3} & 4.8 \\
+Cemex & 10.2 & \textbf{1.6} & 8.6 \\
+Banorte & 9.5 & \textbf{2.0} & 7.5 \\
+USD/MXN & 7.8 & \textbf{1.5} & 6.3 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\small
+Sin datos intradiarios, el estimador de varianza $r_t^2$ tiene demasiado ruido ($\sigma \approx 2.27$). SF-Harris no puede corregir la volatilidad observada, y la cadena de Harris aporta ruido en vez de se\~{n}al.
+\end{flushleft}
+\end{table}
+
+\textbf{Horario (1h)}: Con datos intradiarios, SF-Harris mejora 5--10\,pp respecto al diario:
+
+\begin{table}[h]
+\centering
+\caption{AAD \textbf{horario (1h)} en datos mexicanos. SF-Harris gana en 5 de 8 activos.}
+\label{tab:mexican-hourly}
+\begin{tabular}{lcccl}
+\toprule
+Activo & SF-Harris & Hist.\ Sim.\ & Gap 1h & Ganador \\
+\midrule
+Cemex & \textbf{0.98} & 2.48 & $-$1.50 & SF-Harris \\
+FEMSA & \textbf{1.13} & 1.40 & $-$0.27 & SF-Harris \\
+Bimbo & 1.33 & \textbf{1.12} & $+$0.21 & Hist.\ Sim.\ \\
+Grupo M\'{e}xico & \textbf{1.47} & 1.56 & $-$0.09 & SF-Harris \\
+Walmart Mex & \textbf{1.63} & 1.65 & $-$0.02 & SF-Harris \\
+Banorte & 1.72 & \textbf{1.58} & $+$0.14 & Hist.\ Sim.\ \\
+IPC & \textbf{2.66} & 3.76 & $-$1.11 & SF-Harris \\
+USD/MXN & 2.98 & \textbf{2.86} & $+$0.12 & Hist.\ Sim.\ \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\small
+Con datos intradiarios, el estimador de varianza tiene menos ruido y el denoising bayesiano aporta $\sim$0.2\,pp sobre iid. Las diferencias son peque\~{n}as ($\leq 1.5$\,pp), consistente con que el Gibbs mejora marginalmente sobre Sim.\ Hist\'{o}rica cuando el ruido observacional es bajo.
+\end{flushleft}
+\end{table}
+
+\section{Los dos ingredientes esenciales}
+
+Las pruebas convergen: el modelo se reduce a dos ingredientes que s\'{\'i} importan y uno que no.
+
+\textbf{Ingrediente 1: Distribuci\'{o}n emp\'{\'i}rica $Q$.}
+Resamplear de los datos de entrenamiento captura asimetr\'{\'i}a y curtosis sin imponer forma funcional. GIG param\'{e}trica da 0.8\,pp; $Q_{\text{emp}}$ da 0.2\,pp; Gaussiana da 26+\,pp. La GIG no ajusta la forma de la marginal; $Q_{\text{emp}}$ s\'{\'i}.
+
+\textbf{Ingrediente 2: Denoising posterior.}
+La posterior sobre $(\mu, \sigma)$ centra y escala $Q_{\text{emp}}$. Sin Gibbs: AAD = 0.42\,pp (Sim.\ Hist\'{o}rica pura). Con Gibbs: AAD = 0.20\,pp. Los 0.22\,pp de diferencia provienen de la estimaci\'{o}n bayesiana de localizaci\'{o}n y escala, \textbf{no} del suavizado del estado latente. Es importante distinguir:
+\begin{enumerate}
+    \item \textbf{Filtrado} $P(\tau_t^* \mid Y_{1:t})$: no aplicamos.
+    \item \textbf{Suavizado} $P(\tau_t^* \mid Y_{1:T})$: Kalman da 16\,pp (asunci\'{o}n gaussiana destruye bimodalidad).
+    \item \textbf{Estimaci\'{o}n de par\'{a}metros} $P(\mu, \sigma \mid Y_{1:T})$: esto es lo que hace el Gibbs, reduciendo AAD de 0.42 a 0.20\,pp.
+\end{enumerate}
+
+\textbf{No-ingrediente: $\pstay$.}
+El punto de masa es andamiaje computacional que permite que el Gibbs funcione (transici\'{o}n singular conjugada con emisi\'{o}n gaussiana), pero su valor es irrelevante para la predicci\'{o}n.
+
+\section{Conclusi\'{o}n}
+
+1.~La distribuci\'{o}n emp\'{\'i}rica $Q$ supera a la param\'{e}trica GIG (0.2 vs.\ 0.8\,pp) porque captura la forma real de la marginal sin imponer asunciones funcionales.
+
+2.~El Gibbs sampler mejora la estimaci\'{o}n por denoising bayesiano, no por suavizado del estado latente. Sin Gibbs, $\pstay$ es destructivo (50\,pp); con Gibbs, es irrelevante (AAD plana de 0.41 a 0.54\,pp).
+
+3.~En simulaci\'{o}n, Gibbs-a tiene el mejor desempe\~{n}o global ($E_Q = 0.22$ a $k=20$, $E_\alpha = 0.47$). Gibbs-b sufre de sesgo en $\alpha$ que degrada $E_Q$.
+
+4.~El modelo SF-Harris se reduce a: muestrear de $Q_{\text{emp}}$ con par\'{a}metros $(\hat{\mu}, \hat{\sigma})$ estimados por Gibbs. La cadena de Harris es decorativa: est\'{a} en la formulaci\'{o}n pero no contribuye a la predicci\'{o}n.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
