@@ -1,0 +1,86 @@
+% 07-conclusiones.tex — Chapter 7: Conclusiones
+
+\chapter{Conclusiones}
+\label{ch:conclusiones}
+
+\section{Resumen de hallazgos}
+
+Este trabajo demuestra tres hallazgos estructurales sobre el modelo SF-Harris:
+
+\begin{enumerate}
+    \item \textbf{La distribuci\'{o}n emp\'{\'i}rica $Q$ supera a la param\'{e}trica.}
+    Resamplear de los datos de entrenamiento (AAD 0.2\,pp) es mejor que ajustar una
+    GIG (AAD 0.8\,pp) o una gaussiana (AAD 26\,pp+). La distribuci\'{o}n emp\'{\'i}rica
+    captura asimetr\'{\'i}a y curtosis sin imponer forma funcional.
+
+    \item \textbf{Los saltos continuos son decorativos.} La construcci\'{o}n de
+    tiempo continuo es equivalente a una cadena de Markov discreta con probabilidad
+    de estancia $\pstay$. No aporta poder predictivo.
+
+    \item \textbf{$\pstay$ no es informativo.} Dentro del Gibbs, variar $\pstay$
+    de 0 a 0.95 produce AAD entre 0.41 y 0.54\,pp. El punto de masa es andamiaje
+    computacional, no una caracter\'{\'i}stica predictiva.
+\end{enumerate}
+
+El modelo se reduce a dos ingredientes esenciales: \textbf{distribuci\'{o}n emp\'{\'i}rica}
+y \textbf{estimaci\'{o}n bayesiana de par\'{a}metros}. Sin denoising posterior,
+el punto de masa es destructivo (50\,pp a $\pstay = 0.88$). Con denoising, cualquier
+valor de $\pstay$ funciona igual.
+
+\section{Limitaciones}
+
+\begin{enumerate}
+    \item \textbf{Datos intradiarios necesarios:} El modelo funciona a frecuencias
+    de 15 minutos o menor. A escala diaria, el ruido en $\hat{\tau}_t$ domina
+    (AAD 2--12\,pp).
+
+    \item \textbf{Cobertura de colas extremas:} La distribuci\'{o}n emp\'{\'i}rica
+    no extrapola m\'{a}s all\'{a} de la muestra. Para $p > 0.999$, una
+    distribuci\'{o}n param\'{e}trica podr\'{\'i}a ser necesaria.
+
+    \item \textbf{Estacionariedad:} El modelo asume que $Q$ es estacionaria. En
+    reg\'{\'i}menes de volatilidad cambiantes, la ventana de entrenamiento puede
+    no ser representativa.
+
+    \item \textbf{Un solo activo:} Todos los resultados son para IBM. La
+    extensi\'{o}n a m\'{u}ltiples activos requiere estimaci\'{o}n conjunta de la
+    matriz de covarianza.
+\end{enumerate}
+
+\section{Trabajo futuro}
+
+\begin{enumerate}
+    \item \textbf{Filtro de part\'{\'i}culas para suavizado completo:}
+    Un filtro de part\'{\'i}culas que aproxime $P(\tau_t^* \mid Y_{1:T})$
+    podr\'{\'i}a mejorar la cobertura al denoisar el estado latente, no solo
+    los par\'{a}metros. Sin embargo, el kernel singular del Harris hace que
+    FFBS est\'{a}ndar no aplique; se requerir\'{\'i}a una aproximaci\'{o}n.
+
+    \item \textbf{Cambio de r\'{e}gimen:} Modelos con $Q$ que cambia entre
+    reg\'{\'i}menes de alta y baja volatilidad podr\'{\'i}an capturar la
+    no-estacionariedad y mejorar la cobertura en transiciones.
+
+    \item \textbf{Pricing de opciones:} La distribuci\'{o}n emp\'{\'i}rica bajo
+    la medida f\'{\'i}sica $\Prob$ se puede transformar a la medida neutral al
+    riesgo $\Q$ usando opciones liquidas como calibraci\'{o}n.
+
+    \item \textbf{Datos multivariados:} Extender a una canasta de activos con
+    copulas para capturar dependencias no gaussianas.
+\end{enumerate}
+
+\section{Lo que el SF-Harris ES y NO ES}
+
+El modelo SF-Harris (reducido a sus ingredientes esenciales) \textbf{ES}:
+\begin{itemize}
+    \item Un buen modelo de \emph{cobertura} para $\log(\RV)$ intradiaria.
+    \item Un m\'{e}todo no param\'{e}trico de predicci\'{o}n de distribuciones
+          de volatilidad.
+    \item Un marco para cuantificar incertidumbre en estimaciones de volatilidad.
+\end{itemize}
+
+El modelo SF-Harris \textbf{NO ES}:
+\begin{itemize}
+    \item Un modelo de predicci\'{o}n direccional (se\~{n}al $\alpha$ = 0).
+    \item Un detector de crisis (AUC = 0.416, anti-predictivo).
+    \item Un modelo que funcione a escala diaria sin datos intradiarios.
+\end{itemize}

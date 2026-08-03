@@ -1,0 +1,15 @@
+\begin{thebibliography}{1}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Anzarut(2024)]{anzarut2024}
+Michelle Anzarut.
+\newblock \emph{Stochastic Volatility Modeling with Harris Recurrent
+  Processes}.
+\newblock PhD thesis, Universidad [Nombre], 2024.
+\newblock Tesis de doctorado.
+
+\end{thebibliography}

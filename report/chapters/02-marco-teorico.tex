@@ -1,0 +1,91 @@
+% 02-marco-teorico.tex — Chapter 2: Marco Te\'{o}rico
+
+\chapter{Marco Te\'{o}rico}
+\label{ch:marco-teorico}
+
+\section{Kernels de Markov y modelos de espacio de estados}
+
+Un \textbf{kernel de Markov} $K: \mathcal{X} \times \mathcal{B}(\mathcal{X}) \to [0,1]$ es la probabilidad
+condicional $K(x, A) = \Prob(X_t \in A \mid X_{t-1} = x)$. Generaliza las matrices de
+transici\'{o}n a espacios de estado continuos \citep{chopin2020}.
+
+Un \textbf{modelo de espacio de estados} (SSM) apila dos kernels:
+\begin{align}
+    X_t &\sim f(\cdot \mid X_{t-1}) \quad \text{(transici\'{o}n de estado)} \\
+    Y_t &\sim g(\cdot \mid X_t) \quad \text{(emisi\'{o}n observacional)}
+\end{align}
+Las observaciones $\{Y_t\}$ \textbf{no} son Markov --- heredan dependencia a trav\'{e}s del
+estado latente. Filtrar consiste en computar $P(X_t \mid Y_{1:t})$ integrando sobre toda
+la trayectoria.
+
+\section{Filtrado y suavizado}
+
+El \textbf{filtrado} computa $P(X_t \mid Y_{1:t})$ usando solo datos hasta $t$.
+El \textbf{suavizado} computa $P(X_t \mid Y_{1:T})$ usando toda la serie.
+Para modelos lineales gaussianos, el \textbf{filtro de Kalman} da la soluci\'{o}n exacta:
+
+\begin{align}
+    \hat{x}_{t|t-1} &= A\hat{x}_{t-1}, \quad P_{t|t-1} = AP_{t-1}A^\top + Q \quad \text{(predicci\'{o}n)} \\
+    \hat{x}_t &= \hat{x}_{t|t-1} + K_t(y_t - H\hat{x}_{t|t-1}) \quad \text{(actualizaci\'{o}n)}
+\end{align}
+donde $K_t$ es la ganancia de Kalman.
+
+Para modelos no gaussianos (como SF-Harris), el filtro de Kalman no aplica.
+La \textbf{formalizaci\'{o}n de Feynman-Kac}~\citep{chopin2020} proporciona el marco general:
+el filtrado es una secuencia de integrales
+$\int K(x_{t-1}, x_t) \cdot g(y_t \mid x_t) \cdot w(x_{t-1}) \, dx_{t-1}$,
+y los filtros de part\'{\'i}culas las aproximan por muestreo de importancia secuencial.
+
+\section{La cadena de Harris}
+
+\begin{definicion}[Cadena de Harris]
+Una cadena de Markov $\{X_t\}$ en $(\mathcal{X}, \mathcal{B})$ es \textbf{Harris-recurrente}
+si existe un conjunto peque\~{n}o $C$ y una medida no trivial $\psi$ tales que
+$\Prob(\tau_C < \infty \mid X_0 = x) = 1$ para todo $x \in \mathcal{X}$.
+\end{definicion}
+
+La cadena de Harris del modelo SF-Harris tiene kernel de transici\'{o}n:
+\begin{equation}
+    P(X_{t+1} \mid X_t) = \pstay \cdot \delta_{X_t} + (1 - \pstay) \cdot Q
+\end{equation}
+donde $\pstay = e^{-\alpha}$ es la probabilidad de estancia, $\delta_{X_t}$ es la
+delta de Dirac en el estado actual, y $Q$ es la distribuci\'{o}n invariante.
+La distribuci\'{o}n estacionaria es $Q$: el proceso converge independientemente del
+valor inicial.
+
+\section{La distribuci\'{o}n GIG}
+
+La distribuci\'{o}n \textbf{Generalized Inverse Gaussian} (GIG)~\citep{barndorff1977}
+tiene densidad:
+\begin{equation}
+    f(x \mid \lambda, \kappa, \eta) = \frac{(\kappa/\eta)^{\lambda/2}}{2 K_\lambda(\sqrt{\kappa\eta})} x^{\lambda-1} \exp\left(-\frac{\kappa x + \eta/x}{2}\right), \quad x > 0
+\end{equation}
+donde $K_\lambda$ es la funci\'{o}n de Bessel modificada de tercer tipo.
+Casos especiales: $\lambda = 1$ da la distribuci\'{o}n hiperb\'{o}lica generalizada;
+$\kappa \to 0$ da la gamma; $\eta \to 0$ da la inversa-gamma.
+
+En el modelo SF-Harris original, $Q = \GIG(\lambda, \kappa, \eta)$.
+Nuestros resultados muestran que la distribuci\'{o}n emp\'{\'i}rica supera a la GIG param\'{e}trica
+(AAD 0.2\,pp vs 0.8\,pp).
+
+\section{Muestreo de Gibbs para estimaci\'{o}n de par\'{a}metros}
+
+El muestreador de Gibbs~\citep{chopin2020} produce muestras de la distribuci\'{o}n
+posterior conjunta $P(\alpha, \mu, \sigma \mid Y_{1:T})$ muestreando iterativamente
+de cada distribuci\'{o}n condicional completa:
+
+\begin{enumerate}
+    \item Muestrear $\alpha \mid \mu, \sigma, Y_{1:T}$ (metropolis dentro de Gibbs)
+    \item Muestrear $\mu \mid \alpha, \sigma, Y_{1:T}$ (conjugado gaussiano)
+    \item Muestrear $\sigma \mid \alpha, \mu, Y_{1:T}$ (conjugado inverso-gamma)
+\end{enumerate}
+
+Despu\'{e}s de $N_{\text{iter}}$ iteraciones y un per\'{\'i}odo de \emph{burn-in},
+obtenemos muestras $\{(\alpha^{(i)}, \mu^{(i)}, \sigma^{(i)})\}_{i=1}^{N}$ que caracterizan
+la incertidumbre param\'{e}trica.
+
+\textbf{Observaci\'{o}n clave:} En nuestra implementaci\'{o}n, el muestreador de Gibbs
+produce estimaci\'{o}n de par\'{a}metros (localizaci\'{o}n y escala de $Q$),
+no suavizado del estado latente $\tau^*_{1:T}$.
+La simulaci\'{o}n hacia adelante comienza desde la \'{u}ltima observaci\'{o}n ruidosa,
+no desde un estado suavizado.

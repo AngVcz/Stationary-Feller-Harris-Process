@@ -1,0 +1,15 @@
+Table III Replication — Parameter Range Comparison
+
+Full ranges: α∈(0,30), λ∈(-5,5), κ∈(0.1,50), η∈(0.1,4), alpha_cap=50, Gibbs=component-wise MH
+Restricted:  α∈(0,5),  λ∈(-5,5), κ∈(0.1,10), η∈(0.1,4), alpha_cap=10, no Gibbs
+Anzarut:    α∈(0,30), λ∈(-5,5), κ∈(0,50),   η∈(0,4),   (paper Table III values)
+
+E_alpha = (1/100) * Σ|α_i - α̂_i| / range_width
+E_Q = (1/100) * Σ KL(GIG_true || GIG_estimated)
+
+Notes:
+- Full and restricted use same normalization width (30 vs 5) respectively
+- Full range: alpha_cap was 10 (changed from 50), Gibbs-a/b use 2000/5000 iterations
+- Restricted range: no Gibbs run, alpha_cap=10
+- NDNJ=MLE=EM for E_alpha in both ranges (theoretical result for continuous Q)
+- E_Q(NDNJ) still 80-100x Anzarut even with restricted ranges due to GIG near-unidentifiability

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M1 — Núcleos de Probabilidad y Modelo AR(1)</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+        .grid canvas { width: 100%; height: 280px; }
+        .explanation { background: var(--surface); padding: 16px; border-radius: 8px; margin-top: 16px; }
+        .explanation p { color: var(--text); }
+        .math { font-family: 'Cambria Math', 'Latin Modern Math', serif; color: var(--accent); font-style: italic; }
+        .insight { border-left: 3px solid var(--success); padding-left: 12px; margin: 8px 0; }
+    </style>
+</head>
+<body>
+    <h1>M1 — Núcleos de Probabilidad y Modelo AR(1)</h1>
+    <p class="subtitle">Explora cómo los parámetros φ y σ afectan el núcleo de transición y la trayectoria del proceso</p>
+
+    <div class="controls">
+        <label>φ (phi): <span id="phi-val">0.90</span></label>
+        <input type="range" id="phi" min="-0.99" max="0.99" step="0.05" value="0.90">
+
+        <label>σ (sigma): <span id="sigma-val">1.00</span></label>
+        <input type="range" id="sigma" min="0.1" max="3.0" step="0.1" value="1.0">
+
+        <label>x_prev: <span id="xprev-val">0.00</span></label>
+        <input type="range" id="xprev" min="-5" max="5" step="0.5" value="0">
+
+        <button id="resimulate">Nueva trayectoria</button>
+        <button id="reset">Reset</button>
+    </div>
+
+    <div class="grid">
+        <div>
+            <h3>Núcleo de transición K(x_prev, ·)</h3>
+            <canvas id="kernel-canvas"></canvas>
+            <div class="stats">
+                Media del núcleo: <span id="kernel-mean">0.00</span> |
+                Varianza del núcleo: <span id="kernel-var">1.00</span>
+            </div>
+        </div>
+        <div>
+            <h3>Trayectoria AR(1)</h3>
+            <canvas id="trajectory-canvas"></canvas>
+            <div class="stats">
+                Media muestral: <span id="traj-mean">—</span> |
+                Varianza muestral: <span id="traj-var">—</span> |
+                Varianza teórica: <span id="traj-theo-var">—</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h3>¿Qué estás viendo?</h3>
+        <p><strong>Panel izquierdo — Núcleo de transición:</strong> La curva muestra <span class="math">K(x_prev, x_curr) = N(x_curr; φ · x_prev, σ²)</span>, es decir, la distribución del siguiente estado dado el estado actual. Cambia <strong>x_prev</strong> para ver cómo el pico del núcleo se desplaza: la media del núcleo siempre está en <span class="math">φ · x_prev</span>.</p>
+
+        <p><strong>Panel derecho — Trayectoria AR(1):</strong> Cada punto es <span class="math">X_t = φ · X_{t-1} + σ · ε_t</span>. La varianza estacionaria teórica es <span class="math">σ² / (1 - φ²)</span>. Cuando <span class="math">|φ|</span> se acerca a 1, la trayectoria es más persistente (más "memoria").</p>
+
+        <div class="insight">
+            <p><strong>Conexión con CTMCs:</strong> En una CTMC tienes tasas de transición <span class="math">q(i,j)</span>. Aquí tienes un núcleo <span class="math">K(x, ·)</span> — misma idea, pero en continuo. Cada fila de la matriz de transición es reemplazada por una distribución gaussiana.</p>
+        </div>
+    </div>
+
+    <script>
+    const phiSlider = document.getElementById('phi');
+    const sigmaSlider = document.getElementById('sigma');
+    const xprevSlider = document.getElementById('xprev');
+    const resimBtn = document.getElementById('resimulate');
+    const resetBtn = document.getElementById('reset');
+
+    // State
+    let phi = 0.9, sigma = 1.0, xprev = 0.0;
+    let trajectory = [];
+    let rngState = 42;
+
+    // Seeded PRNG (simple LCG for reproducibility)
+    function lcg() {
+        rngState = (rngState * 1664525 + 1013904223) & 0xFFFFFFFF;
+        return (rngState >>> 0) / 0xFFFFFFFF;
+    }
+    function randn() {
+        let u1 = lcg(), u2 = lcg();
+        while (u1 === 0) u1 = lcg();
+        return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
+
+    function simulateAR1(nSteps, phi, sigma, x0) {
+        let states = [x0];
+        for (let t = 1; t < nSteps; t++) {
+            states.push(phi * states[t-1] + sigma * randn());
+        }
+        return states;
+    }
+
+    function gaussianPDF(x, mean, std) {
+        const z = (x - mean) / std;
+        return (1 / (std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
+    }
+
+    // Drawing
+    function drawKernel() {
+        const canvas = document.getElementById('kernel-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        const W = canvas.offsetWidth, H = canvas.offsetHeight;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+        const plotW = W - margin.left - margin.right;
+        const plotH = H - margin.top - margin.bottom;
+
+        const mean = phi * xprev;
+        const xMin = mean - 4 * sigma;
+        const xMax = mean + 4 * sigma;
+        const yMax = gaussianPDF(mean, mean, sigma) * 1.1;
+
+        // Clear
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+
+        // x-axis labels
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '11px system-ui';
+        ctx.textAlign = 'center';
+        for (let v = Math.ceil(xMin); v <= Math.floor(xMax); v++) {
+            const px = margin.left + ((v - xMin) / (xMax - xMin)) * plotW;
+            ctx.fillText(v.toFixed(0), px, margin.top + plotH + 15);
+        }
+
+        // y-axis labels
+        ctx.textAlign = 'right';
+        ctx.fillText(yMax.toFixed(2), margin.left - 5, margin.top + 5);
+
+        // Kernel curve
+        ctx.beginPath();
+        ctx.strokeStyle = '#60a5fa';
+        ctx.lineWidth = 2.5;
+        let first = true;
+        for (let px = 0; px <= plotW; px++) {
+            const x = xMin + (px / plotW) * (xMax - xMin);
+            const y = gaussianPDF(x, mean, sigma);
+            const py = margin.top + plotH - (y / yMax) * plotH;
+            if (first) { ctx.moveTo(margin.left + px, py); first = false; }
+            else ctx.lineTo(margin.left + px, py);
+        }
+        ctx.stroke();
+
+        // Fill under curve
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(96, 165, 250, 0.1)';
+        ctx.fill();
+
+        // Mean line
+        const meanPx = margin.left + ((mean - xMin) / (xMax - xMin)) * plotW;
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(meanPx, margin.top);
+        ctx.lineTo(meanPx, margin.top + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Update stats
+        document.getElementById('kernel-mean').textContent = mean.toFixed(2);
+        document.getElementById('kernel-var').textContent = (sigma * sigma).toFixed(2);
+    }
+
+    function drawTrajectory() {
+        const canvas = document.getElementById('trajectory-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        ctx.scale(2, 2);
+        const W = canvas.offsetWidth, H = canvas.offsetHeight;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+        const plotW = W - margin.left - margin.right;
+        const plotH = H - margin.top - margin.bottom;
+
+        const n = trajectory.length;
+        const yMin = Math.min(...trajectory) - 0.5;
+        const yMax = Math.max(...trajectory) + 0.5;
+
+        // Clear
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+
+        // Zero line
+        const zeroY = margin.top + plotH - ((0 - yMin) / (yMax - yMin)) * plotH;
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, zeroY);
+        ctx.lineTo(margin.left + plotW, zeroY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Trajectory
+        ctx.beginPath();
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 1.5;
+        let first = true;
+        for (let i = 0; i < n; i++) {
+            const px = margin.left + (i / (n - 1)) * plotW;
+            const py = margin.top + plotH - ((trajectory[i] - yMin) / (yMax - yMin)) * plotH;
+            if (first) { ctx.moveTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Points
+        ctx.fillStyle = '#34d399';
+        for (let i = 0; i < n; i++) {
+            const px = margin.left + (i / (n - 1)) * plotW;
+            const py = margin.top + plotH - ((trajectory[i] - yMin) / (yMax - yMin)) * plotH;
+            ctx.beginPath();
+            ctx.arc(px, py, 2, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        // Update stats
+        const mean = trajectory.reduce((a, b) => a + b, 0) / n;
+        const variance = trajectory.reduce((a, b) => a + (b - mean) ** 2, 0) / n;
+        const theoVar = sigma * sigma / (1 - phi * phi);
+        document.getElementById('traj-mean').textContent = mean.toFixed(3);
+        document.getElementById('traj-var').textContent = variance.toFixed(3);
+        document.getElementById('traj-theo-var').textContent = theoVar.toFixed(3);
+    }
+
+    function update() {
+        phi = parseFloat(phiSlider.value);
+        sigma = parseFloat(sigmaSlider.value);
+        xprev = parseFloat(xprevSlider.value);
+        document.getElementById('phi-val').textContent = phi.toFixed(2);
+        document.getElementById('sigma-val').textContent = sigma.toFixed(2);
+        document.getElementById('xprev-val').textContent = xprev.toFixed(2);
+        drawKernel();
+    }
+
+    function resimulate() {
+        rngState = Math.floor(Math.random() * 100000);
+        trajectory = simulateAR1(100, phi, sigma, 0);
+        drawTrajectory();
+    }
+
+    // Initialize
+    phiSlider.addEventListener('input', () => { update(); resimulate(); });
+    sigmaSlider.addEventListener('input', () => { update(); resimulate(); });
+    xprevSlider.addEventListener('input', update);
+    resimBtn.addEventListener('click', resimulate);
+    resetBtn.addEventListener('click', () => {
+        phiSlider.value = 0.9; sigmaSlider.value = 1.0; xprevSlider.value = 0;
+        rngState = 42;
+        update();
+        trajectory = simulateAR1(100, 0.9, 1.0, 0);
+        drawTrajectory();
+    });
+
+    // Initial draw
+    update();
+    trajectory = simulateAR1(100, phi, sigma, 0);
+    drawTrajectory();
+
+    // Responsive resize
+    window.addEventListener('resize', () => { drawKernel(); drawTrajectory(); });
+    </script>
+</body>
+</html>

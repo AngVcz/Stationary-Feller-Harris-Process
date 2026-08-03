@@ -1,0 +1,118 @@
+% 05-modelo-esencial.tex — Chapter 5: El Modelo Esencial
+
+\chapter{El Modelo Esencial}
+\label{ch:modelo-esencial}
+
+Las once pruebas del Cap\'{\'i}tulo~\ref{ch:cadena-decorativa} convergen en tres
+hallazgos estructurales.
+
+\section{Hallazgo 1: La distribuci\'{o}n emp\'{\'i}rica $Q$ es casi siempre mejor}
+
+La distribuci\'{o}n emp\'{\'i}rica $Q_{\text{emp}}$ (resamplear de los datos de
+entrenamiento) produce AAD = 0.2\,pp con barras de d\'{o}lar, mientras que la
+distribuci\'{o}n GIG param\'{e}trica produce AAD = 0.8\,pp. La ventaja es universal:
+la distribuci\'{\'i}rica captura la forma exacta de la marginal (asimetr\'{\'i}a,
+curtosis), mientras que la GIG impone una forma param\'{e}trica que no ajusta bien.
+
+Solo en colas extremas ($p > 0.999$) podr\'{\'i}a una distribuci\'{o}n param\'{e}trica
+ayudar, extrapolando m\'{a}s all\'{a} de la muestra. Para niveles de probabilidad
+pr\'{a}cticos ($p \leq 0.95$), la emp\'{\'i}rica es superior.
+
+\section{Hallazgo 2: Los saltos continuos son decorativos}
+
+La construcci\'{o}n de tiempo continuo del SF-Harris ---tiempos de espera exponenciales
+entre saltos--- es equivalente a una cadena de Markov discreta con probabilidad de
+estancia $\pstay = e^{-\alpha}$. No hay diferencia entre:
+\begin{itemize}
+    \item ``El proceso espera un tiempo exponencial con par\'{a}metro $\alpha$ y luego
+          salta a un nuevo nivel de $Q$.'' (tiempo continuo)
+    \item ``En cada paso, el proceso se queda con probabilidad $\pstay$ o salta con
+          probabilidad $1 - \pstay$.'' (discreto)
+\end{itemize}
+La cobertura predictiva es id\'{e}ntica porque solo importa la probabilidad de
+estancia por intervalo de observaci\'{o}n, no la estructura de tiempo continuo.
+
+\section{Hallazgo 3: $\pstay$ no es informativo}
+
+Dentro del muestreador de Gibbs, el barrido de $\pstay$ de 0.0 a 0.95 produce
+AAD entre 0.41 y 0.54\,pp --- esencialmente plano. El punto de masa es
+\textbf{andamiaje computacional}: permite que el Gibbs funcione (proporciona una
+transici\'{o}n singular que conjugada con la emisi\'{o}n gaussiana), pero su valor
+es irrelevante para la predicci\'{o}n.
+
+\textbf{?`Por qu\'{e}?} Sin denoising posterior, el punto de masa concentra
+probabilidad en la observaci\'{o}n ruidosa actual (con $\sigma_{\text{obs}} \approx 1.04$
+para datos de 15 minutos), creando un pico artificial en la distribuci\'{o}n
+predictiva. Con denoising posterior, el punto de masa se coloca en la media posterior
+(que promedia el ruido), haci\'{e}ndolo inofensivo --- pero tambi\'{e}n innecesario,
+ya que cualquier $\pstay$ funciona igual.
+
+\section{Los dos ingredientes esenciales}
+
+El modelo SF-Harris se reduce a:
+
+\begin{enumerate}
+    \item \textbf{Distribuci\'{o}n emp\'{\'i}rica $Q$}: Resamplear de los datos de
+          entrenamiento captura la forma exacta de la marginal (asimetr\'{\'i}a, curtosis).
+          La distribuci\'{o}n GIG da 0.8\,pp; la gaussiana da 26\,pp+.
+
+    \item \textbf{Denoising posterior Gibbs}: La posterior sobre $(\mu, \sigma)$
+          promedia el ruido observacional. Sin este paso, el punto de masa es
+          destructivo (50\,pp a $\pstay = 0.88$).
+\end{enumerate}
+
+La ``receta m\'{\'i}nima'' es:
+\begin{enumerate}
+    \item Ajustar $(\mu, \sigma)$ por Gibbs o m\'{a}xima verosimilitud usando los datos
+          de entrenamiento centrados.
+    \item Para cada simulaci\'{o}n, muestrear iid de $\{x_i\} + \hat{\mu}$ donde
+          $\{x_i\}$ son los datos centrados y $\hat{\mu}$ es la media posterior.
+    \item A\~{n}adir ruido observacional $\N(0, \hat{\sigma})$.
+\end{enumerate}
+
+Esto produce 0.2--0.3\,pp de AAD sin cadena de Harris.
+
+\section{?`Por qu\'{e} falla el filtro de Kalman?}
+
+El filtro de Kalman asume que la distribuci\'{o}n predictiva es gaussiana.
+Cuando el proceso salta, la distribuci\'{o}n real es \textbf{bimodal}: una masa en
+el estado actual y otra en $Q$. El Kalman promedia los dos modos en una \'{u}nica
+gaussiana ancha, cubriendo ambos modos con exceso de anchura (AAD = 16\,pp).
+
+La distribuci\'{o}n emp\'{\'i}rica $Q$, por otro lado, preserva la bimodalidad
+naturalmente porque es no param\'{e}trica.
+
+\section{?`Por qu\'{e} fallan los estimadores simples?}
+
+Los estimadores que no incluyen denoising posterior (Sim.\ Hist\'{o}rica con
+$\pstay = 0$, media muestral, mediana) producen AAD = 0.4--2.0\,pp dependiendo
+de la frecuencia. La diferencia entre 0.4\,pp (Hist.\ Sim.) y 0.2\,pp (Gibbs)
+proviene de la estimaci\'{o}n bayesiana de $\mu$ y $\sigma$, que:
+\begin{itemize}
+    \item Centro: $\hat{\mu}$ desplaza la distribuci\'{o}n al nivel correcto
+    \item Escala: $\hat{\sigma}$ ajusta la anchura para compensar el ruido observacional
+\end{itemize}
+
+Sin este paso, la distribuci\'{o}n emp\'{\'i}rica est\'{a} desplazada por
+$\hat{\mu} - \mu_{\text{true}}$ y ensanchada por $\sigma_{\text{obs}}$.
+
+\section{Denoising posterior: filtrado vs.\ suavizado vs.\ estimaci\'{o}n de par\'{a}metros}
+
+Es crucial distinguir tres niveles de denoising:
+
+\begin{enumerate}
+    \item \textbf{Filtrado} $P(\tau_t^* \mid Y_{1:t})$: usa datos hasta $t$.
+          No aplica aqu\'{\'i} porque la simulaci\'{o}n es hacia adelante.
+
+    \item \textbf{Suavizado} $P(\tau_t^* \mid Y_{1:T})$: usa toda la serie.
+          No lo usamos porque (a)~el kernel de Harris tiene singularidad de Dirac
+          (FFBS no aplica), (b)~el Kalman da 16\,pp, y (c)~$\pstay$ es no informativo.
+
+    \item \textbf{Estimaci\'{o}n de par\'{a}metros} $P(\mu, \sigma \mid Y_{1:T})$:
+          \'{e}sto es lo que hace el Gibbs. Produce $\hat{\mu}$ y $\hat{\sigma}$
+          que centran y escalan la distribuci\'{o}n emp\'{\'i}rica, reduciendo
+          AAD de 0.4\,pp a 0.2\,pp.
+\end{enumerate}
+
+El ``denoising'' que importa es la \textbf{estimaci\'{o}n de par\'{a}metros},
+no el suavizado del estado latente.

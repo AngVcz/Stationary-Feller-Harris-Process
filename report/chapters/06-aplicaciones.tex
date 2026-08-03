@@ -1,0 +1,105 @@
+% 06-aplicaciones.tex — Chapter 6: Aplicaciones Financieras
+
+\chapter{Aplicaciones Financieras}
+\label{ch:aplicaciones}
+
+Aunque el modelo SF-Harris se reduce a sus ingredientes esenciales, la
+distribuci\'{o}n emp\'{\'i}rica con estimaci\'{o}n bayesiana tiene aplicaciones
+directas en finanzas.
+
+\section{Pricing de swaps de varianza}
+
+Un swap de varianza paga $\text{RV}_T - K_{\text{var}}$ al vencimiento, donde
+$K_{\text{var}}$ es el \emph{strike} de varianza. El strike justo es:
+\begin{equation}
+    K_{\text{var}} = \E[\RV_T] = \E[\tau_T^*]
+\end{equation}
+
+La distribuci\'{o}n emp\'{\'i}rica $Q_{\text{emp}}$ estima directamente
+$\E[\tau^*]$ como la media de $\RV_t$ en la ventana de entrenamiento.
+La ventaja sobre modelos param\'{e}tricos es que $Q_{\text{emp}}$ captura
+la asimetr\'{\'i}a y curtosis sin imponer una forma funcional.
+
+Para pasar de la medida f\'{\'i}sica $\Prob$ a la neutral al riesgo $\Q$,
+se a\~{n}ade una prima de riesgo de volatilidad $\lambda_v$:
+\begin{equation}
+    \E^\Q[\RV_T] = e^{\lambda_v T} \cdot \E^\Prob[\RV_T]
+\end{equation}
+donde $\lambda_v$ se calibra con opciones liquidas~\citep{demeterfi1999}.
+
+\section{Opciones sobre VIX}
+
+El VIX es la volatilidad impl\'{\'i}cita a 30 d\'{\'i}as extra\'{\'i}da de opciones
+sobre el S\&P~500. Nuestra distribuci\'{o}n predictiva de $\tau^*$ proporciona
+intervalos de probabilidad calibrados para $\text{VIX}_T$:
+
+\begin{equation}
+    P(\text{VIX}_T \leq v) \approx P\left(\sqrt{\frac{252}{T} \sum_{t=1}^T \tau_t^*} \leq v\right)
+\end{equation}
+
+La distribuci\'{o}n emp\'{\'i}rica captura la asimetr\'{\'i}a positiva del VIX
+(sin VIX negativo, cola derecha pesada) sin suponer normalidad.
+
+\section{Trading del skew de volatilidad}
+
+El \emph{skew} de volatilidad es la diferencia entre volatilidad impl\'{\'i}tica
+de puts out-of-the-money y calls out-of-the-money. La distribuci\'{o}n
+emp\'{\'i}rica $Q_{\text{emp}}$ tiene asimetr\'{\'i}a negativa (colas izquierdas
+m\'{a}s pesadas para $\log(\RV)$), lo que genera un skew natural.
+
+La se\~{n}al de trading consiste en comparar el skew impl\'{\'i}cito del mercado
+con el skew predicho por $Q_{\text{emp}}$:
+\begin{itemize}
+    \item Si el skew impl\'{\'i}cito es m\'{a}s plano que el de $Q_{\text{emp}}$,
+          vender straddles y comprar strangles.
+    \item Si el skew impl\'{\'i}cito es m\'{a}s pronunciado, la operaci\'{o}n inversa.
+\end{itemize}
+
+\section{Estructura temporal de $\pstay$}
+
+Aunque $\pstay$ no es informativo para la cobertura de $\log(\RV)$, la
+probabilidad de estancia \textbf{var\'{\'i}a con la frecuencia de muestreo}:
+\begin{itemize}
+    \item 15\,min: $\pstay \approx 0.88$ (estimado por ACF)
+    \item Diario: $\pstay \approx 0.0$ (pr\'{a}cticamente iid)
+\end{itemize}
+
+Esto tiene una interpretaci\'{o}n financiera: a frecuencia intradiaria, el
+precio ``se queda'' en niveles de volatilidad similares entre intervalos cortos.
+A escala diaria, los cambios son iid respecto a la distribuci\'{o}n marginal.
+
+Para \emph{term structure modeling}, la curva $\pstay(f)$ podr\'{\'i}a calibrar
+la correlaci\'{o}n entre volatilidades a diferentes horizontes, pero nuestra
+evidencia muestra que esta informaci\'{o}n no mejora la cobertura.
+
+\section{Trading de dispersi\'{o}n}
+
+La dispersi\'{o}n (\emph{dispersion trading}) explota la diferencia entre la
+volatilidad impl\'{\'i}cita del \'{\'i}ndice y la volatilidad impl\'{\'i}cita
+de sus componentes. La distribuci\'{o}n emp\'{\'i}rica $Q_{\text{emp}}$ aplicada a
+cada componente estima la covarianza de la matriz de varianza-covarianza:
+\begin{equation}
+    \widehat{\text{Cov}}(\RV_i, \RV_j) = \frac{1}{n} \sum_{t=1}^{n} (\RV_{i,t} - \bar{\RV}_i)(\RV_{j,t} - \bar{\RV}_j)
+\end{equation}
+
+La covarianza emp\'{\'i}rica es consistente con nuestro enfoque: la distribuci\'{o}n
+conjunta emp\'{\'i}rica captura correlaciones sin suponer normalidad multivariada.
+
+\section{Lo que NO funciona}
+
+Es igualmente importante se\~{n}alar las aplicaciones donde el modelo no aporta valor:
+
+\begin{enumerate}
+    \item \textbf{Predicci\'{o}n direccional}: El modelo predice la
+          \emph{distribuci\'{o}n} de la volatilidad, no su direcci\'{o}n.
+          Los rendimientos condicionales $r_t \mid \tau_t \sim N(0, \tau_t)$
+          tienen media cero por construcci\'{o}n.
+
+    \item \textbf{Detecci\'{o}n de crisis}: La sorpresa predictiva tiene
+          AUC = 0.416 (anti-predictivo). El modelo siempre espera colas pesadas,
+          as\'{\'i} que las crisis no son sorprendentes bajo el modelo.
+
+    \item \textbf{Predicci\'{o}n diaria}: A escala diaria, el ruido en $\hat{\tau}_t$
+          domina (AAD 2--12\,pp). Se requieren datos intradiarios para que el
+          modelo funcione.
+\end{enumerate}

@@ -1,0 +1,39 @@
+\begin{thebibliography}{5}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Anzarut(2024)]{anzarut2024}
+Michelle Anzarut.
+\newblock \emph{Stochastic Volatility Modeling with Harris Recurrent
+  Processes}.
+\newblock PhD thesis, Universidad [Nombre], 2024.
+\newblock Tesis de doctorado.
+
+\bibitem[Barndorff-Nielsen(1977)]{barndorff1977}
+Ole~E. Barndorff-Nielsen.
+\newblock Exponentially decreasing distributions for the logarithm of particle
+  size.
+\newblock \emph{Proceedings of the Royal Society of London. Series A,
+  Mathematical and Physical Sciences}, 353\penalty0 (1674):\penalty0 401--419,
+  1977.
+
+\bibitem[Chopin and Papaspiliopoulos(2020)]{chopin2020}
+Nicolas Chopin and Omiros Papaspiliopoulos.
+\newblock \emph{An Introduction to Sequential Monte Carlo}.
+\newblock Springer, Cham, 2020.
+
+\bibitem[Demeterfi et~al.(1999)Demeterfi, Derman, Kamal, and
+  Zou]{demeterfi1999}
+Kresimir Demeterfi, Emanuel Derman, Michael Kamal, and Joseph Zou.
+\newblock More than you ever wanted to know about volatility swaps.
+\newblock \emph{Goldman Sachs Quantitative Strategies Research Notes}, 1999.
+
+\bibitem[L{\'o}pez~de Prado(2018)]{lopezdeprado2018}
+Marcos L{\'o}pez~de Prado.
+\newblock \emph{Advances in Financial Machine Learning}.
+\newblock Wiley, Hoboken, NJ, 2018.
+
+\end{thebibliography}
