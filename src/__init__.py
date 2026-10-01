@@ -1,1 +1,1 @@
-"""SF-Harris process and SMC methods study project."""
+"""Proyecto SF-Harris + SMC (servicio social)."""

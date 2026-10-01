@@ -1,0 +1,10 @@
+  epsilon threshold: 1e-01, stays: 201/7327 (2.7%), jumps: 7126/7327 (97.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.759, mu=-13.5160, sigma=2.1413
+  Posterior means:
+    alpha:    0.972 (std=0.012)
+    mu:       -13.5168 (std=0.0251)
+    sigma:    2.1409 (std=0.0174)
+    P(stay):  0.3782 (mean)
+    n_jumps:  7126.0/7327 (mean)
+RESULT_JSON {"threshold": 54616948.42394965, "bpd": 8.150045745654163, "aad": 1.7248459958932234, "levels": [{"p": 0.25, "coverage": 23.887748117727583, "deviation": -1.1122518822724174}, {"p": 0.5, "coverage": 47.84394250513347, "deviation": -2.1560574948665305}, {"p": 0.75, "coverage": 72.41615331964408, "deviation": -2.5838466803559186}, {"p": 0.85, "coverage": 82.88843258042436, "deviation": -2.1115674195756355}, {"p": 0.9, "coverage": 88.29568788501027, "deviation": -1.7043121149897331}, {"p": 0.95, "coverage": 94.3189596167009, "deviation": -0.6810403832991057}], "abs_r_median": 0.0014171759309616907, "std_logr2": 2.1413034952926204, "n_train": 7328, "n_test": 1461, "tr_mean": -13.515952476925087, "te_mean": -13.395338256452433, "arm": "const:13"}

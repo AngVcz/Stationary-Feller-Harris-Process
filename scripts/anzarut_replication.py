@@ -49,6 +49,51 @@ def compute_15min_returns(df):
     return np.log(close_15min).diff().dropna()
 
 
+def build_dollar_bars_rolling(df, lookback_days=30, bars_per_day=26):
+    """Dollar bars with a CAUSAL rolling threshold -> leak-free and ~bars_per_day/day.
+
+    Each trading day's threshold = trailing ``lookback_days`` trading days' average
+    dollars per active 15-min block = (mean trailing daily dollar volume) / bars_per_day.
+    Calibrated from trading-hours-only daily dollar volume (groupby date), so the
+    overnight/weekend empty bins that diluted the old global
+    ``resample('15min').sum().mean()`` threshold (~5.4x too small -> ~101 bars/day) never
+    enter the average.
+
+    Causal: day d's threshold uses daily dollar volume of days [d-lookback, d-1] only
+    (shift(1)), so bar boundaries never look at the future -> leak-free and adaptive to
+    volume drift. The first trading day (no history) is skipped; min_periods=1 then
+    expands the warmup until ``lookback_days`` fill.
+    """
+    daily_dv = df["dollar_volume"].groupby(df.index.normalize()).sum()
+    avg_daily = daily_dv.shift(1).rolling(lookback_days, min_periods=1).mean()
+    thr_map = (avg_daily / bars_per_day).to_dict()
+
+    cum = 0.0
+    first_close = None
+    recs = []
+    cur_day = None
+    thr = np.nan
+    for idx, row in df.iterrows():
+        d = idx.normalize()
+        if d != cur_day:
+            cur_day = d
+            t = thr_map.get(d, np.nan)
+            if not np.isnan(t):
+                thr = t
+        if np.isnan(thr):
+            continue  # warmup: no causal threshold yet
+        if first_close is None:
+            first_close = row["close"]
+        cum += row["dollar_volume"]
+        if cum >= thr:
+            recs.append({"datetime": idx, "return": np.log(row["close"] / first_close)})
+            cum = 0.0
+            first_close = None
+    if not recs:
+        return pd.Series(dtype=float)
+    return pd.DataFrame(recs).set_index("datetime")["return"]
+
+
 # ===========================================================================
 # 2. Jump detection via bipower variation (Anzarut Section 4.2)
 # ===========================================================================
@@ -60,60 +105,90 @@ def bipower_variation(returns):
     return (np.pi / 2) * np.sum(abs_ret[1:] * abs_ret[:-1])
 
 
-def detect_and_remove_jumps(returns, n_passes=2, top_pct=0.001):
-    """Anzarut's jump detection: compute max(0, RV - BPV) per 15-min interval,
-    flag top 0.1% intervals, remove the most extreme return in each.
-    Run n_passes times (Anzarut found 2 passes sufficient).
+def fit_jump_thresholds(returns, n_passes=2, top_pct=0.001):
+    """Fit jump-detection thresholds on `returns` (the TRAIN set), per pass.
+
+    Same per-pass logic as detect_and_remove_jumps in fit mode — the threshold is a
+    single global scalar per pass (the top ``top_pct`` quantile of the positive jump
+    measures over the current cleaned series) — but returns the list of thresholds
+    instead of the cleaned series. Apply them later to any series with
+    ``detect_and_remove_jumps(returns, fixed_thresholds=thresholds)``.
+
+    Returns a list[float] of length <= n_passes (shorter if an early break triggers).
+    """
+    cleaned = returns.copy()
+    thresholds = []
+    for _ in range(n_passes):
+        all_jump_measures = np.maximum(
+            cleaned.values**2 - (np.pi / 2) * np.abs(cleaned.values) * np.abs(
+                np.concatenate([cleaned.values[1:], [0]])
+            ),
+            0,
+        )
+        positive = all_jump_measures[all_jump_measures > 0]
+        if len(positive) == 0:
+            break
+        threshold = np.quantile(positive, 1 - top_pct)
+        thresholds.append(threshold)
+        jump_mask = all_jump_measures > threshold
+        if not np.any(jump_mask):
+            break
+        cleaned = cleaned.drop(cleaned.index[jump_mask])
+    return thresholds
+
+
+def detect_and_remove_jumps(returns, n_passes=2, top_pct=0.001, fixed_thresholds=None):
+    """Anzarut's jump detection: flag top 0.1% intervals by RV-BPV jump measure, drop.
+
+    Run n_passes times (Anzarut found 2 passes sufficient). The threshold is a single
+    global scalar per pass.
+
+    Leak-free split: pass ``fixed_thresholds`` (a list[float] from ``fit_jump_thresholds``
+    fit on TRAIN only) to apply pre-fit thresholds to a held-out series without
+    re-quantiling on it. ``fixed_thresholds=None`` (default) fits+applies on the same
+    series — backward compatible with every existing caller.
     """
     cleaned = returns.copy()
 
-    for pass_num in range(n_passes):
-        # Compute per-interval jump measure
-        daily_groups = cleaned.groupby(cleaned.index.date)
-        flagged_indices = []
+    # ponytail: fit mode is just apply-on-self with the thresholds fit would produce;
+    # detect_and_remove_jumps(x) is bit-identical to fit_jump_thresholds(x) then apply.
+    if fixed_thresholds is None:
+        fixed_thresholds = fit_jump_thresholds(returns, n_passes=n_passes, top_pct=top_pct)
 
-        for date, group in daily_groups:
-            if len(group) < 2:
-                continue
-
-            rv = np.sum(group.values**2)
-            bpv = bipower_variation(group)
-
-            # Jump contribution per interval
-            jump_measure = np.maximum(group.values**2 - (np.pi/2) * np.abs(group.values) * np.abs(
-                np.concatenate([group.values[1:], [0]])
-            ), 0)
-
-            # Also compute interval-level RV - BPV
-            daily_jump = max(0, rv - bpv)
-            if daily_jump == 0:
-                continue
-
-        # Global: flag top top_pct of 15-min intervals by jump measure
+    for threshold in fixed_thresholds:
         all_jump_measures = np.maximum(
-            cleaned.values**2 - (np.pi/2) * np.abs(cleaned.values) * np.abs(
+            cleaned.values**2 - (np.pi / 2) * np.abs(cleaned.values) * np.abs(
                 np.concatenate([cleaned.values[1:], [0]])
             ),
-            0
+            0,
         )
-        threshold = np.quantile(all_jump_measures[all_jump_measures > 0], 1 - top_pct)
         jump_mask = all_jump_measures > threshold
-
         if not np.any(jump_mask):
             break
-
-        # For each flagged interval, remove the single most extreme return
-        # (Anzarut: "mark the entry that differs the most from the interval mean")
-        indices_to_remove = cleaned.index[jump_mask]
-        if len(indices_to_remove) == 0:
-            break
-
-        # Remove jump returns
-        cleaned = cleaned.drop(indices_to_remove)
+        cleaned = cleaned.drop(cleaned.index[jump_mask])
 
     n_removed = len(returns) - len(cleaned)
     print(f"  Jump detection removed {n_removed} returns ({n_removed/len(returns)*100:.2f}%)")
     return cleaned
+
+
+def split_returns_by_date(returns, train_frac=0.8):
+    """Split an intraday return series by a single temporal boundary.
+
+    Sorts the unique trading days, assigns the first ``train_frac`` of them to train
+    and the rest to test, and partitions the 15-min returns accordingly. Guarantees one
+    shared temporal cut for intraday returns, daily realized variance and close-to-close
+    returns — call this BEFORE any cleaning so the test window never informs the jump
+    threshold or the periodicity. The boundary (last train day) is
+    ``train.index.date.max()``.
+    """
+    unique_dates = pd.Index(sorted(set(returns.index.date)))
+    n_train = int(len(unique_dates) * train_frac)
+    train_dates = set(unique_dates[:n_train])
+    day = pd.Series(returns.index.date, index=returns.index)
+    train = returns[day.isin(train_dates).values]
+    test = returns[~day.isin(train_dates).values]
+    return train, test
 
 
 # ===========================================================================
@@ -437,6 +512,46 @@ def simulate_predictive_sf_harris(log_rv_train, log_rv_test, gibbs_posterior,
     return simulated
 
 
+def simulate_predictive_sf_harris_vec(log_rv_train, log_rv_test, gibbs_posterior,
+                                      alpha_posterior, Q_type="empirical",
+                                      n_sim=2000, rng=None):
+    """Vectorized-over-n_sim version of simulate_predictive_sf_harris.
+
+    Same SF-Harris transition kernel and same (n_sim, n_test) output, but the
+    n_sim paths advance in lockstep: `current` is a length-n_sim vector and each
+    of the n_test sequential steps is one vectorized numpy op. ~30x faster than
+    the per-path Python loop. Not bit-identical to the loop (draw order differs)
+    but identical in distribution.
+    """
+    if rng is None:
+        rng = np.random.default_rng()
+    n_test = len(log_rv_test)
+    n_post = len(alpha_posterior)
+    emp = np.asarray(log_rv_train - np.mean(log_rv_train))
+    n_emp = emp.size
+
+    idx = rng.integers(0, n_post, size=n_sim)
+    alpha = np.asarray(alpha_posterior)[idx]
+    mu = np.asarray(gibbs_posterior["mu"])[idx]
+    sigma = np.asarray(gibbs_posterior["sigma"])[idx]
+    p_stay = np.exp(-alpha)                 # (n_sim,)
+
+    simulated = np.empty((n_sim, n_test))
+    current = np.full(n_sim, float(log_rv_train[-1]))
+    for i in range(n_test):
+        u = rng.random(n_sim)
+        jump = u >= p_stay                    # loop stays when u < p_stay
+        n_jump = int(jump.sum())
+        if n_jump:
+            if Q_type == "empirical":
+                q = emp[rng.integers(0, n_emp, size=n_jump)]
+                current[jump] = mu[jump] + q
+            else:  # normal
+                current[jump] = rng.normal(mu[jump], sigma[jump])
+        simulated[:, i] = current
+    return simulated
+
+
 def simulate_predictive_mixture(log_rv_train, log_rv_test, params,
                                   bootstrap_params=None, Q_type="empirical",
                                   n_sim=2000, rng=None):
@@ -553,17 +668,22 @@ if __name__ == "__main__":
     print(f"  {len(returns)} 15-min return observations")
 
     # ==================================================================
-    # STEP 3: Jump detection via bipower variation
+    # STEP 3: Jump detection — leak-free split: cut by date BEFORE cleaning,
+    # fit jump thresholds on TRAIN, apply to both windows
     # ==================================================================
-    print("\n--- Step 3: Jump detection ---")
-    returns_clean = detect_and_remove_jumps(returns, n_passes=2, top_pct=0.001)
-    print(f"  Clean returns: {len(returns_clean)} (from {len(returns)})")
+    print("\n--- Step 3: Jump detection (split-by-date, fit on train) ---")
+    train_returns, test_returns = split_returns_by_date(returns, train_frac=0.8)
+    thresholds = fit_jump_thresholds(train_returns, n_passes=2, top_pct=0.001)
+    train_clean = detect_and_remove_jumps(train_returns, fixed_thresholds=thresholds)
+    test_clean = detect_and_remove_jumps(test_returns, fixed_thresholds=thresholds)
+    print(f"  Clean returns: train={len(train_clean)}, test={len(test_clean)} (from {len(returns)})")
 
     # ==================================================================
-    # STEP 4: Periodicity adjustment
+    # STEP 4: Periodicity adjustment — estimate on TRAIN clean (leak-free;
+    # also fixes the prior inconsistency of estimating on raw, un-cleaned returns)
     # ==================================================================
     print("\n--- Step 4: Periodicity adjustment ---")
-    periodicity = estimate_periodicity(returns)
+    periodicity = estimate_periodicity(train_clean)
 
     # Show periodicity pattern
     morning_vals = [v for t, v in periodicity.items() if t < "10:00"]
@@ -578,46 +698,36 @@ if __name__ == "__main__":
         if np.mean(morning_vals) > np.mean(midday_vals) and np.mean(afternoon_vals) > np.mean(midday_vals):
             print("  -> U-shape detected (high at open/close)")
 
-    # Adjust returns for periodicity
-    returns_adjusted = adjust_for_periodicity(returns_clean, periodicity)
+    # Adjust returns for periodicity (leak-free: periodicity fit on train, applied to both)
+    train_adjusted = adjust_for_periodicity(train_clean, periodicity)
+    test_adjusted = adjust_for_periodicity(test_clean, periodicity)
 
     # ==================================================================
-    # STEP 5: Daily realized variance (with and without adjustment)
+    # STEP 5: Daily realized variance — per window, then concat train+test so the
+    # downstream [:split_idx]/[split_idx:] slicing stays a clean temporal cut
     # ==================================================================
     print("\n--- Step 5: Daily realized variance ---")
 
-    # Unadjusted
-    rv_daily = compute_daily_rv(returns_clean)
-    log_rv = np.log(rv_daily.values)
-    valid = np.isfinite(log_rv)
-    log_rv_clean = log_rv[valid]
-    dates_clean = rv_daily.index[valid]
+    def _window_log_rv(clean_ret, adj_ret):
+        """Daily log-RV (unadjusted and adjusted) for one window, aligned by date."""
+        rv_u = compute_daily_rv(clean_ret)
+        rv_a = compute_daily_rv(adj_ret)
+        common = rv_u.index.intersection(rv_a.index)
+        log_u = np.log(rv_u.loc[common].values)
+        log_a = np.log(rv_a.loc[common].values)
+        fin = np.isfinite(log_u) & np.isfinite(log_a)
+        return log_u[fin], log_a[fin]
 
-    # Adjusted (divide intraday RV by periodicity, then sum)
-    rv_daily_adj = compute_daily_rv(returns_adjusted)
-    log_rv_adj = np.log(rv_daily_adj.values)
-    valid_adj = np.isfinite(log_rv_adj)
-    log_rv_adj_clean = log_rv_adj[valid_adj]
-    dates_adj = rv_daily_adj.index[valid_adj]
+    log_u_train, log_a_train = _window_log_rv(train_clean, train_adjusted)
+    log_u_test, log_a_test = _window_log_rv(test_clean, test_adjusted)
 
-    # Use the same dates for both
-    common_dates = dates_clean.intersection(dates_adj)
-    mask_cal = dates_clean.isin(common_dates)
-    mask_adj = dates_adj.isin(common_dates)
-
-    log_rv_unadj_final = log_rv_clean[mask_cal[:len(log_rv_clean)]]
-    log_rv_adj_final = log_rv_adj_clean[mask_adj[:len(log_rv_adj_clean)]]
-
-    # Align lengths
-    min_len = min(len(log_rv_unadj_final), len(log_rv_adj_final))
-    log_rv_unadj_final = log_rv_unadj_final[:min_len]
-    log_rv_adj_final = log_rv_adj_final[:min_len]
-
-    n_total = min_len
-    split_idx = int(n_total * 0.8)
+    log_rv_unadj_final = np.concatenate([log_u_train, log_u_test])
+    log_rv_adj_final = np.concatenate([log_a_train, log_a_test])
+    split_idx = len(log_u_train)  # train/test boundary (train days come first chronologically)
+    n_total = len(log_rv_unadj_final)
 
     # Two versions: unadjusted and periodicity-adjusted
-    print(f"  Total days: {n_total}")
+    print(f"  Total days: {n_total} (train={split_idx}, test={n_total - split_idx})")
     print(f"  Unadjusted: mean={np.mean(log_rv_unadj_final):.4f}, std={np.std(log_rv_unadj_final):.4f}, "
           f"skew={stats.skew(log_rv_unadj_final):.2f}, kurt={stats.kurtosis(log_rv_unadj_final):.2f}")
     print(f"  Adjusted:   mean={np.mean(log_rv_adj_final):.4f}, std={np.std(log_rv_adj_final):.4f}, "
@@ -785,58 +895,28 @@ if __name__ == "__main__":
     print("Working with 15-min spot volatility + epsilon threshold")
     print("=" * 70)
 
-    # Compute 15-min realized variance per interval
-    rv_15min = returns_clean.to_frame("return")
-    rv_15min["rv"] = rv_15min["return"]**2
+    # Compute 15-min realized variance per interval, per window (leak-free: periodicity
+    # fit on train, applied to both; daily RV = sum of periodicity-adjusted 15-min RV)
+    def _15min_daily_log_rv(clean_ret):
+        rv = clean_ret.to_frame("return")
+        rv["rv"] = rv["return"]**2
+        rv["time"] = rv.index.strftime("%H:%M")
+        rv["f_t"] = rv["time"].map(periodicity).fillna(1.0)
+        rv["rv_adj"] = rv["rv"] / rv["f_t"]
+        daily = rv.groupby(rv.index.date)["rv_adj"].sum()
+        log_rv = np.log(daily.values)
+        return log_rv[np.isfinite(log_rv)]
 
-    # Remove periodicity from 15-min RV
-    rv_15min["time"] = rv_15min.index.strftime("%H:%M")
-    rv_15min["f_t"] = rv_15min["time"].map(periodicity)
-    # Fill missing periodicity values with 1.0
-    rv_15min["f_t"] = rv_15min["f_t"].fillna(1.0)
-    # Adjusted 15-min RV: divide by periodicity factor
-    rv_15min["rv_adj"] = rv_15min["rv"] / rv_15min["f_t"]
-
-    # Daily integrated volatility: sum of 15-min RV
-    daily_rv_adj_15 = rv_15min.groupby(rv_15min.index.date)["rv_adj"].sum()
-    log_rv_15_adj = np.log(daily_rv_adj_15.values)
-    valid_15 = np.isfinite(log_rv_15_adj)
-    log_rv_15_adj = log_rv_15_adj[valid_15]
-    dates_15 = daily_rv_adj_15.index[valid_15]
-    dates_15 = pd.to_datetime(dates_15)
-
-    # Also compute daily spot volatility: H_t ≈ (RV_t - RV_{t-1}) / delta_t
-    # This is the derivative approximation from Section 4.4.1
-    # For daily: H_t = delta(RV) / delta_t = (RV_t - RV_{t-1}) / 1 day
-    spot_vol_adj = np.diff(log_rv_15_adj)  # log spot volatility changes
-    # The actual spot volatility is approximately the average within the day
-    # For daily prediction, we use log(RV) as the observation (as Anzarut does)
-
-    # Split into train/test
+    train_15 = _15min_daily_log_rv(train_clean)
+    test_15 = _15min_daily_log_rv(test_clean)
+    log_rv_15_adj = np.concatenate([train_15, test_15])
     n_15 = len(log_rv_15_adj)
-    split_15 = int(n_15 * 0.8)
-    train_15 = log_rv_15_adj[:split_15]
-    test_15 = log_rv_15_adj[split_15:]
+    split_15 = len(train_15)
 
     print(f"\n  Periodicity-adjusted daily log-RV:")
     print(f"    Total: {n_15} days, Train: {split_15}, Test: {n_15 - split_15}")
     print(f"    Train: mean={np.mean(train_15):.4f}, std={np.std(train_15):.4f}, "
           f"skew={stats.skew(train_15):.2f}, kurt={stats.kurtosis(train_15):.2f}")
-
-    # Compute spot volatility series at 15-min intervals
-    # H_t ≈ (RV_15min_t / f(t)) for each 15-min interval within each day
-    # Then aggregate to daily level
-    # Anzarut's key insight: at 15-min level, many consecutive spot vol values
-    # are "stays" (within epsilon), creating the stay/jump structure
-
-    # Let's compute the 15-min log spot volatility series
-    spot_15min = rv_15min["rv_adj"].values
-    log_spot_15min = np.log(np.maximum(spot_15min, 1e-20))  # log of adjusted 15-min RV
-
-    # Group by day for daily-level analysis
-    rv_15min["date"] = rv_15min.index.date
-    daily_means = rv_15min.groupby("date")["rv_adj"].mean()
-    daily_rv_sums = rv_15min.groupby("date")["rv_adj"].sum()
 
     # Now apply Gibbs sampler with epsilon threshold at different scales
     # Test epsilon thresholds at the daily level

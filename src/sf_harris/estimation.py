@@ -1,11 +1,4 @@
-"""Estimation methods for the SF-Harris process.
-
-Implements:
-- NDNJ: Nonparametric density-based non-jump estimator
-- MLE: Maximum likelihood estimation (alpha-only and full)
-- EM: Expectation-Maximization
-- Gibbs: Gibbs sampler with ARMS (basic implementation)
-"""
+"""Estimación para el proceso SF-Harris: NDNJ, MLE, EM y Gibbs."""
 import numpy as np
 from numpy.typing import NDArray
 from scipy.optimize import minimize_scalar, minimize
@@ -15,28 +8,13 @@ from .distributions import DiscreteUniformQ, GIGQ
 
 
 def ndnj_estimate(obs: NDArray[np.float64], return_params: bool = False, rng: np.random.Generator | None = None):
-    """NDNJ (Nonparametric Density-based Non-Jump) estimator for alpha.
+    """NDNJ: estima alpha a partir de la frecuencia de cambios observados.
 
-    Algorithm:
-    1. Find J = {j : x_j != x_{j-1}} (observed change positions)
-    2. If J is empty, estimate alpha = 0
-    3. Compute the raw jump probability: p_hat = n_changes / n_total
-    4. Convert to alpha: alpha_hat = -log(1 - p_hat)
+    J = {j : x_j != x_{j-1}}; p_hat = |J|/(k-1) estima 1 - e^{-alpha}
+    => alpha_hat = -log(1 - p_hat).
+    Con Q discreta hay saltos ocultos (sesgo a la baja).
 
-    The raw estimator 1/mean(inter-arrival times) estimates 1-e^{-alpha}
-    (the jump probability per step). Converting via -log(1-p) gives alpha.
-
-    For discrete Q, some jumps may be hidden (process jumps to same value),
-    making this estimator biased downward.
-
-    Args:
-        obs: Observation sequence of length k.
-        return_params: If True, also estimate GIG parameters using Gibbs posterior mean.
-        rng: Random number generator (required when return_params=True).
-
-    Returns:
-        Estimated alpha value (float), or dict with alpha, lam, kappa, eta
-        if return_params=True.
+    return_params=True: agrega (lam, kappa, eta) vía media posterior Gibbs.
     """
     n_total = len(obs) - 1
     if n_total == 0:
@@ -53,7 +31,7 @@ def ndnj_estimate(obs: NDArray[np.float64], return_params: bool = False, rng: np
 
     p_hat = n_changes / n_total
 
-    # Cap p_hat to avoid log(0)
+    # tope para evitar log(0)
     if p_hat >= 1.0:
         alpha_hat = 50.0
     else:
@@ -62,25 +40,15 @@ def ndnj_estimate(obs: NDArray[np.float64], return_params: bool = False, rng: np
     if not return_params:
         return alpha_hat
 
-    # Estimate GIG parameters via Gibbs posterior mean (avoids MLE instability)
+    # Q vía media posterior Gibbs (evita la inestabilidad del MLE)
     gig_params = gibbs_q_posterior_mean(obs, rng=rng)
     return {"alpha": alpha_hat, **gig_params}
 
 
 def mle_alpha_continuous(obs: NDArray[np.float64]) -> float:
-    """MLE for alpha with continuous Q (e.g., GIG).
+    """MLE de alpha con Q continua: x_t = x_{t-1} <=> no hubo salto.
 
-    For continuous Q, x_t = x_{t-1} implies no jump, and x_t != x_{t-1}
-    implies a jump. The MLE is:
-        alpha_hat = -log(n_stay / n_total)
-
-    where n_stay = number of consecutive equal pairs, n_total = k-1.
-
-    Args:
-        obs: Observation sequence.
-
-    Returns:
-        MLE estimate of alpha. Returns 0.0 if no transitions.
+    alpha_hat = -log(n_stay / n_total).
     """
     n_total = len(obs) - 1
     if n_total == 0:
@@ -90,13 +58,11 @@ def mle_alpha_continuous(obs: NDArray[np.float64]) -> float:
     n_change = n_total - n_stay
 
     if n_stay == 0:
-        # All transitions are changes: alpha -> infinity
-        # Cap at 10 (reasonable upper bound for most simulation ranges)
+        # todos cambian: alpha -> infinito (tope en 50)
         return 50.0
 
     if n_change == 0:
-        # No changes at all: alpha = 0
-        return 0.0
+        return 0.0  # sin cambios: alpha = 0
 
     ratio = n_stay / n_total
     if ratio <= 0:
@@ -111,17 +77,9 @@ def mle_alpha_discrete(
     obs: NDArray[np.float64],
     Q: DiscreteUniformQ,
 ) -> float:
-    """MLE for alpha with discrete Q (e.g., Uniform{1,...,m}).
+    """MLE de alpha con Q discreta (Uniform{1,...,m}).
 
-    For discrete Q, P(observe same) = e^{-alpha} + (1-e^{-alpha}) * (1/m).
-    The MLE is found by numerical optimization of the full likelihood.
-
-    Args:
-        obs: Observation sequence.
-        Q: Discrete uniform distribution.
-
-    Returns:
-        MLE estimate of alpha.
+    P(observar igual) = e^{-alpha} + (1-e^{-alpha})*(1/m): optimización numérica.
     """
     n_total = len(obs) - 1
     if n_total == 0:
@@ -145,12 +103,11 @@ def mle_alpha_discrete(
 
         ll = n_stay * np.log(p_obs_same) + n_change * np.log(p_obs_diff)
 
-        # Add Q PMF contributions
+        # contribución de la PMF de Q en cada valor nuevo y en x_0
         for t in range(1, len(obs)):
             if not np.isclose(obs[t], obs[t - 1]):
                 ll += np.log(max(Q.pmf(obs[t]), 1e-300))
 
-        # Initial observation
         ll += np.log(max(Q.pmf(obs[0]), 1e-300))
 
         return -ll
@@ -160,16 +117,7 @@ def mle_alpha_discrete(
 
 
 def mle_alpha(obs: NDArray[np.float64], Q=None) -> float:
-    """MLE for alpha, dispatching to continuous or discrete version.
-
-    Args:
-        obs: Observation sequence.
-        Q: Distribution object (DiscreteUniformQ or GIGQ). If None,
-            uses continuous MLE.
-
-    Returns:
-        MLE estimate of alpha.
-    """
+    """MLE de alpha: despacha a la versión discreta o continua según Q."""
     if isinstance(Q, DiscreteUniformQ):
         return mle_alpha_discrete(obs, Q)
     else:
@@ -177,17 +125,10 @@ def mle_alpha(obs: NDArray[np.float64], Q=None) -> float:
 
 
 def mle_full_gig(obs: NDArray[np.float64], rng: np.random.Generator | None = None) -> dict:
-    """Joint MLE for (alpha, lambda, kappa, eta) with GIG invariant distribution.
+    """MLE conjunto (alpha, lam, kappa, eta) con Q ~ GIG.
 
-    For continuous Q, alpha MLE is analytical. GIG parameters are estimated
-    via Gibbs posterior mean to avoid MLE instability from near-unidentifiability.
-
-    Args:
-        obs: Observation sequence.
-        rng: Random number generator (for Gibbs Q estimation).
-
-    Returns:
-        Dict with keys: alpha, lam, kappa, eta.
+    alpha analítico (Q continua); GIG vía media posterior Gibbs
+    (el MLE de GIG es casi no identificable).
     """
     n_total = len(obs) - 1
     if n_total < 1:
@@ -195,20 +136,16 @@ def mle_full_gig(obs: NDArray[np.float64], rng: np.random.Generator | None = Non
 
     n_change = n_total - int(np.sum(obs[1:] == obs[:-1]))
 
-    # Alpha: analytical MLE for continuous Q
+    # alpha: MLE analítico (Q continua)
     alpha_hat = mle_alpha_continuous(obs) if n_change > 0 else 0.0
 
-    # GIG parameters: Gibbs posterior mean (avoids MLE instability)
+    # GIG: media posterior Gibbs (evita inestabilidad del MLE)
     gig_params = gibbs_q_posterior_mean(obs, rng=rng)
     return {"alpha": alpha_hat, **gig_params}
 
 
 def _get_distinct_values(obs: NDArray[np.float64]) -> NDArray[np.float64]:
-    """Extract distinct values from observation sequence (including x₀).
-
-    For continuous Q, each time x_t != x_{t-1}, the value x_t is a fresh
-    draw from Q. x₀ is also from Q. Used by MLE which includes x₀ in likelihood.
-    """
+    """Valores distintos de la secuencia (incluye x_0; cada salto es un draw fresco de Q)."""
     changes = obs[1:] != obs[:-1]
     jump_vals = [obs[0]]
     for t in range(1, len(obs)):
@@ -218,34 +155,16 @@ def _get_distinct_values(obs: NDArray[np.float64]) -> NDArray[np.float64]:
 
 
 def _get_jump_values(obs: NDArray[np.float64]) -> NDArray[np.float64]:
-    """Extract jump values only (excluding x₀).
-
-    Per Anzarut's definition, J = {j : x_j != x_{j-1}}.
-    Only the values at jump times, not the initial observation.
-    Used by NDNJ for Q parameter estimation.
-    """
+    """Solo valores en tiempos de salto J = {j : x_j != x_{j-1}} (sin x_0); lo usa NDNJ."""
     changes = obs[1:] != obs[:-1]
     return obs[1:][changes]
 
 
 def _mle_gig(values: NDArray[np.float64], method: str = "de") -> dict:
-    """Estimate GIG parameters by MLE on i.i.d. samples.
+    """MLE de GIG sobre muestras i.i.d., en parametrización (chi, psi).
 
-    Uses the standard (chi, psi) parameterization internally:
-        chi = kappa*eta, psi = kappa/eta
-        kappa = sqrt(chi*psi), eta = sqrt(chi/psi)
-
-    The density is:
-        f(x) = (chi/psi)^(lam/2) / (2*K_lam(sqrt(chi*psi)))
-               * x^(lam-1) * exp(-(chi*x + psi/x)/2)
-
-    Args:
-        values: i.i.d. samples from GIG.
-        method: Optimization method. "de" uses differential evolution (default,
-            most robust for GIG). "nm" uses Nelder-Mead with multiple restarts.
-
-    Returns:
-        Dict with keys: lam, kappa, eta.
+    chi = kappa*eta, psi = kappa/eta => kappa = sqrt(chi*psi), eta = sqrt(chi/psi).
+    method="de": evolución diferencial; "nm": Nelder-Mead con reinicios.
     """
     from scipy.optimize import minimize, differential_evolution
     from scipy.special import kv as bessel_kv
@@ -284,23 +203,18 @@ def _mle_gig(values: NDArray[np.float64], method: str = "de") -> dict:
             return 1e10
         return -ll
 
-    # Method of moments for starting point using GIG moments:
-    # E[X] = sqrt(psi/chi) * K_{lam+1}(omega)/K_{lam}(omega) where omega = sqrt(chi*psi)
-    # Var[X] = (chi/psi) * K_{lam+2}/K_{lam} + (E[X])^2 * (1 - K_{lam+1}^2/(K_lam * K_{lam+2}))
-    # Simplified: use sample mean and variance to get initial (chi, psi)
+    # punto inicial por momentos:
+    # E[X] = sqrt(psi/chi) K_{lam+1}(omega)/K_lam(omega), omega = sqrt(chi*psi)
     sample_mean = np.mean(values)
     sample_var = np.var(values)
 
-    # Start from multiple initial guesses:
-    # 1. Inverse-Gamma-motivated: chi ~ 1/var, psi ~ 1/mean
+    # 1) motivado por Gamma inversa: chi ~ 1/var, psi ~ 1/media
     chi0 = max(1.0 / max(sample_var, 1e-6), 0.01)
     psi0 = max(1.0 / max(sample_mean, 1e-6), 0.01)
-    # 2. Gamma-motivated: chi ~ mean, psi ~ mean (for moderate kappa)
+    # 2) motivado por Gamma: chi ~ media, psi ~ media
     chi1 = max(sample_mean, 0.01)
     psi1 = max(sample_mean, 0.01)
-    # 3. Large-kappa-motivated: chi ~ kappa_hat / mean, psi ~ kappa_hat * mean
-    # For GIG: chi = kappa*eta, psi = kappa/eta, eta ≈ 1/mean for large kappa
-    # So: chi ≈ kappa_hat / mean, psi ≈ kappa_hat * mean
+    # 3) kappa grande: chi = kappa*eta ~ kappa/media, psi = kappa/eta ~ kappa*media
     kappa_hat = max(sample_mean**2 / max(sample_var, 1e-6), 0.1)
     chi2 = max(kappa_hat / max(sample_mean, 1e-6), 0.01)
     psi2 = max(kappa_hat * sample_mean, 0.01)
@@ -308,13 +222,12 @@ def _mle_gig(values: NDArray[np.float64], method: str = "de") -> dict:
     best_nll = np.inf
     best_params = None
 
-    # Profile likelihood approach: optimize (log_chi, log_psi) for a grid of lambda values
-    # This avoids the local optimum problem where DE converges to boundary solutions.
+    # verosimilitud perfilada: para cada lambda, optimizar (log_chi, log_psi)
+    # evita que DE caiga en soluciones de frontera
     lam_grid = np.arange(-5, 5.5, 0.5).tolist() + np.arange(-20, 20.5, 4).tolist()
     lam_grid = sorted(set(lam_grid))
 
     for lam_try in lam_grid:
-        # For each lambda, optimize (log_chi, log_psi) using Nelder-Mead
         def neg_ll_fixed_lam(params):
             return neg_log_lik([lam_try, params[0], params[1]])
 
@@ -333,7 +246,7 @@ def _mle_gig(values: NDArray[np.float64], method: str = "de") -> dict:
             except Exception:
                 pass
 
-    # Differential evolution as secondary method (may find better solutions in some cases)
+    # DE como método secundario (a veces encuentra mejores soluciones)
     if method in ("de", "scipy"):
         try:
             de_result = differential_evolution(
@@ -348,7 +261,7 @@ def _mle_gig(values: NDArray[np.float64], method: str = "de") -> dict:
         except Exception:
             pass
 
-    # Nelder-Mead with multiple restarts as secondary / fallback
+    # Nelder-Mead con muchos reinicios (fallback)
     starts = [
         [0.0, np.log(chi0), np.log(psi0)],
         [1.0, np.log(chi0), np.log(psi0)],
@@ -359,7 +272,7 @@ def _mle_gig(values: NDArray[np.float64], method: str = "de") -> dict:
         [-2.0, np.log(chi0), np.log(psi0)],
         [0.0, np.log(chi0 * 0.1), np.log(psi0 * 10)],
         [0.0, np.log(chi0 * 10), np.log(psi0 * 0.1)],
-        # Additional starts from method-of-moments guesses
+        # reinicios extra desde los puntos de momentos
         [0.0, np.log(chi1), np.log(psi1)],
         [0.0, np.log(chi2), np.log(psi2)],
         [1.0, np.log(chi2), np.log(psi2)],
@@ -384,12 +297,10 @@ def _mle_gig(values: NDArray[np.float64], method: str = "de") -> dict:
     chi_hat = np.exp(best_params[1])
     psi_hat = np.exp(best_params[2])
 
-    # Boundary recovery: if the optimizer hit a boundary, try harder starting
-    # from data-informed initial points with more aggressive Nelder-Mead.
+    # recuperación de frontera: si el optimizador pegó en la frontera,
+    # reintentar cerca de la solución de momentos con NM más agresivo
     kappa_est = np.sqrt(chi_hat * psi_hat)
     if abs(lam_hat) >= 19.5 or kappa_est < 0.5:
-        # The optimizer got stuck at a boundary. Try a focused search around
-        # the method-of-moments solution and a lambda grid near 0.
         recovery_starts = [
             [0.0, np.log(chi2), np.log(psi2)],
             [1.0, np.log(chi2), np.log(psi2)],
@@ -411,7 +322,7 @@ def _mle_gig(values: NDArray[np.float64], method: str = "de") -> dict:
             except Exception:
                 pass
 
-    # Convert (lam, chi, psi) -> (lam, kappa, eta)
+    # (lam, chi, psi) -> (lam, kappa, eta)
     kappa_hat = np.sqrt(chi_hat * psi_hat)
     eta_hat = np.sqrt(chi_hat / psi_hat) if psi_hat > 1e-10 else 1.0
 
@@ -428,24 +339,10 @@ def em_estimate_discrete(
     max_iter: int = 100,
     tol: float = 1e-6,
 ) -> float:
-    """EM algorithm for alpha with discrete Q (Uniform{1,...,m}).
+    """EM para alpha con Q discreta (maneja saltos ocultos).
 
-    Handles hidden jumps where the process jumps but draws the same value.
-
-    E-step: For each t where x_t = x_{t-1}, compute P(jump | same_obs):
-        P(jump | same) = (1-e^{-alpha}) * (1/m) / (e^{-alpha} + (1-e^{-alpha})*(1/m))
-
-    M-step: Update alpha using expected counts:
-        alpha = -log(E[n_stay_no_jump] / n_total)
-
-    Args:
-        obs: Observation sequence.
-        Q: Discrete uniform distribution.
-        max_iter: Maximum EM iterations.
-        tol: Convergence tolerance.
-
-    Returns:
-        EM estimate of alpha.
+    E-step: P(salto | igual) = (1-e^{-alpha})(1/m) / (e^{-alpha} + (1-e^{-alpha})(1/m)).
+    M-step: alpha = -log(E[n_stay verdadero] / n_total).
     """
     n_total = len(obs) - 1
     if n_total == 0:
@@ -457,24 +354,24 @@ def em_estimate_discrete(
     if n_change == 0:
         return 0.0
 
-    pmf_same = Q.pmf_same  # 1/m for uniform
-    alpha = mle_alpha_discrete(obs, Q)  # Start from MLE
+    pmf_same = Q.pmf_same  # 1/m
+    alpha = mle_alpha_discrete(obs, Q)  # arranque en el MLE
 
     for _ in range(max_iter):
         alpha_old = alpha
 
-        # E-step: expected number of "stays" (no jump) among same-value pairs
+        # E-step: estancias verdaderas esperadas entre los pares iguales
         p_jump = 1.0 - np.exp(-alpha)
         p_stay_true = np.exp(-alpha)
         p_obs_same = p_stay_true + p_jump * pmf_same
         expected_no_jump = n_stay * (p_stay_true / p_obs_same)
 
-        # M-step: update alpha
+        # M-step: actualizar alpha
         if expected_no_jump <= 0 or expected_no_jump >= n_total:
             break
         alpha = -np.log(expected_no_jump / n_total)
         alpha = max(alpha, 0.001)
-        alpha = min(alpha, 50.0)  # cap at reasonable maximum
+        alpha = min(alpha, 50.0)  # tope
 
         if abs(alpha - alpha_old) < tol:
             break
@@ -491,26 +388,10 @@ def gibbs_estimate_discrete(
     prior_c: float = 0.01,
     method: str = "a",
 ) -> float:
-    """Gibbs sampler for alpha with discrete Q (e.g., Uniform{1,...,m}).
+    """Gibbs para alpha con Q discreta: alterna Z-step (indicadores latentes) y alpha-step.
 
-    For discrete Q, "stays" (x_t = x_{t-1}) can be either true stays
-    or hidden jumps (process jumped but drew same value from Q). The
-    Gibbs sampler alternates between:
-    - Z-step: sample latent jump indicators z_i for each stay
-    - Alpha-step: sample alpha given the z indicators
-
-    Args:
-        obs: Observation sequence.
-        Q: Discrete uniform distribution.
-        n_iter: Number of Gibbs iterations.
-        burn_in: Number of burn-in iterations to discard.
-        rng: Random number generator.
-        prior_c: Rate parameter for Exp(c) prior on alpha.
-        method: "a" for MH random walk on alpha posterior,
-                "b" for conjugate Gamma update with latent jump times.
-
-    Returns:
-        Posterior mean of alpha.
+    method="a": MH random walk sobre pi(alpha | z, datos);
+    method="b": actualización Gamma conjugada con tiempos de salto latentes.
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -529,20 +410,18 @@ def gibbs_estimate_discrete(
     if n_change == 0 and n_stay == 0:
         return 0.0
 
-    # Identify stay positions (where x_t == x_{t-1})
+    # posiciones: estancias (x_t == x_{t-1}) y cambios (x_t != x_{t-1})
     stay_mask = obs[1:] == obs[:-1]
-    stay_indices = np.where(stay_mask)[0]  # 0-based indices of stays
-    # Identify change positions (where x_t != x_{t-1})
-    change_indices = np.where(~stay_mask)[0] + 1  # 1-based positions of changes
+    stay_indices = np.where(stay_mask)[0]
+    change_indices = np.where(~stay_mask)[0] + 1
 
-    # Initialize alpha from MLE
+    # alpha inicial desde el MLE
     alpha = mle_alpha_discrete(obs, Q)
     alpha = np.clip(alpha, 0.01, 50.0)
 
-    # Initialize z: latent jump indicators for stays
-    # z_i = 1 means "jump happened" at stay position i
+    # z: indicador latente de salto en cada estancia (z_i = 1 => saltó)
     z = np.zeros(n_stay, dtype=np.float64)
-    # Initialize z from current alpha
+    # inicializar z con el alpha actual
     p_jump = 1.0 - np.exp(-alpha)
     p_stay_true = np.exp(-alpha)
     p_jump_given_same = p_jump * pmf_same / (p_stay_true + p_jump * pmf_same)
@@ -550,13 +429,13 @@ def gibbs_estimate_discrete(
 
     alpha_samples = np.empty(n_iter)
 
-    # Adaptive step size for method "a"
+    # tamaño de paso adaptativo para method "a"
     alpha_step = max(0.5, alpha * 0.3)
     adapt_interval = 50
     alpha_accepts = 0
 
     for i in range(n_iter):
-        # --- Z-step: sample z_i | alpha for each stay ---
+        # --- Z-step: z_i | alpha en cada estancia ---
         p_jump = 1.0 - np.exp(-alpha)
         p_stay_true = np.exp(-alpha)
         p_jump_given_same = p_jump * pmf_same / (p_stay_true + p_jump * pmf_same)
@@ -564,12 +443,11 @@ def gibbs_estimate_discrete(
 
         n_jump_from_stays = int(np.sum(z))
         n_total_jumps = n_change + n_jump_from_stays
-        n_total_stays_true = n_stay - n_jump_from_stays  # true non-jump stays
+        n_total_stays_true = n_stay - n_jump_from_stays
 
         # --- Alpha-step ---
         if method == "a":
-            # Gibbs-a: MH random walk on pi(alpha | z, data)
-            # pi(alpha | z) ∝ (1 - e^{-alpha})^{n_total_jumps} * e^{-alpha * (n_total_stays_true + c)}
+            # Gibbs-a: MH random walk; pi(alpha | z) ∝ (1-e^{-alpha})^{n_jumps} e^{-alpha(n_stays + c)}
             def log_post_a(a):
                 if a <= 0:
                     return -1e10
@@ -583,16 +461,13 @@ def gibbs_estimate_discrete(
                     alpha_accepts += 1
             alpha = np.clip(alpha, 0.001, 50.0)
         else:
-            # Gibbs-b: conjugate Gamma with latent jump times
-            # Sample j_k ~ Uniform(i_k - 1, i_k) for each observed jump (change or hidden)
-            # Then alpha ~ Gamma(n_total_jumps + 1, 1 / (j_m + c))
+            # Gibbs-b: Gamma conjugada con tiempos de salto latentes
+            # j_k ~ Uniform(i_k - 1, i_k); alpha ~ Gamma(n_jumps + 1, 1/(j_m + c))
             all_jump_indices = []
-            # Observed changes at positions change_indices (1-based)
-            all_jump_indices.extend(change_indices.tolist())
-            # Hidden jumps at stay positions where z=1
-            for si in range(n_stay):
+            all_jump_indices.extend(change_indices.tolist())  # cambios observados
+            for si in range(n_stay):  # saltos ocultos (z = 1)
                 if z[si] == 1:
-                    all_jump_indices.append(stay_indices[si] + 1)  # 1-based
+                    all_jump_indices.append(stay_indices[si] + 1)
 
             if len(all_jump_indices) > 0:
                 jump_times = np.array([rng.uniform(idx - 1, idx) for idx in all_jump_indices])
@@ -603,7 +478,7 @@ def gibbs_estimate_discrete(
             alpha = rng.gamma(n_total_jumps + 1, 1.0 / (j_m + prior_c))
             alpha = np.clip(alpha, 0.001, 50.0)
 
-        # Adapt step size for method "a"
+        # adaptar el paso (method "a")
         if method == "a" and (i + 1) % adapt_interval == 0 and i > 0:
             rate = alpha_accepts / adapt_interval
             if rate > 0.44:
@@ -623,20 +498,10 @@ def em_estimate_gig(
     tol: float = 1e-6,
     rng: np.random.Generator | None = None,
 ) -> dict:
-    """EM algorithm for (alpha, lambda, kappa, eta) with GIG Q.
+    """EM para (alpha, lam, kappa, eta) con GIG.
 
-    For continuous Q, the E-step is trivial (jumps are observed), so EM
-    converges to the same alpha as MLE. GIG parameters are estimated via
-    Gibbs posterior mean to avoid MLE instability.
-
-    Args:
-        obs: Observation sequence.
-        max_iter: Maximum EM iterations (unused for continuous Q).
-        tol: Convergence tolerance (unused for continuous Q).
-        rng: Random number generator (for Gibbs Q estimation).
-
-    Returns:
-        Dict with alpha, lam, kappa, eta.
+    Con Q continua los saltos se observan: alpha converge al MLE de inmediato.
+    GIG vía media posterior Gibbs.
     """
     n_total = len(obs) - 1
     if n_total < 1:
@@ -644,10 +509,10 @@ def em_estimate_gig(
 
     n_change = n_total - int(np.sum(obs[1:] == obs[:-1]))
 
-    # For continuous Q: alpha converges immediately to MLE
+    # Q continua: alpha converge de inmediato al MLE
     alpha_hat = mle_alpha_continuous(obs) if n_change > 0 else 0.0
 
-    # GIG parameters: Gibbs posterior mean (avoids MLE instability)
+    # GIG: media posterior Gibbs
     gig_params = gibbs_q_posterior_mean(obs, rng=rng)
     return {"alpha": alpha_hat, **gig_params}
 
@@ -660,25 +525,10 @@ def gibbs_estimate_gig(
     prior_c: float = 0.01,
     method: str = "a",
 ) -> dict:
-    """Gibbs sampler for (alpha, lambda, kappa, eta) with GIG Q.
+    """Gibbs para (alpha, lam, kappa, eta) con GIG.
 
-    Uses MH for alpha (correct posterior) and adaptive MH for GIG parameters
-    in (chi, psi) parameterization with Robbins-Monro step size adaptation.
-
-    The correct posterior for alpha (with prior Exp(c)) is:
-        pi(alpha | data) proportional to (1 - exp(-alpha))^n_change * exp(-alpha * (n_stay + c))
-
-    Args:
-        obs: Observation sequence.
-        n_iter: Number of Gibbs iterations.
-        burn_in: Number of burn-in iterations to discard.
-        rng: Random number generator.
-        prior_c: Rate parameter for Exp(c) prior on alpha.
-        method: "a" for MH random walk on alpha posterior (default),
-                "b" for conjugate Gamma update with latent jump times.
-
-    Returns:
-        Dict with posterior means: alpha, lam, kappa, eta.
+    alpha por MH (posterior correcta: pi ∝ (1-e^{-alpha})^{n_change} e^{-alpha(n_stay+c)});
+    GIG por MH adaptativo por componentes en (chi, psi).
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -690,8 +540,8 @@ def gibbs_estimate_gig(
     n_stay = int(np.sum(obs[1:] == obs[:-1]))
     n_change = n_total - n_stay
 
-    # For Gibbs-b: precompute jump indices for latent jump time sampling
-    jump_indices = np.where(obs[1:] != obs[:-1])[0] + 1  # 1-based positions
+    # para Gibbs-b: índices de saltos (tiempos latentes)
+    jump_indices = np.where(obs[1:] != obs[:-1])[0] + 1
 
     distinct_vals = _get_distinct_values(obs)
 
@@ -700,14 +550,14 @@ def gibbs_estimate_gig(
     kappa_samples = np.empty(n_iter)
     eta_samples = np.empty(n_iter)
 
-    # Initial values from MLE
+    # valores iniciales desde el MLE
     alpha = mle_alpha_continuous(obs) if n_change > 0 else 0.01
     gig_params = _mle_gig(distinct_vals) if len(distinct_vals) >= 3 else {"lam": 0.0, "kappa": 1.0, "eta": 1.0}
     lam = gig_params["lam"]
     kappa = gig_params["kappa"]
     eta = gig_params["eta"]
 
-    # Work in (lam, chi, psi) parameterization for MH within Gibbs
+    # MH dentro de Gibbs en (lam, chi, psi)
     chi = kappa * eta
     psi = kappa / eta
 
@@ -721,8 +571,7 @@ def gibbs_estimate_gig(
     sum_inv_dv = np.sum(1.0 / distinct_vals)
     nd = len(distinct_vals)
 
-    # Adaptive MH step sizes with window-based acceptance tracking
-    # Component-wise MH: update each parameter individually for better mixing
+    # pasos MH adaptativos, uno por componente (mejor mezcla)
     alpha_step = max(0.5, alpha * 0.3)
     lam_step = 0.3
     log_chi_step = 0.2
@@ -734,7 +583,7 @@ def gibbs_estimate_gig(
     psi_accepts = 0
 
     def _gig_log_lik_params(lam_v, chi_v, psi_v):
-        """Log-likelihood of distinct values under GIG(lam, chi, psi)."""
+        # log-verosimilitud de los valores distintos bajo GIG(lam, chi, psi)
         from scipy.special import kv as bkv
         omega_v = np.sqrt(chi_v * psi_v)
         Kv = bkv(lam_v, omega_v)
@@ -744,9 +593,9 @@ def gibbs_estimate_gig(
         return nd * ln + (lam_v - 1) * sum_log_dv - (chi_v * sum_dv + psi_v * sum_inv_dv) / 2
 
     for i in range(n_iter):
-        # --- 1. Sample alpha ---
+        # --- 1. alpha ---
         if method == "a":
-            # Gibbs-a: MH random walk on pi(alpha | data)
+            # Gibbs-a: MH random walk
             alpha_prop = alpha + rng.normal(0, alpha_step)
             if alpha_prop > 0:
                 log_ratio_a = alpha_log_posterior(alpha_prop) - alpha_log_posterior(alpha)
@@ -755,8 +604,7 @@ def gibbs_estimate_gig(
                     alpha_accepts += 1
             alpha = np.clip(alpha, 0.001, 50.0)
         else:
-            # Gibbs-b: conjugate update with latent jump times
-            # Sample j_k ~ Uniform(i_k - 1, i_k), then alpha ~ Gamma(m+1, 1/(j_m + c))
+            # Gibbs-b: j_k ~ Uniform(i_k - 1, i_k); alpha ~ Gamma(m+1, 1/(j_m + c))
             if len(jump_indices) > 0:
                 jump_times = np.array([rng.uniform(idx - 1, idx) for idx in jump_indices])
                 j_m = jump_times[-1]
@@ -765,7 +613,7 @@ def gibbs_estimate_gig(
             alpha = rng.gamma(n_change + 1, 1.0 / (j_m + prior_c))
             alpha = np.clip(alpha, 0.001, 50.0)
 
-        # --- 2. Sample lambda using component-wise MH ---
+        # --- 2. lambda (MH por componente) ---
         lam_prop = lam + rng.normal(0, lam_step)
         ll_curr = _gig_log_lik_params(lam, chi, psi)
         ll_prop = _gig_log_lik_params(lam_prop, chi, psi)
@@ -774,20 +622,20 @@ def gibbs_estimate_gig(
                 lam = lam_prop
                 lam_accepts += 1
 
-        # --- 3. Sample chi (log-scale MH) ---
+        # --- 3. chi (MH en escala log) ---
         log_chi_prop = np.log(chi) + rng.normal(0, log_chi_step)
         chi_prop = np.exp(log_chi_prop)
         if chi_prop > 0.01:
             ll_curr_chi = _gig_log_lik_params(lam, chi, psi)
             ll_prop_chi = _gig_log_lik_params(lam, chi_prop, psi)
-            # Jacobian: proposing in log(chi), so add log(chi_prop) - log(chi)
+            # jacobiano de proponer en log(chi)
             if np.isfinite(ll_prop_chi) and np.isfinite(ll_curr_chi):
                 log_ratio_chi = (ll_prop_chi - ll_curr_chi) + np.log(chi_prop) - np.log(chi)
                 if np.log(rng.uniform()) < log_ratio_chi:
                     chi = chi_prop
                     chi_accepts += 1
 
-        # --- 4. Sample psi (log-scale MH) ---
+        # --- 4. psi (MH en escala log) ---
         log_psi_prop = np.log(psi) + rng.normal(0, log_psi_step)
         psi_prop = np.exp(log_psi_prop)
         if psi_prop > 0.01:
@@ -799,7 +647,7 @@ def gibbs_estimate_gig(
                     psi = psi_prop
                     psi_accepts += 1
 
-        # Adapt step sizes every adapt_interval iterations
+        # adaptar pasos cada adapt_interval iteraciones
         if (i + 1) % adapt_interval == 0 and i > 0:
             if method == "a":
                 alpha_rate = alpha_accepts / adapt_interval
@@ -827,7 +675,7 @@ def gibbs_estimate_gig(
             chi_accepts = 0
             psi_accepts = 0
 
-        # Convert (lam, chi, psi) -> (lam, kappa, eta)
+        # (lam, chi, psi) -> (lam, kappa, eta) en cada iteración
         kappa = np.sqrt(chi * psi)
         eta = np.sqrt(chi / psi) if psi > 1e-10 else eta
 
@@ -851,28 +699,17 @@ def gibbs_q_posterior_mean(
     rng: np.random.Generator | None = None,
     prior_c: float = 0.01,
 ) -> dict:
-    """Run Gibbs sampler and return posterior mean for (lam, kappa, eta) only.
+    """Gibbs que regresa solo la media posterior de (lam, kappa, eta).
 
-    Used by NDNJ/MLE/EM to estimate Q parameters via posterior averaging
-    instead of MLE, avoiding GIG near-unidentifiability issues.
-    Alpha is estimated separately by each method.
-
-    Args:
-        obs: Observation sequence.
-        n_iter: Number of Gibbs iterations.
-        burn_in: Number of burn-in iterations to discard.
-        rng: Random number generator.
-        prior_c: Rate parameter for Exp(c) prior on alpha.
-
-    Returns:
-        Dict with keys: lam, kappa, eta (posterior means).
+    NDNJ/MLE/EM la usan para estimar Q promediando la posterior
+    (evita la casi-no-identificabilidad del MLE de GIG).
     """
     result = gibbs_estimate_gig(obs, n_iter=n_iter, burn_in=burn_in, rng=rng, prior_c=prior_c)
     return {k: v for k, v in result.items() if k != "alpha"}
 
 
 def _gig_log_lik(values, lam, kappa, eta, bessel_kv_func):
-    """Log-likelihood of i.i.d. samples under GIG(lam, kappa, eta)."""
+    # log-verosimilitud de muestras i.i.d. bajo GIG(lam, kappa, eta)
     bessel_val = bessel_kv_func(lam, kappa)
     if bessel_val <= 0 or not np.isfinite(bessel_val):
         return -1e10

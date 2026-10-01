@@ -29,6 +29,8 @@ from anzarut_replication import (
     load_ibm_data,
     compute_15min_returns,
     detect_and_remove_jumps,
+    fit_jump_thresholds,
+    split_returns_by_date,
     estimate_periodicity,
     estimate_alpha,
     gibbs_gig_harris,
@@ -302,37 +304,48 @@ if __name__ == "__main__":
     returns = compute_15min_returns(df)
     print(f"  {len(returns)} 15-min return observations")
 
-    returns_clean = detect_and_remove_jumps(returns, n_passes=2, top_pct=0.001)
-    print(f"  Clean returns: {len(returns_clean)}")
+    # --- leak-free split: cut by date BEFORE cleaning; fit jump thresholds on TRAIN, apply to both ---
+    train_returns, test_returns = split_returns_by_date(returns, train_frac=0.8)
+    thresholds = fit_jump_thresholds(train_returns, n_passes=2, top_pct=0.001)
+    train_clean = detect_and_remove_jumps(train_returns, fixed_thresholds=thresholds)
+    test_clean = detect_and_remove_jumps(test_returns, fixed_thresholds=thresholds)
+    print(f"  Clean returns: train={len(train_clean)}, test={len(test_clean)}")
 
     # ==================================================================
     # STEP 2: Periodicity adjustment
     # ==================================================================
     print("\n--- Step 2: Periodicity adjustment ---")
-    periodicity = estimate_periodicity(returns)
+    # Estimate on TRAIN clean returns (leak-free; also fixes the raw-not-clean inconsistency)
+    periodicity = estimate_periodicity(train_clean)
     print(f"  Periodicity range: {periodicity.min():.2f} to {periodicity.max():.2f}")
 
     # ==================================================================
-    # STEP 3: Compute 15-min spot volatility
+    # STEP 3: Compute 15-min spot volatility (per window, TRAIN-fitted periodicity)
     # ==================================================================
     print("\n--- Step 3: Compute 15-min spot volatility ---")
-    log_spot, rv_df = compute_15min_spot_volatility(returns_clean, periodicity)
-    log_spot_vals = log_spot.values
-    raw_spot_vals = np.exp(log_spot_vals)  # raw = exp(log)
+    log_spot_train, rv_df_train = compute_15min_spot_volatility(train_clean, periodicity)
+    log_spot_test, rv_df_test = compute_15min_spot_volatility(test_clean, periodicity)
 
-    print(f"  15-min log spot vol: {len(log_spot_vals)} observations")
-    print(f"  Log scale:  mean={log_spot_vals.mean():.4f}, std={log_spot_vals.std():.4f}")
-    print(f"               skew={stats.skew(log_spot_vals):.2f}, kurt={stats.kurtosis(log_spot_vals):.2f}")
-    print(f"  Raw scale:   mean={raw_spot_vals.mean():.2e}, std={raw_spot_vals.std():.2e}")
-    print(f"               min={raw_spot_vals.min():.2e}, max={raw_spot_vals.max():.2e}")
+    train_log = log_spot_train.values
+    test_log = log_spot_test.values
+    train_raw = np.exp(train_log)
+    test_raw = np.exp(test_log)
+    train_idx = log_spot_train.index
+    test_idx = log_spot_test.index
+
+    print(f"  15-min log spot vol: train={len(train_log)}, test={len(test_log)}")
+    print(f"  Train log:  mean={train_log.mean():.4f}, std={train_log.std():.4f}, "
+          f"skew={stats.skew(train_log):.2f}, kurt={stats.kurtosis(train_log):.2f}")
+    print(f"  Test  log:  mean={test_log.mean():.4f}, std={test_log.std():.4f}, "
+          f"skew={stats.skew(test_log):.2f}, kurt={stats.kurtosis(test_log):.2f}")
 
     # ==================================================================
-    # STEP 4: Test epsilon thresholds at 15-min level
+    # STEP 4: Test epsilon thresholds at 15-min level (train window)
     # ==================================================================
-    print("\n--- Step 4: Testing epsilon thresholds ---")
+    print("\n--- Step 4: Testing epsilon thresholds (train window) ---")
 
     # Log scale
-    diffs_log = np.abs(np.diff(log_spot_vals))
+    diffs_log = np.abs(np.diff(train_log))
     print(f"\n  LOG scale (log spot volatility):")
     print(f"    Typical diff: mean={diffs_log.mean():.4f}, median={np.median(diffs_log):.4f}")
     print(f"    Diff range: [{diffs_log.min():.6f}, {diffs_log.max():.4f}]")
@@ -344,7 +357,7 @@ if __name__ == "__main__":
         print(f"    eps={eps_label}: stays={n_stay}/{n_total} ({n_stay/n_total*100:.1f}%)")
 
     # Raw scale
-    diffs_raw = np.abs(np.diff(raw_spot_vals))
+    diffs_raw = np.abs(np.diff(train_raw))
     print(f"\n  RAW scale (spot volatility):")
     print(f"    Typical diff: mean={diffs_raw.mean():.2e}, median={np.median(diffs_raw):.2e}")
     print(f"    Diff range: [{diffs_raw.min():.2e}, {diffs_raw.max():.2e}]")
@@ -356,20 +369,11 @@ if __name__ == "__main__":
         print(f"    eps={eps_label}: stays={n_stay}/{n_total} ({n_stay/n_total*100:.1f}%)")
 
     # ==================================================================
-    # STEP 5: Train/test split
+    # STEP 5: Train/test split (already done leak-free above)
     # ==================================================================
-    print("\n--- Step 5: Train/test split ---")
-    n_15 = len(log_spot_vals)
-    split_15 = int(n_15 * 0.8)
-
-    train_log = log_spot_vals[:split_15]
-    test_log = log_spot_vals[split_15:]
-    train_raw = raw_spot_vals[:split_15]
-    test_raw = raw_spot_vals[split_15:]
-    train_idx = log_spot.index[:split_15]
-    test_idx = log_spot.index[split_15:]
-
-    print(f"  Total: {n_15}, Train: {split_15}, Test: {n_15 - split_15}")
+    print("\n--- Step 5: Train/test split (by date, before cleaning) ---")
+    n_15 = len(train_log) + len(test_log)
+    print(f"  Total: {n_15}, Train: {len(train_log)}, Test: {len(test_log)}")
     print(f"  Train log: mean={train_log.mean():.4f}, std={train_log.std():.4f}")
     print(f"  Test  log: mean={test_log.mean():.4f}, std={test_log.std():.4f}")
 
@@ -405,24 +409,26 @@ if __name__ == "__main__":
     # Dollar bar spot volatility (no periodicity adjustment needed)
     dol_rv = dol_returns_series**2  # squared returns = spot variance proxy
     dol_log_spot = np.log(dol_rv.clip(lower=1e-20))
-    dol_log_spot_vals = dol_log_spot.replace([np.inf, -np.inf], np.nan).dropna().values
+    dol_log_spot_series = dol_log_spot.replace([np.inf, -np.inf], np.nan).dropna()
 
-    # Remove extreme outliers (same jump detection idea)
-    dol_clean = dol_log_spot_vals[np.isfinite(dol_log_spot_vals)]
-    dol_q01 = np.percentile(dol_clean, 0.5)
-    dol_q99 = np.percentile(dol_clean, 99.5)
-    dol_log_spot_clean = dol_clean[(dol_clean > dol_q01) & (dol_clean < dol_q99)]
-    print(f"  After outlier removal: {len(dol_log_spot_clean)} observations")
-    print(f"  Dollar bar log spot: mean={dol_log_spot_clean.mean():.4f}, "
-          f"std={dol_log_spot_clean.std():.4f}, "
-          f"skew={stats.skew(dol_log_spot_clean):.2f}, "
-          f"kurt={stats.kurtosis(dol_log_spot_clean):.2f}")
+    # --- leak-free: split dollar bars at the SAME temporal boundary; fit outlier bounds on TRAIN, drop from both ---
+    dol_cutoff = pd.Timestamp(train_returns.index.date.max())  # last train day (inclusive)
+    dol_train_full = dol_log_spot_series[dol_log_spot_series.index <= dol_cutoff].values
+    dol_test_full = dol_log_spot_series[dol_log_spot_series.index > dol_cutoff].values
 
-    # Train/test split for dollar bars
-    n_dol = len(dol_log_spot_clean)
-    split_dol = int(n_dol * 0.8)
-    dol_train = dol_log_spot_clean[:split_dol]
-    dol_test = dol_log_spot_clean[split_dol:]
+    # Outlier bounds fit on TRAIN only; drop outliers from BOTH windows (leak-free cleaning,
+    # same drop semantics as the original — train/test are independent arrays so dropping is safe)
+    dol_q01 = np.percentile(dol_train_full, 0.5)
+    dol_q99 = np.percentile(dol_train_full, 99.5)
+    dol_train = dol_train_full[(dol_train_full > dol_q01) & (dol_train_full < dol_q99)]
+    dol_test = dol_test_full[(dol_test_full > dol_q01) & (dol_test_full < dol_q99)]
+    dol_log_spot_clean = dol_train  # for the diagnostics print below
+
+    print(f"  After outlier removal (bounds fit on train): train={len(dol_train)}, test={len(dol_test)}")
+    print(f"  Dollar bar log spot (train): mean={dol_train.mean():.4f}, "
+          f"std={dol_train.std():.4f}, "
+          f"skew={stats.skew(dol_train):.2f}, "
+          f"kurt={stats.kurtosis(dol_train):.2f}")
 
     print(f"  Dollar bar train: {len(dol_train)}, test: {len(dol_test)}")
 
@@ -562,7 +568,7 @@ if __name__ == "__main__":
     # Method A: log-scale simulation aggregated to daily
     print(f"\n  [A] Aggregating log-scale simulations to daily...")
     cov_log_adj, aad_log_adj, cov_log_unadj, aad_log_unadj, n_valid = aggregate_to_daily(
-        sim_log, test_idx, rv_df, periodicity, n_sim, PROB_LEVELS
+        sim_log, test_idx, rv_df_test, periodicity, n_sim, PROB_LEVELS
     )
 
     print(f"  Daily aggregated (adjusted, log-scale, eps=1e-5):")
@@ -585,7 +591,7 @@ if __name__ == "__main__":
     # Method C: log-scale eps=0.1 aggregated to daily
     print(f"\n  [C] Aggregating log-scale (eps=0.1) simulations to daily...")
     cov_e01_adj, aad_e01_adj, cov_e01_unadj, aad_e01_unadj, _ = aggregate_to_daily(
-        sim_log_e01, test_idx, rv_df, periodicity, n_sim, PROB_LEVELS
+        sim_log_e01, test_idx, rv_df_test, periodicity, n_sim, PROB_LEVELS
     )
 
     print(f"  Daily aggregated (adjusted, log-scale, eps=0.1):")

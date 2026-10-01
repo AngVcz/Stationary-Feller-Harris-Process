@@ -7,6 +7,7 @@
 \usepackage[spanish]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
+\usepackage{multirow}
 \usepackage{graphicx}
 \usepackage{geometry}
 \usepackage{hyperref}
@@ -34,7 +35,7 @@ Simulaci\'{o}n, Estimaci\'{o}n y Evidencia Experimental}}
 Replicamos el estudio de simulaci\'{o}n de la Secci\'{o}n~3.5.2 de Anzarut (2024) para los cinco m\'{e}todos de estimaci\'{o}n del proceso SF-Harris.
 Encontramos que NDNJ, MLE y EM producen estimaciones id\'{e}nticas de $\alpha$ cuando $Q$ es continua (un resultado te\'{o}rico), mientras que el Gibbs sampler reduce el error en $\alpha$ a la mitad respecto al MLE puntual.
 Para $Q$, la media posterior del Gibbs resuelve la casi-no-identificabilidad de la distribuci\'{o}n GIG que degradaba los estimadores puntuales.
-En datos emp\'{i}ricos, el modelo SF-Harris sobre datos intradiarios de IBM alcanza una AAD de 0.2\,pp con barras de d\'{o}lar, mejorando el 0.8\,pp de Anzarut.
+En datos emp\'{i}ricos, el modelo SF-Harris sobre datos intradiarios de IBM alcanza una AAD de 0.3\,pp con barras de d\'{o}lar, mejorando el 0.8\,pp de Anzarut.
 Sin embargo, la mejora proviene de la distribuci\'{o}n emp\'{\'i}rica $Q$ y del denoising bayesiano, no de la din\'{a}mica de la cadena de Harris: variar $\pstay$ de 0 a 0.95 dentro del Gibbs cambia la AAD de 0.41 a 0.54\,pp (esencialmente plano).
 Proponemos que el modelo se reduce a dos ingredientes: muestreo emp\'{\'i}rico de $Q$ y estimaci\'{o}n bayesiana de par\'{a}metros.
 \end{abstract}
@@ -59,7 +60,7 @@ Nuestro objetivo inicial era replicar estas tablas, pero durante el proceso desc
 
 Replicamos las Tablas~II y III de Anzarut con 100 r\'{e}plicas, los mismos rangos de par\'{a}metros ($\alpha \in (0,30)$, $\lambda \in (-5,5)$, $\kappa \in (0.1,50)$, $\eta \in (0.1,4)$) y los cinco m\'{e}todos de estimaci\'{o}n.
 
-\subsection{Caso 1: $Q$ discreta}
+\subsection{Tabla 1: $Q$-emp (discreta)}
 
 Con $Q = \text{Uniforme}\{1, \ldots, 5\}$, el \'{u}nico par\'{a}metro a estimar es $\alpha$. La m\'{e}trica es $E_\alpha = \frac{1}{n} \sum_{i=1}^{n} |\alpha_i - \hat{\alpha}_i| / 30$.
 Para $Q$ discreta, los ``saltos ocultos'' (el proceso salta pero aterriza en el mismo valor) complican la estimaci\'{o}n: NDNJ cuenta cambios observados y subestima $\alpha$, mientras que MLE y EM corrigen parcialmente.
@@ -67,8 +68,8 @@ Gibbs-a y Gibbs-b muestrean los indicadores de salto latentes $z_i$ junto con $\
 
 \begin{table}[h]
 \centering
-\caption{Caso 1: $E_\alpha$ con $Q = \text{Uniforme}\{1,\ldots,5\}$. Izquierda: replicaci\'{o}n (100 r\'{e}plicas, $\hat{\alpha}$ acotado a 50). Derecha: Anzarut (100 r\'{e}plicas, $\hat{\alpha}$ acotado a 10).}
-\label{tab:sim-case1}
+\caption{$Q$-emp: $E_\alpha$ con $Q = \text{Uniforme}\{1,\ldots,5\}$. Izquierda: replicaci\'{o}n (100 r\'{e}plicas, $\hat{\alpha}$ acotado a 50). Derecha: Anzarut (2017, $\hat{\alpha}$ acotado a 10).}
+\label{tab:sim-qemp}
 \begin{tabular}{c|ccccc|ccccc}
 \toprule
 & \multicolumn{5}{c|}{Replicaci\'{o}n} & \multicolumn{5}{c}{Anzarut (2017)} \\
@@ -88,7 +89,7 @@ NDNJ subestima $\alpha$ porque no corrige por saltos ocultos. MLE y EM corrigen 
 
 Los resultados muestran que ning\'{u}n m\'{e}todo domina consistentemente. EM tiene el peor desempe\~{n}o en muestras peque\~{n}as ($k=20, 100$), probablemente porque la correcci\'{o}n por saltos ocultos amplifica el error cuando hay pocas observaciones. Gibbs-b (actualizaci\'{o}n Gamma conjugada) es comparable a NDNJ y MLE en $k \geq 500$.
 
-\subsection{Caso 2: $Q$ continua (GIG)}
+\subsection{Tabla 2: GInvG ($Q$ continua GIG)}
 
 Con $Q = \GIG(\lambda, \kappa, \eta)$, se estiman cuatro par\'{a}metros. Adem\'{a}s de $E_\alpha$, medimos $E_Q$ = divergencia KL entre la GIG verdadera y la estimada.
 
@@ -96,43 +97,30 @@ Un resultado te\'{o}rico importante: para $Q$ continua, $x_t \neq x_{t-1}$ impli
 
 \begin{table}[h]
 \centering
-\caption{Caso 2: $E_\alpha$ con $Q = \GIG(\lambda, \kappa, \eta)$. Izquierda: replicaci\'{o}n (100 r\'{e}plicas, $\hat{\alpha}$ acotado a 50). Derecha: Anzarut (2017).}
-\label{tab:sim-case2-alpha}
-\begin{tabular}{c|ccccc|ccccc}
+\caption{GInvG: $E_\alpha$ (bloque superior) y $E_Q$ divergencia KL (bloque inferior), con $Q = \GIG(\lambda, \kappa, \eta)$. Izquierda: replicaci\'{o}n (100 r\'{e}plicas, $\hat{\alpha}$ acotado a 50; $Q$ v\'{i}a media posterior del Gibbs). Derecha: Anzarut (2017).}
+\label{tab:sim-gig}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{cc|ccccc|ccccc}
 \toprule
-& \multicolumn{5}{c|}{Replicaci\'{o}n} & \multicolumn{5}{c}{Anzarut (2017)} \\
-\cmidrule(lr){2-6} \cmidrule(lr){7-11}
-$k$ & NDNJ & MLE & EM & Gibbs-a & Gibbs-b & NDNJ & MLE & EM & Gibbs-a & Gibbs-b \\
+& & \multicolumn{5}{c|}{Replicaci\'{o}n} & \multicolumn{5}{c}{Anzarut (2017)} \\
+\cmidrule(lr){3-7} \cmidrule(lr){8-12}
+m\'{e}trica & $k$ & NDNJ & EM & MLE & Gibbs-a & Gibbs-b & NDNJ & EM & MLE & Gibbs-a & Gibbs-b \\
 \midrule
-20 & 0.96 & 0.96 & 0.96 & 0.47 & 0.51 & 0.51 & 1.76 & 1.49 & 0.33 & 0.51 \\
-100 & 0.88 & 0.88 & 0.88 & 0.45 & 0.50 & 0.44 & 1.59 & 1.29 & 0.15 & 0.44 \\
-500 & 0.86 & 0.86 & 0.86 & 0.45 & 0.51 & 0.28 & 1.56 & 1.29 & 1.09 & 0.25 \\
-1000 & 0.81 & 0.81 & 0.81 & 0.44 & 0.50 & 0.19 & 1.51 & 1.29 & 1.86 & 0.17 \\
+\multirow{4}{*}{$E_\alpha$}
+& 20   & 0.96 & 0.96 & 0.96 & 0.47 & 0.51 & 0.51 & 1.49 & 1.76 & 0.33 & 0.51 \\
+& 100  & 0.88 & 0.88 & 0.88 & 0.45 & 0.50 & 0.44 & 1.29 & 1.59 & 0.15 & 0.44 \\
+& 500  & 0.86 & 0.86 & 0.86 & 0.45 & 0.51 & 0.28 & 1.29 & 1.56 & 1.09 & 0.25 \\
+& 1000 & 0.81 & 0.81 & 0.81 & 0.44 & 0.50 & 0.19 & 1.29 & 1.51 & 1.86 & 0.17 \\
+\midrule
+\multirow{4}{*}{$E_Q$}
+& 20   & 0.35 & 0.32 & 0.24 & 0.22 & 0.38 & 0.09 & 0.10 & 0.09 & 0.77 & 0.84 \\
+& 100  & 0.16 & 0.11 & 0.15 & 0.06 & 0.36 & 0.02 & 0.03 & 0.02 & 0.31 & 0.31 \\
+& 500  & 0.025 & 0.017 & 0.031 & 0.023 & 0.051 & 0.01 & 0.07 & 0.04 & 0.16 & 0.18 \\
+& 1000 & 0.004 & 0.027 & 0.011 & 0.008 & 0.042 & 0.01 & 0.09 & 0.05 & 0.09 & 0.12 \\
 \bottomrule
 \end{tabular}
 \begin{flushleft}\small
-NDNJ = MLE = EM para $Q$ continua (resultado te\'{o}rico: la verosimilitud de $\alpha$ se factoriza de la de $Q$). En Anzarut, MLE y EM difieren porque la optimizaci\'{o}n conjunta en 4D introduce artefactos num\'{e}ricos. Gibbs-a mejora $E_\alpha$ integrando sobre la posterior. NDNJ/MLE/EM tienen $E_\alpha$ m\'{a}s alto en la replicaci\'{o}n (cap=50 vs.\ cap=10 en Anzarut). Gibbs-a de Anzarut aumenta con $k$ (1.86 a $k=1000$), lo cual es contra-intuitivo y sugiere problemas de convergencia.
-\end{flushleft}
-\end{table}
-
-\begin{table}[h]
-\centering
-\caption{Caso 2: $E_Q$ (divergencia KL) con $Q = \GIG(\lambda, \kappa, \eta)$. Izquierda: replicaci\'{o}n. Derecha: Anzarut (2017).}
-\label{tab:sim-case2-kl}
-\begin{tabular}{c|ccccc|ccccc}
-\toprule
-& \multicolumn{5}{c|}{Replicaci\'{o}n} & \multicolumn{5}{c}{Anzarut (2017)} \\
-\cmidrule(lr){2-6} \cmidrule(lr){7-11}
-$k$ & NDNJ & MLE & EM & Gibbs-a & Gibbs-b & NDNJ & MLE & EM & Gibbs-a & Gibbs-b \\
-\midrule
-20 & 0.35 & 0.24 & 0.32 & 0.22 & 0.38 & 0.09 & 0.09 & 0.10 & 0.77 & 0.84 \\
-100 & 0.16 & 0.15 & 0.11 & 0.06 & 0.36 & 0.02 & 0.02 & 0.03 & 0.31 & 0.31 \\
-500 & 0.025 & 0.031 & 0.017 & 0.023 & 0.051 & 0.01 & 0.04 & 0.07 & 0.16 & 0.18 \\
-1000 & 0.004 & 0.011 & 0.027 & 0.008 & 0.042 & 0.01 & 0.05 & 0.09 & 0.09 & 0.12 \\
-\bottomrule
-\end{tabular}
-\begin{flushleft}\small
-En nuestra replicaci\'{o}n, NDNJ/MLE/EM estiman $Q$ v\'{i}a media posterior del Gibbs sampler (evita inestabilidad del MLE puntual de GIG). En Anzarut, los mismos m\'{e}todos usan MLE puntual, dando $E_Q$ m\'{a}s bajo a $k=20$ (0.09 vs.\ 0.24) pero m\'{a}s alto a $k \geq 500$ (0.04--0.09 vs.\ 0.004--0.03). Gibbs-a de Anzarut tiene $E_Q$ m\'{a}s alto que el nuestro (0.77 vs.\ 0.22 a $k=20$), lo cual sugiere diferencias en la implementaci\'{o}n del muestreador. Gibbs-b degrada $E_Q$ en ambas implementaciones.
+NDNJ = MLE = EM en $E_\alpha$ para $Q$ continua (resultado te\'{o}rico: la verosimilitud de $\alpha$ se factoriza de la de $Q$); en Anzarut, MLE y EM difieren porque la optimizaci\'{o}n conjunta en 4D introduce artefactos num\'{e}ricos. NDNJ/MLE/EM tienen $E_\alpha$ m\'{a}s alto en la replicaci\'{o}n (cap=50 vs.\ cap=10 en Anzarut); Gibbs-a de Anzarut aumenta con $k$ (0.33 $\to$ 1.86), contra-intuitivo y sugestivo de problemas de convergencia. Para $E_Q$, NDNJ/MLE/EM estiman $Q$ v\'{i}a media posterior del Gibbs (evita inestabilidad del MLE puntual de GIG); en Anzarut los mismos m\'{e}todos usan MLE puntual, dando $E_Q$ m\'{a}s bajo a $k=20$ (0.09 vs.\ 0.24) pero m\'{a}s alto a $k\geq 500$ (0.04--0.09 vs.\ 0.004--0.03). Gibbs-a de Anzarut tiene $E_Q$ m\'{a}s alto (0.77 vs.\ 0.22 a $k=20$); Gibbs-b degrada $E_Q$ en ambas implementaciones.
 \end{flushleft}
 \end{table}
 
@@ -174,7 +162,7 @@ Sim.\ Hist\'{o}rica ($\pstay = 0$) & 15\,min & 0.4 \\
 \end{tabular}
 \end{table}
 
-El resultado de 0.2\,pp mejora 4$\times$ el de Anzarut. La mejora proviene de dos fuentes:
+El resultado de 0.3\,pp mejora $\sim$2.7$\times$ el de Anzarut. La mejora proviene de dos fuentes:
 (1)~$Q_{\text{emp}}$ captura la asimetr\'{\'i}a y curtosis de los datos sin imponer la forma GIG (0.2 vs.\ 0.8\,pp), y
 (2)~las barras de d\'{o}lar reducen la curtosis de $\log(\RV)$ de 35.5 a 0.09, estabilizando la emisi\'{o}n gaussiana.
 

@@ -1,1 +1,1 @@
-"""State-space model simulation and kernel computation."""
+"""Simulación de modelos estado-espacio y núcleos de probabilidad."""

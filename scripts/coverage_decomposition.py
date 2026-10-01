@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 from anzarut_replication import (
     load_ibm_data, compute_15min_returns, detect_and_remove_jumps,
+    fit_jump_thresholds, split_returns_by_date,
     estimate_alpha, gibbs_gig_harris, simulate_predictive_sf_harris, compute_coverage
 )
 
@@ -28,29 +29,47 @@ PROB_LEVELS = [0.25, 0.50, 0.75, 0.85, 0.90, 0.95]
 
 df = load_ibm_data(start_date="1998-01-01", end_date="2026-12-31")
 returns = compute_15min_returns(df)
-returns_clean = detect_and_remove_jumps(returns, n_passes=2, top_pct=0.001)
 
-rv_df = returns_clean.to_frame("return")
-rv_df["rv_15min"] = rv_df["return"]**2
-rv_df["date"] = pd.to_datetime(rv_df.index.date)
-daily_rv_all = rv_df.groupby("date")["rv_15min"].sum()
-daily_rv_all = daily_rv_all[daily_rv_all > 0]
+# --- leak-free split: cut by date BEFORE cleaning; fit jump thresholds on TRAIN, apply to both ---
+train_returns, test_returns = split_returns_by_date(returns, train_frac=0.8)
+thresholds = fit_jump_thresholds(train_returns, n_passes=2, top_pct=0.001)
+train_clean = detect_and_remove_jumps(train_returns, fixed_thresholds=thresholds)
+test_clean = detect_and_remove_jumps(test_returns, fixed_thresholds=thresholds)
 
+
+def _daily_rv(ret):
+    """Daily realized variance (sum of r^2 per day) from an intraday return series."""
+    rdf = ret.to_frame("return")
+    rdf["rv_15min"] = rdf["return"]**2
+    rdf["date"] = pd.to_datetime(rdf.index.date)
+    return rdf.groupby("date")["rv_15min"].sum()
+
+
+daily_rv_train = _daily_rv(train_clean)
+daily_rv_train = daily_rv_train[daily_rv_train > 0]
+daily_rv_test = _daily_rv(test_clean)
+daily_rv_test = daily_rv_test[daily_rv_test > 0]
+
+# close-to-close daily returns, cut at the SAME temporal boundary as the intraday split
 close_daily = df["close"].resample("D").last().dropna()
 daily_log_ret = np.log(close_daily).diff().dropna()
+cutoff = pd.Timestamp(train_returns.index.date.max())  # last train day (inclusive)
 
-common_daily = daily_rv_all.index.intersection(daily_log_ret.index)
-daily_rv = daily_rv_all.loc[common_daily].values
-daily_ret = daily_log_ret.loc[common_daily].values
-daily_log_spot = np.log(daily_rv)
-daily_log_spot = daily_log_spot[np.isfinite(daily_log_spot)]
+# train window: realized variance aligned with its close-to-close return
+common_train = daily_rv_train.index.intersection(daily_log_ret.index)
+train_log = np.log(daily_rv_train.loc[common_train].values)
+train_ret = daily_log_ret.loc[common_train].values
+_finite = np.isfinite(train_log)
+train_log, train_ret = train_log[_finite], train_ret[_finite]
 
-n = len(daily_log_spot)
-split = int(n * 0.8)
-train_log = daily_log_spot[:split]
-test_log = daily_log_spot[split:]
-train_ret = daily_ret[:split]
-test_ret = daily_ret[split:split+len(test_log)]
+# test window: same alignment (close-to-close return must fall AFTER the cutoff)
+test_ret_idx = daily_log_ret.index[daily_log_ret.index > cutoff]
+common_test = daily_rv_test.index.intersection(test_ret_idx)
+test_log = np.log(daily_rv_test.loc[common_test].values)
+test_ret = daily_log_ret.loc[common_test].values
+_finite_t = np.isfinite(test_log)
+test_log, test_ret = test_log[_finite_t], test_ret[_finite_t]
+daily_rv = daily_rv_test.loc[common_test].values  # oracle realized variance (test)
 n_test = len(test_log)
 
 # SF-Harris
@@ -115,7 +134,7 @@ aad6 = np.mean([abs(cov6[p] - p*100) for p in PROB_LEVELS])
 
 # Model 7: N(0, actual RV) oracle variance + Gaussian
 rng7 = np.random.default_rng(48)
-test_rv_aligned = daily_rv[split:split+n_test_actual]
+test_rv_aligned = daily_rv[:n_test_actual]
 sim7 = np.sqrt(np.maximum(test_rv_aligned, 1e-20)) * rng7.normal(size=(2000, n_test_actual))
 cov7 = compute_coverage(test_ret, sim7, PROB_LEVELS)
 aad7 = np.mean([abs(cov7[p] - p*100) for p in PROB_LEVELS])

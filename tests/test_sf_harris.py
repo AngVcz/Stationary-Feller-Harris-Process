@@ -1,4 +1,4 @@
-"""Tests for SF-Harris process simulation and estimation."""
+"""Tests de simulación y estimación del proceso SF-Harris."""
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
@@ -18,23 +18,27 @@ from src.sf_harris.estimation import (
 class TestDiscreteUniformQ:
     def test_sample_within_range(self):
         Q = DiscreteUniformQ(m=5)
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42
         samples = [Q.sample(rng) for _ in range(100)]
+        # teórica: soporte {1,...,5}
         assert all(1 <= s <= 5 for s in samples)
 
     def test_pmf_uniform(self):
+        """PMF uniforme: teórica 1/m = 0.2 en cada punto."""
         Q = DiscreteUniformQ(m=5)
         for i in range(1, 6):
-            assert_allclose(Q.pmf(float(i)), 0.2, atol=1e-10)
+            assert_allclose(Q.pmf(float(i)), 0.2, atol=1e-10)  # teórica: 1/5
 
     def test_pmf_outside_range(self):
+        """Fuera del soporte la PMF es 0."""
         Q = DiscreteUniformQ(m=5)
         assert Q.pmf(0.0) == 0.0
         assert Q.pmf(6.0) == 0.0
 
     def test_pmf_same(self):
+        """P(Q_t = Q_{t-1}) = 1/m = 0.2."""
         Q = DiscreteUniformQ(m=5)
-        assert_allclose(Q.pmf_same, 0.2)
+        assert_allclose(Q.pmf_same, 0.2)  # teórica: 1/5
 
 
 class TestGIGQ:
@@ -43,47 +47,51 @@ class TestGIGQ:
         assert Q.density(1.0) > 0
 
     def test_density_zero_for_negative(self):
+        """GIG tiene soporte en (0, inf): densidad 0 fuera."""
         Q = GIGQ(lam=1.0, kappa=2.0, eta=1.0)
         assert Q.density(-1.0) == 0.0
         assert Q.density(0.0) == 0.0
 
     def test_sample_positive(self):
         Q = GIGQ(lam=1.0, kappa=2.0, eta=1.0)
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42
         samples = Q.sample_n(100, rng)
         assert np.all(samples > 0)
 
     def test_sample_consistent_with_density(self):
-        """Samples should concentrate where density is high."""
+        """Las muestras se concentran donde la densidad es alta."""
         Q = GIGQ(lam=1.0, kappa=5.0, eta=1.0)
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42
         samples = Q.sample_n(5000, rng)
-        # Mean should be near the mode
+        # media cerca del modo (>0)
         assert np.mean(samples) > 0
 
     def test_kl_divergence_self_is_zero(self):
         Q = GIGQ(lam=1.0, kappa=2.0, eta=1.0)
         kl = Q.kl_divergence(Q)
-        assert kl < 0.5  # Should be close to 0 (numerical tolerance)
+        assert kl < 0.5  # KL(Q||Q) = 0 (tolerancia numérica)
 
     def test_invalid_parameters(self):
+        """kappa y eta deben ser > 0."""
         with pytest.raises(ValueError):
-            GIGQ(lam=1.0, kappa=0.0, eta=1.0)  # kappa must be > 0
+            GIGQ(lam=1.0, kappa=0.0, eta=1.0)
         with pytest.raises(ValueError):
-            GIGQ(lam=1.0, kappa=2.0, eta=0.0)  # eta must be > 0
+            GIGQ(lam=1.0, kappa=2.0, eta=0.0)
 
 
 class TestSFHarrisProcess:
     def test_simulate_length(self):
+        """Simular T=100 devuelve 100 obs."""
         Q = DiscreteUniformQ(m=5)
         process = SFHarrisProcess(
             alpha=1.0, Q_sample=Q.sample, Q_density=Q.pmf, Q_pmf_same=Q.pmf_same
         )
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42
         obs = process.simulate(100, rng=rng)
         assert len(obs) == 100
 
     def test_simulate_values_in_range(self):
+        """Con Q uniforme discreta, obs en {1,...,5}."""
         Q = DiscreteUniformQ(m=5)
         process = SFHarrisProcess(
             alpha=1.0, Q_sample=Q.sample, Q_density=Q.pmf, Q_pmf_same=Q.pmf_same
@@ -94,9 +102,9 @@ class TestSFHarrisProcess:
         assert np.all(obs <= 5)
 
     def test_high_alpha_means_more_changes(self):
-        """With high alpha, most transitions should be jumps (changes)."""
+        """Alpha alto => más saltos (más cambios entre obs)."""
         Q = DiscreteUniformQ(m=5)
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semillas 42 / 43
         process_low = SFHarrisProcess(alpha=0.1, Q_sample=Q.sample)
         process_high = SFHarrisProcess(alpha=5.0, Q_sample=Q.sample)
 
@@ -109,7 +117,7 @@ class TestSFHarrisProcess:
         assert changes_high > changes_low
 
     def test_alpha_zero_means_constant(self):
-        """With alpha=0, the process should stay at its initial value."""
+        """Alpha=0 => sin saltos, proceso constante."""
         Q = DiscreteUniformQ(m=5)
         process = SFHarrisProcess(alpha=0.0, Q_sample=Q.sample)
         rng = np.random.default_rng(42)
@@ -117,9 +125,10 @@ class TestSFHarrisProcess:
         assert np.all(obs == obs[0])
 
     def test_stay_prob_property(self):
+        """P(stay) = exp(-alpha); con alpha=2 -> teórica: e^{-2} = 0.1353."""
         process = SFHarrisProcess(alpha=2.0, Q_sample=lambda rng: 1.0)
-        assert_allclose(process.stay_prob, np.exp(-2.0))
-        assert_allclose(process.jump_prob, 1 - np.exp(-2.0))
+        assert_allclose(process.stay_prob, np.exp(-2.0))  # teórica: e^{-2}
+        assert_allclose(process.jump_prob, 1 - np.exp(-2.0))  # teórica: 1 - e^{-2}
 
     def test_count_transitions(self):
         Q = DiscreteUniformQ(m=5)
@@ -127,10 +136,10 @@ class TestSFHarrisProcess:
         rng = np.random.default_rng(42)
         obs = process.simulate(100, rng=rng)
         n_stay, n_change = process.count_transitions(obs)
-        assert n_stay + n_change == 99  # 100 observations = 99 transitions
+        assert n_stay + n_change == 99  # 100 obs = 99 transiciones
 
     def test_continuous_Q_simulation(self):
-        """With GIG Q, all values should be positive."""
+        """Q GIG continua: todas las obs positivas."""
         Q = GIGQ(lam=1.0, kappa=2.0, eta=1.0)
         process = SFHarrisProcess(alpha=2.0, Q_sample=Q.sample, Q_density=Q.density)
         rng = np.random.default_rng(42)
@@ -138,7 +147,7 @@ class TestSFHarrisProcess:
         assert np.all(obs > 0)
 
     def test_log_likelihood_continuous(self):
-        """Log-likelihood should be negative for typical observations."""
+        """Log-verosimilitud (Q continua) negativa en obs típicas."""
         Q = GIGQ(lam=1.0, kappa=2.0, eta=1.0)
         process = SFHarrisProcess(
             alpha=2.0, Q_sample=Q.sample, Q_density=Q.density
@@ -149,7 +158,7 @@ class TestSFHarrisProcess:
         assert ll < 0
 
     def test_log_likelihood_discrete(self):
-        """Log-likelihood should be negative for typical observations."""
+        """Log-verosimilitud (Q discreta) negativa en obs típicas."""
         Q = DiscreteUniformQ(m=5)
         process = SFHarrisProcess(
             alpha=1.0, Q_sample=Q.sample, Q_density=Q.pmf, Q_pmf_same=Q.pmf_same
@@ -162,12 +171,12 @@ class TestSFHarrisProcess:
 
 class TestNDNJ:
     def test_no_changes_returns_zero(self):
-        """If all observations are the same, NDNJ returns 0."""
+        """Sin cambios => NDNJ = 0."""
         obs = np.array([3.0] * 20)
         assert ndnj_estimate(obs) == 0.0
 
     def test_estimate_is_positive(self):
-        """NDNJ should return a positive estimate when changes exist."""
+        """NDNJ > 0 cuando hay cambios."""
         Q = DiscreteUniformQ(m=5)
         process = SFHarrisProcess(alpha=2.0, Q_sample=Q.sample)
         rng = np.random.default_rng(42)
@@ -176,18 +185,18 @@ class TestNDNJ:
         assert est > 0
 
     def test_ndnj_approximately_recovers_alpha(self):
-        """NDNJ should approximately recover alpha for continuous Q with large sample."""
+        """NDNJ recupera alpha ~ 2.0 con muestra grande."""
         Q = GIGQ(lam=1.0, kappa=2.0, eta=1.0)
         alpha_true = 2.0
         process = SFHarrisProcess(alpha=alpha_true, Q_sample=Q.sample, Q_density=Q.density)
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42, alpha_true=2.0
         obs = process.simulate(2000, rng=rng)
         alpha_hat = ndnj_estimate(obs)
-        # Should be within 30% of true value (generous tolerance due to estimator variance)
+        # tolerancia 50% (varianza del estimador)
         assert abs(alpha_hat - alpha_true) < alpha_true * 0.5
 
     def test_higher_alpha_more_changes(self):
-        """Higher alpha should produce more changes, higher NDNJ estimate."""
+        """Mayor alpha => más cambios => NDNJ mayor."""
         Q = DiscreteUniformQ(m=5)
         estimates = []
         for alpha in [0.5, 2.0, 5.0]:
@@ -195,8 +204,7 @@ class TestNDNJ:
             rng = np.random.default_rng(42)
             obs = process.simulate(500, rng=rng)
             estimates.append(ndnj_estimate(obs))
-        # Higher alpha should generally give higher estimate
-        # (not guaranteed due to randomness, but likely with large samples)
+        # alpha creciente => estimación creciente (con muestra grande)
 
 
 class TestMLEContinuous:
@@ -205,22 +213,22 @@ class TestMLEContinuous:
         assert mle_alpha_continuous(obs) == 0.0
 
     def test_all_changes_gives_high_alpha(self):
-        """If all transitions are changes, alpha should be high (capped at 10)."""
-        obs = np.arange(1.0, 21.0)  # All different
+        """Todos los cambios => alpha -> inf (cap en 10)."""
+        obs = np.arange(1.0, 21.0)  # todas distintas
         alpha = mle_alpha_continuous(obs)
-        assert alpha > 5.0  # All changes means alpha -> infinity (capped at 10)
+        assert alpha > 5.0  # cap: 10
 
     def test_mle_recovers_alpha(self):
-        """MLE should approximately recover the true alpha."""
+        """MLE recupera alpha ~ 2.0."""
         Q = GIGQ(lam=1.0, kappa=2.0, eta=1.0)
         alpha_true = 2.0
         process = SFHarrisProcess(
             alpha=alpha_true, Q_sample=Q.sample, Q_density=Q.density
         )
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42, alpha_true=2.0
         obs = process.simulate(1000, rng=rng)
         alpha_hat = mle_alpha_continuous(obs)
-        # Should be within 50% of true value (generous tolerance)
+        # tolerancia 50%
         assert abs(alpha_hat - alpha_true) < alpha_true * 0.5
 
 
@@ -249,33 +257,34 @@ class TestEMDiscrete:
         assert alpha == 0.0
 
     def test_em_recovers_alpha(self):
-        """EM should approximately recover the true alpha."""
+        """EM recupera alpha ~ 2.0 (Q discreta)."""
         Q = DiscreteUniformQ(m=5)
         alpha_true = 2.0
         process = SFHarrisProcess(
             alpha=alpha_true, Q_sample=Q.sample, Q_density=Q.pmf, Q_pmf_same=Q.pmf_same
         )
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42, alpha_true=2.0
         obs = process.simulate(500, rng=rng)
         alpha_hat = em_estimate_discrete(obs, Q)
-        # Should be within 50% of true value
+        # tolerancia 50%
         assert abs(alpha_hat - alpha_true) < alpha_true * 0.5
 
 
 class TestMLEDistpatch:
     def test_dispatch_continuous(self):
+        """Q=None => MLE continua."""
         Q = GIGQ(lam=1.0, kappa=2.0, eta=1.0)
         process = SFHarrisProcess(alpha=2.0, Q_sample=Q.sample)
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42
         obs = process.simulate(200, rng=rng)
-        # Should use continuous MLE
         alpha = mle_alpha(obs, Q=None)
         assert alpha > 0
 
     def test_dispatch_discrete(self):
+        """Q dada => MLE discreta."""
         Q = DiscreteUniformQ(m=5)
         process = SFHarrisProcess(alpha=2.0, Q_sample=Q.sample)
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(42)  # semilla 42
         obs = process.simulate(200, rng=rng)
         alpha = mle_alpha(obs, Q=Q)
         assert alpha > 0

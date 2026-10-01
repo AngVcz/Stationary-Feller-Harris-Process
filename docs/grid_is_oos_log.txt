@@ -1,0 +1,1341 @@
+=== CALENDAR GRID (IS+OOS) ===
+  epsilon threshold: 1e-05, stays: 0/7801 (0.0%), jumps: 7801/7801 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.579, mu=-13.8176, sigma=4.0942
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.8170 (std=0.0464)
+    sigma:    4.0939 (std=0.0334)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7801.0/7801 (mean)
+  CAL  30min ( 13.0/d) pct= 0.0% IS=0.11535503716995461 OOS=0.6189986282578873 [6s]
+  epsilon threshold: 1e-05, stays: 0/7794 (0.0%), jumps: 7794/7794 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.579, mu=-13.8335, sigma=4.0913
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.8328 (std=0.0464)
+    sigma:    4.0910 (std=0.0334)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7794.0/7794 (mean)
+  CAL  30min ( 13.0/d) pct=0.08% IS=0.12080393414581951 OOS=0.582432664264885 [6s]
+  epsilon threshold: 1e-05, stays: 0/7761 (0.0%), jumps: 7761/7761 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.642, mu=-13.8873, sigma=4.0885
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.8867 (std=0.0465)
+    sigma:    4.0882 (std=0.0335)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7761.0/7761 (mean)
+  CAL  30min ( 13.0/d) pct= 0.5% IS=0.12969166022502954 OOS=0.5452356381148983 [6s]
+  epsilon threshold: 1e-05, stays: 0/7722 (0.0%), jumps: 7722/7722 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.684, mu=-13.9462, sigma=4.0883
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.9456 (std=0.0466)
+    sigma:    4.0880 (std=0.0335)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7722.0/7722 (mean)
+  CAL  30min ( 13.0/d) pct= 1.0% IS=0.10552893953127018 OOS=0.2079002079002059 [6s]
+  epsilon threshold: 1e-05, stays: 0/7605 (0.0%), jumps: 7605/7605 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.797, mu=-14.0727, sigma=4.0923
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -14.0720 (std=0.0470)
+    sigma:    4.0921 (std=0.0338)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7605.0/7605 (mean)
+  CAL  30min ( 13.0/d) pct= 2.5% IS=0.03768954334297566 OOS=0.3980752405949269 [6s]
+  epsilon threshold: 1e-05, stays: 0/7410 (0.0%), jumps: 7410/7410 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.018, mu=-14.2218, sigma=4.1013
+  Posterior means:
+    alpha:    1.000 (std=0.012)
+    mu:       -14.2212 (std=0.0477)
+    sigma:    4.1011 (std=0.0343)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7410.0/7410 (mean)
+  CAL  30min ( 13.0/d) pct= 5.0% IS=0.07916160662078948 OOS=0.24499284692417808 [6s]
+  epsilon threshold: 1e-05, stays: 0/7176 (0.0%), jumps: 7176/7176 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.273, mu=-14.3692, sigma=4.1210
+  Posterior means:
+    alpha:    1.000 (std=0.012)
+    mu:       -14.3685 (std=0.0487)
+    sigma:    4.1208 (std=0.0351)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7176.0/7176 (mean)
+  CAL  30min ( 13.0/d) pct= 8.0% IS=0.09939157493846018 OOS=0.5825510767531767 [6s]
+  epsilon threshold: 1e-05, stays: 0/7020 (0.0%), jumps: 7020/7020 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.519, mu=-14.4536, sigma=4.1387
+  Posterior means:
+    alpha:    1.000 (std=0.012)
+    mu:       -14.4529 (std=0.0495)
+    sigma:    4.1385 (std=0.0356)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7020.0/7020 (mean)
+  CAL  30min ( 13.0/d) pct=10.0% IS=0.04439063761097609 OOS=0.8286358511837632 [5s]
+  epsilon threshold: 1e-05, stays: 8/15604 (0.1%), jumps: 15596/15604 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.146, mu=-14.5887, sigma=4.3121
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.5882 (std=0.0346)
+    sigma:    4.3120 (std=0.0249)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15596.0/15604 (mean)
+  CAL  15min ( 26.0/d) pct= 0.0% IS=0.094520986863186 OOS=0.6144413000600295 [13s]
+  epsilon threshold: 1e-05, stays: 8/15591 (0.1%), jumps: 15583/15591 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.153, mu=-14.6109, sigma=4.3090
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.6104 (std=0.0346)
+    sigma:    4.3089 (std=0.0249)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15583.0/15591 (mean)
+  CAL  15min ( 26.0/d) pct=0.08% IS=0.085941508465881 OOS=0.5469755469755478 [12s]
+  epsilon threshold: 1e-05, stays: 8/15525 (0.1%), jumps: 15517/15525 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.162, mu=-14.6889, sigma=4.3051
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.6884 (std=0.0346)
+    sigma:    4.3051 (std=0.0249)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15517.0/15525 (mean)
+  CAL  15min ( 26.0/d) pct= 0.5% IS=0.08909785735755331 OOS=0.46887109274089295 [13s]
+  epsilon threshold: 1e-05, stays: 8/15447 (0.1%), jumps: 15439/15447 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.178, mu=-14.7555, sigma=4.3040
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.7550 (std=0.0347)
+    sigma:    4.3039 (std=0.0250)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15439.0/15447 (mean)
+  CAL  15min ( 26.0/d) pct= 1.0% IS=0.09019506300707707 OOS=0.3858144972720184 [12s]
+  epsilon threshold: 1e-05, stays: 8/15213 (0.1%), jumps: 15205/15213 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.238, mu=-14.8896, sigma=4.3054
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.8891 (std=0.0350)
+    sigma:    4.3054 (std=0.0252)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15205.0/15213 (mean)
+  CAL  15min ( 26.0/d) pct= 2.5% IS=0.06704351255422718 OOS=0.4587597306043918 [12s]
+  epsilon threshold: 1e-05, stays: 9/14823 (0.1%), jumps: 14814/14823 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.331, mu=-15.0372, sigma=4.3180
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -15.0367 (std=0.0355)
+    sigma:    4.3179 (std=0.0256)
+    P(stay):  0.3680 (mean)
+    n_jumps:  14814.0/14823 (mean)
+  CAL  15min ( 26.0/d) pct= 5.0% IS=0.050818492534628966 OOS=0.398745519713259 [12s]
+  epsilon threshold: 1e-05, stays: 8/14355 (0.1%), jumps: 14347/14355 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.473, mu=-15.1785, sigma=4.3417
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -15.1780 (std=0.0363)
+    sigma:    4.3416 (std=0.0261)
+    P(stay):  0.3680 (mean)
+    n_jumps:  14347.0/14355 (mean)
+  CAL  15min ( 26.0/d) pct= 8.0% IS=0.05711897464474861 OOS=0.5012427506213761 [12s]
+  epsilon threshold: 1e-05, stays: 8/14043 (0.1%), jumps: 14035/14043 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.556, mu=-15.2669, sigma=4.3610
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -15.2663 (std=0.0369)
+    sigma:    4.3609 (std=0.0265)
+    P(stay):  0.3680 (mean)
+    n_jumps:  14035.0/14043 (mean)
+  CAL  15min ( 26.0/d) pct=10.0% IS=0.07571442134244559 OOS=0.45088113985751593 [11s]
+  epsilon threshold: 1e-05, stays: 35/46816 (0.1%), jumps: 46781/46816 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.362, mu=-15.8438, sigma=5.0923
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -15.8434 (std=0.0236)
+    sigma:    5.0923 (std=0.0170)
+    P(stay):  0.3681 (mean)
+    n_jumps:  46781.0/46816 (mean)
+  CAL   5min ( 78.0/d) pct= 0.0% IS=0.10333333333333232 OOS=0.5322068788060731 [27s]
+  epsilon threshold: 1e-05, stays: 35/46778 (0.1%), jumps: 46743/46778 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.371, mu=-15.8897, sigma=5.0865
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -15.8894 (std=0.0236)
+    sigma:    5.0865 (std=0.0170)
+    P(stay):  0.3681 (mean)
+    n_jumps:  46743.0/46778 (mean)
+  CAL   5min ( 78.0/d) pct=0.08% IS=0.14250000000000007 OOS=0.5436368317171532 [27s]
+  epsilon threshold: 1e-05, stays: 35/46581 (0.1%), jumps: 46546/46581 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.387, mu=-16.0018, sigma=5.0772
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.0015 (std=0.0236)
+    sigma:    5.0772 (std=0.0170)
+    P(stay):  0.3681 (mean)
+    n_jumps:  46546.0/46581 (mean)
+  CAL   5min ( 78.0/d) pct= 0.5% IS=0.24333333333333348 OOS=0.5391988062442644 [28s]
+  epsilon threshold: 1e-05, stays: 35/46347 (0.1%), jumps: 46312/46347 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.409, mu=-16.0804, sigma=5.0737
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.0800 (std=0.0236)
+    sigma:    5.0737 (std=0.0170)
+    P(stay):  0.3681 (mean)
+    n_jumps:  46312.0/46347 (mean)
+  CAL   5min ( 78.0/d) pct= 1.0% IS=0.18583333333333604 OOS=0.5297727076311473 [27s]
+  epsilon threshold: 1e-05, stays: 35/45645 (0.1%), jumps: 45610/45645 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.467, mu=-16.2154, sigma=5.0781
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.2150 (std=0.0238)
+    sigma:    5.0781 (std=0.0171)
+    P(stay):  0.3681 (mean)
+    n_jumps:  45610.0/45645 (mean)
+  CAL   5min ( 78.0/d) pct= 2.5% IS=0.27500000000000036 OOS=0.5372009464551759 [26s]
+  epsilon threshold: 1e-05, stays: 35/44475 (0.1%), jumps: 44440/44475 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.640, mu=-16.3584, sigma=5.1013
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.3581 (std=0.0242)
+    sigma:    5.1013 (std=0.0174)
+    P(stay):  0.3681 (mean)
+    n_jumps:  44440.0/44475 (mean)
+  CAL   5min ( 78.0/d) pct= 5.0% IS=0.17833333333333515 OOS=0.4716587734191169 [26s]
+  epsilon threshold: 1e-05, stays: 35/43070 (0.1%), jumps: 43035/43070 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.762, mu=-16.5015, sigma=5.1384
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.5011 (std=0.0248)
+    sigma:    5.1384 (std=0.0179)
+    P(stay):  0.3681 (mean)
+    n_jumps:  43035.0/43070 (mean)
+  CAL   5min ( 78.0/d) pct= 8.0% IS=0.2641666666666674 OOS=0.6257454812368101 [26s]
+  epsilon threshold: 1e-05, stays: 35/42134 (0.1%), jumps: 42099/42134 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.863, mu=-16.5887, sigma=5.1672
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.5883 (std=0.0252)
+    sigma:    5.1672 (std=0.0182)
+    P(stay):  0.3681 (mean)
+    n_jumps:  42099.0/42134 (mean)
+  CAL   5min ( 78.0/d) pct=10.0% IS=0.09750000000000192 OOS=0.6900311526479737 [25s]
+  epsilon threshold: 1e-05, stays: 104/78028 (0.1%), jumps: 77924/78028 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.454, mu=-16.5526, sigma=5.6389
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.5523 (std=0.0202)
+    sigma:    5.6389 (std=0.0146)
+    P(stay):  0.3683 (mean)
+    n_jumps:  77924.0/78028 (mean)
+  CAL   3min (130.0/d) pct= 0.0% IS=0.3608333333333326 OOS=0.5999862762252768 [40s]
+  epsilon threshold: 1e-05, stays: 104/77965 (0.1%), jumps: 77861/77965 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.462, mu=-16.6151, sigma=5.6297
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.6148 (std=0.0202)
+    sigma:    5.6297 (std=0.0145)
+    P(stay):  0.3683 (mean)
+    n_jumps:  77861.0/77965 (mean)
+  CAL   3min (130.0/d) pct=0.08% IS=0.27083333333333215 OOS=0.6570025919631975 [40s]
+  epsilon threshold: 1e-05, stays: 104/77637 (0.1%), jumps: 77533/77637 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.467, mu=-16.7529, sigma=5.6149
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.7526 (std=0.0202)
+    sigma:    5.6149 (std=0.0145)
+    P(stay):  0.3683 (mean)
+    n_jumps:  77533.0/77637 (mean)
+  CAL   3min (130.0/d) pct= 0.5% IS=0.253333333333335 OOS=0.7030293625752163 [41s]
+  epsilon threshold: 1e-05, stays: 104/77247 (0.1%), jumps: 77143/77247 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.496, mu=-16.8200, sigma=5.6130
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.8197 (std=0.0202)
+    sigma:    5.6130 (std=0.0146)
+    P(stay):  0.3683 (mean)
+    n_jumps:  77143.0/77247 (mean)
+  CAL   3min (130.0/d) pct= 1.0% IS=0.269166666666667 OOS=0.7259001161440217 [39s]
+  epsilon threshold: 1e-05, stays: 105/76077 (0.1%), jumps: 75972/76077 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.529, mu=-16.9423, sigma=5.6222
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.9420 (std=0.0204)
+    sigma:    5.6222 (std=0.0147)
+    P(stay):  0.3683 (mean)
+    n_jumps:  75972.0/76077 (mean)
+  CAL   3min (130.0/d) pct= 2.5% IS=0.169166666666665 OOS=0.6502824264112554 [35s]
+  epsilon threshold: 1e-05, stays: 106/74126 (0.1%), jumps: 74020/74126 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.618, mu=-17.0883, sigma=5.6514
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -17.0880 (std=0.0208)
+    sigma:    5.6514 (std=0.0150)
+    P(stay):  0.3684 (mean)
+    n_jumps:  74020.0/74126 (mean)
+  CAL   3min (130.0/d) pct= 5.0% IS=0.23583333333333498 OOS=0.6660930666093078 [36s]
+  epsilon threshold: 1e-05, stays: 109/71785 (0.2%), jumps: 71676/71785 (99.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.708, mu=-17.2357, sigma=5.6966
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -17.2354 (std=0.0213)
+    sigma:    5.6966 (std=0.0153)
+    P(stay):  0.3684 (mean)
+    n_jumps:  71676.0/71785 (mean)
+  CAL   3min (130.0/d) pct= 8.0% IS=0.2975000000000018 OOS=0.7317813206818577 [40s]
+  epsilon threshold: 1e-05, stays: 110/70225 (0.2%), jumps: 70115/70225 (99.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.804, mu=-17.3280, sigma=5.7308
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -17.3277 (std=0.0217)
+    sigma:    5.7308 (std=0.0156)
+    P(stay):  0.3684 (mean)
+    n_jumps:  70115.0/70225 (mean)
+  CAL   3min (130.0/d) pct=10.0% IS=0.2524999999999989 OOS=0.6443173748925499 [38s]
+  epsilon threshold: 1e-05, stays: 963/234032 (0.4%), jumps: 233069/234032 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.200, mu=-18.0661, sigma=6.8559
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.0659 (std=0.0142)
+    sigma:    6.8560 (std=0.0102)
+    P(stay):  0.3694 (mean)
+    n_jumps:  233069.0/234032 (mean)
+  CAL   1min (390.0/d) pct= 0.0% IS=0.4258333333333327 OOS=0.5638925613685668 [98s]
+  epsilon threshold: 1e-05, stays: 962/233844 (0.4%), jumps: 232882/233844 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.204, mu=-18.1783, sigma=6.8325
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.1781 (std=0.0142)
+    sigma:    6.8325 (std=0.0102)
+    P(stay):  0.3694 (mean)
+    n_jumps:  232882.0/233844 (mean)
+  CAL   1min (390.0/d) pct=0.08% IS=0.2383333333333321 OOS=0.5552691867124881 [105s]
+  epsilon threshold: 1e-05, stays: 962/232861 (0.4%), jumps: 231899/232861 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.216, mu=-18.3064, sigma=6.8145
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.3062 (std=0.0141)
+    sigma:    6.8146 (std=0.0102)
+    P(stay):  0.3694 (mean)
+    n_jumps:  231899.0/232861 (mean)
+  CAL   1min (390.0/d) pct= 0.5% IS=0.24666666666666792 OOS=0.5343871516992221 [97s]
+  epsilon threshold: 1e-05, stays: 965/231691 (0.4%), jumps: 230726/231691 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.230, mu=-18.3684, sigma=6.8141
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.3682 (std=0.0142)
+    sigma:    6.8142 (std=0.0102)
+    P(stay):  0.3694 (mean)
+    n_jumps:  230726.0/231691 (mean)
+  CAL   1min (390.0/d) pct= 1.0% IS=0.2641666666666656 OOS=0.4861785235519835 [104s]
+  epsilon threshold: 1e-05, stays: 966/228181 (0.4%), jumps: 227215/228181 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.284, mu=-18.4927, sigma=6.8290
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.4924 (std=0.0143)
+    sigma:    6.8291 (std=0.0103)
+    P(stay):  0.3694 (mean)
+    n_jumps:  227215.0/228181 (mean)
+  CAL   1min (390.0/d) pct= 2.5% IS=0.44083333333333147 OOS=0.5975102277316383 [99s]
+  epsilon threshold: 1e-05, stays: 970/222330 (0.4%), jumps: 221360/222330 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.380, mu=-18.6481, sigma=6.8701
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.6478 (std=0.0146)
+    sigma:    6.8702 (std=0.0105)
+    P(stay):  0.3695 (mean)
+    n_jumps:  221360.0/222330 (mean)
+  CAL   1min (390.0/d) pct= 5.0% IS=0.3658333333333334 OOS=0.6378951014290214 [96s]
+  epsilon threshold: 1e-05, stays: 979/215309 (0.5%), jumps: 214330/215309 (99.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.493, mu=-18.8117, sigma=6.9307
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.8114 (std=0.0150)
+    sigma:    6.9307 (std=0.0108)
+    P(stay):  0.3695 (mean)
+    n_jumps:  214330.0/215309 (mean)
+  CAL   1min (390.0/d) pct= 8.0% IS=0.413333333333334 OOS=0.6842793585606698 [100s]
+  epsilon threshold: 1e-05, stays: 988/210628 (0.5%), jumps: 209640/210628 (99.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.551, mu=-18.9162, sigma=6.9755
+  Posterior means:
+    alpha:    0.995 (std=0.002)
+    mu:       -18.9159 (std=0.0152)
+    sigma:    6.9756 (std=0.0110)
+    P(stay):  0.3696 (mean)
+    n_jumps:  209640.0/210628 (mean)
+  CAL   1min (390.0/d) pct=10.0% IS=0.8650000000000008 OOS=0.8086291922414374 [101s]
+C:\Users\angve\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\numpy\_core\fromnumeric.py:57: FutureWarning: 'Series.swapaxes' is deprecated and will be removed in a future version. Please use 'Series.transpose' instead.
+  return bound(*args, **kwds)
+  epsilon threshold: 1e-05, stays: 1/4822 (0.0%), jumps: 4821/4822 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.3929, sigma=3.7014
+  Posterior means:
+    alpha:    1.000 (std=0.014)
+    mu:       -13.3922 (std=0.0534)
+    sigma:    3.7010 (std=0.0384)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4821.0/4822 (mean)
+  CAL n=8 (   8/d) pct= 0.0% IS=0.11265464095652906 OOS=0.5022075055187637 [4s]
+  epsilon threshold: 1e-05, stays: 1/4818 (0.0%), jumps: 4817/4818 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.4051, sigma=3.6984
+  Posterior means:
+    alpha:    1.000 (std=0.014)
+    mu:       -13.4043 (std=0.0533)
+    sigma:    3.6980 (std=0.0384)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4817.0/4818 (mean)
+  CAL n=8 (   8/d) pct=0.08% IS=0.1635885730096156 OOS=0.5813311239988946 [4s]
+  epsilon threshold: 1e-05, stays: 1/4797 (0.0%), jumps: 4796/4797 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.4557, sigma=3.6931
+  Posterior means:
+    alpha:    1.000 (std=0.014)
+    mu:       -13.4550 (std=0.0534)
+    sigma:    3.6927 (std=0.0384)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4796.0/4797 (mean)
+  CAL n=8 (   8/d) pct= 0.5% IS=0.12574683896067937 OOS=0.6636187309503979 [4s]
+  epsilon threshold: 1e-05, stays: 1/4773 (0.0%), jumps: 4772/4773 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.5094, sigma=3.6918
+  Posterior means:
+    alpha:    1.000 (std=0.014)
+    mu:       -13.5087 (std=0.0535)
+    sigma:    3.6914 (std=0.0385)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4772.0/4773 (mean)
+  CAL n=8 (   8/d) pct= 1.0% IS=0.16059209607596614 OOS=0.7464553794829024 [4s]
+  epsilon threshold: 1e-05, stays: 1/4701 (0.0%), jumps: 4700/4701 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.6234, sigma=3.6938
+  Posterior means:
+    alpha:    1.000 (std=0.015)
+    mu:       -13.6226 (std=0.0539)
+    sigma:    3.6934 (std=0.0388)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4700.0/4701 (mean)
+  CAL n=8 (   8/d) pct= 2.5% IS=0.08294342832836914 OOS=0.5030916245081519 [4s]
+  epsilon threshold: 1e-05, stays: 1/4580 (0.0%), jumps: 4579/4580 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.7488, sigma=3.7041
+  Posterior means:
+    alpha:    1.000 (std=0.015)
+    mu:       -13.7480 (std=0.0548)
+    sigma:    3.7037 (std=0.0394)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4579.0/4580 (mean)
+  CAL n=8 (   8/d) pct= 5.0% IS=0.09422978971112646 OOS=0.6752873563218375 [4s]
+  epsilon threshold: 1e-05, stays: 1/4436 (0.0%), jumps: 4435/4436 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.9200, sigma=3.7150
+  Posterior means:
+    alpha:    1.000 (std=0.015)
+    mu:       -13.9192 (std=0.0558)
+    sigma:    3.7146 (std=0.0402)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4435.0/4436 (mean)
+  CAL n=8 (   8/d) pct= 8.0% IS=0.09240477800315834 OOS=0.7780725022104337 [4s]
+  epsilon threshold: 1e-05, stays: 1/4339 (0.0%), jumps: 4338/4339 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-14.0030, sigma=3.7265
+  Posterior means:
+    alpha:    1.000 (std=0.015)
+    mu:       -14.0022 (std=0.0566)
+    sigma:    3.7261 (std=0.0408)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4338.0/4339 (mean)
+  CAL n=8 (   8/d) pct=10.0% IS=0.08064516129032029 OOS=0.6384892086330934 [4s]
+C:\Users\angve\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\numpy\_core\fromnumeric.py:57: FutureWarning: 'Series.swapaxes' is deprecated and will be removed in a future version. Please use 'Series.transpose' instead.
+  return bound(*args, **kwds)
+  epsilon threshold: 1e-05, stays: 0/3012 (0.0%), jumps: 3012/3012 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.338, mu=-12.9652, sigma=3.7822
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -12.9642 (std=0.0690)
+    sigma:    3.7815 (std=0.0496)
+    P(stay):  0.3676 (mean)
+    n_jumps:  3012.0/3012 (mean)
+  CAL n=5 (   5/d) pct= 0.0% IS=0.1692665117822744 OOS=0.7117595048629551 [3s]
+  epsilon threshold: 1e-05, stays: 0/3009 (0.0%), jumps: 3009/3009 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.345, mu=-12.9766, sigma=3.7787
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -12.9756 (std=0.0690)
+    sigma:    3.7781 (std=0.0496)
+    P(stay):  0.3676 (mean)
+    n_jumps:  3009.0/3009 (mean)
+  CAL n=5 (   5/d) pct=0.08% IS=0.13842746400885808 OOS=0.6285967242142529 [3s]
+  epsilon threshold: 1e-05, stays: 0/2996 (0.0%), jumps: 2996/2996 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.441, mu=-13.0162, sigma=3.7738
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -13.0152 (std=0.0690)
+    sigma:    3.7731 (std=0.0497)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2996.0/2996 (mean)
+  CAL n=5 (   5/d) pct= 0.5% IS=0.14125236347458645 OOS=0.7333333333333331 [3s]
+  epsilon threshold: 1e-05, stays: 0/2981 (0.0%), jumps: 2981/2981 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.498, mu=-13.0544, sigma=3.7729
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -13.0535 (std=0.0692)
+    sigma:    3.7722 (std=0.0498)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2981.0/2981 (mean)
+  CAL n=5 (   5/d) pct= 1.0% IS=0.12519561815336586 OOS=0.7219251336898408 [3s]
+  epsilon threshold: 1e-05, stays: 0/2936 (0.0%), jumps: 2936/2936 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.532, mu=-13.1563, sigma=3.7762
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -13.1553 (std=0.0698)
+    sigma:    3.7755 (std=0.0502)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2936.0/2936 (mean)
+  CAL n=5 (   5/d) pct= 2.5% IS=0.16456701849960353 OOS=1.1050724637681164 [3s]
+  epsilon threshold: 1e-05, stays: 0/2861 (0.0%), jumps: 2861/2861 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.595, mu=-13.2828, sigma=3.7889
+  Posterior means:
+    alpha:    1.001 (std=0.019)
+    mu:       -13.2819 (std=0.0709)
+    sigma:    3.7882 (std=0.0510)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2861.0/2861 (mean)
+  CAL n=5 (   5/d) pct= 5.0% IS=0.13277428371767996 OOS=1.3167587476979719 [2s]
+  epsilon threshold: 1e-05, stays: 0/2770 (0.0%), jumps: 2770/2770 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.783, mu=-13.4150, sigma=3.8054
+  Posterior means:
+    alpha:    1.001 (std=0.019)
+    mu:       -13.4140 (std=0.0724)
+    sigma:    3.8046 (std=0.0521)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2770.0/2770 (mean)
+  CAL n=5 (   5/d) pct= 8.0% IS=0.09743774810537727 OOS=0.8568738229755178 [2s]
+  epsilon threshold: 1e-05, stays: 0/2710 (0.0%), jumps: 2710/2710 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.770, mu=-13.5005, sigma=3.8198
+  Posterior means:
+    alpha:    1.001 (std=0.019)
+    mu:       -13.4995 (std=0.0735)
+    sigma:    3.8190 (std=0.0528)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2710.0/2710 (mean)
+  CAL n=5 (   5/d) pct=10.0% IS=0.13340710684863963 OOS=0.7027540360873689 [2s]
+C:\Users\angve\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\numpy\_core\fromnumeric.py:57: FutureWarning: 'Series.swapaxes' is deprecated and will be removed in a future version. Please use 'Series.transpose' instead.
+  return bound(*args, **kwds)
+  epsilon threshold: 1e-05, stays: 2/601 (0.3%), jumps: 599/601 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.428, mu=-10.6632, sigma=2.2134
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.6620 (std=0.0903)
+    sigma:    2.2110 (std=0.0647)
+    P(stay):  0.3681 (mean)
+    n_jumps:  599.0/601 (mean)
+  CAL n=1 (   1/d) pct= 0.0% IS=0.22702104097452983 OOS=2.5055187637969105 [1s]
+  epsilon threshold: 1e-05, stays: 2/600 (0.3%), jumps: 598/600 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.483, mu=-10.6728, sigma=2.2025
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.6717 (std=0.0899)
+    sigma:    2.2002 (std=0.0645)
+    P(stay):  0.3681 (mean)
+    n_jumps:  598.0/600 (mean)
+  CAL n=1 (   1/d) pct=0.08% IS=0.40210759844703087 OOS=2.6158940397351 [1s]
+  epsilon threshold: 1e-05, stays: 2/597 (0.3%), jumps: 595/597 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.562, mu=-10.6967, sigma=2.1819
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.6955 (std=0.0893)
+    sigma:    2.1796 (std=0.0640)
+    P(stay):  0.3681 (mean)
+    n_jumps:  595.0/597 (mean)
+  CAL n=1 (   1/d) pct= 0.5% IS=0.30657748049052574 OOS=2.4444444444444433 [1s]
+  epsilon threshold: 1e-05, stays: 2/594 (0.3%), jumps: 592/594 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.663, mu=-10.7177, sigma=2.1672
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.7165 (std=0.0889)
+    sigma:    2.1649 (std=0.0637)
+    P(stay):  0.3681 (mean)
+    n_jumps:  592.0/594 (mean)
+  CAL n=1 (   1/d) pct= 1.0% IS=0.32212885154061927 OOS=2.7069351230425034 [1s]
+  epsilon threshold: 1e-05, stays: 2/585 (0.3%), jumps: 583/585 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.649, mu=-10.7732, sigma=2.1364
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.7721 (std=0.0883)
+    sigma:    2.1341 (std=0.0633)
+    P(stay):  0.3681 (mean)
+    n_jumps:  583.0/585 (mean)
+  CAL n=1 (   1/d) pct= 2.5% IS=0.14789533560864676 OOS=2.374429223744291 [1s]
+  epsilon threshold: 1e-05, stays: 2/570 (0.4%), jumps: 568/570 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.691, mu=-10.8556, sigma=2.1020
+  Posterior means:
+    alpha:    0.999 (std=0.042)
+    mu:       -10.8545 (std=0.0880)
+    sigma:    2.0996 (std=0.0631)
+    P(stay):  0.3681 (mean)
+    n_jumps:  568.0/570 (mean)
+  CAL n=1 (   1/d) pct= 5.0% IS=0.3940455341506131 OOS=2.1264367816091947 [1s]
+  epsilon threshold: 1e-05, stays: 2/552 (0.4%), jumps: 550/552 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.807, mu=-10.9487, sigma=2.0705
+  Posterior means:
+    alpha:    0.999 (std=0.042)
+    mu:       -10.9476 (std=0.0881)
+    sigma:    2.0681 (std=0.0631)
+    P(stay):  0.3681 (mean)
+    n_jumps:  550.0/552 (mean)
+  CAL n=1 (   1/d) pct= 8.0% IS=0.2230259192284496 OOS=2.511737089201878 [1s]
+  epsilon threshold: 1e-05, stays: 2/540 (0.4%), jumps: 538/540 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.949, mu=-11.0097, sigma=2.0520
+  Posterior means:
+    alpha:    0.999 (std=0.043)
+    mu:       -11.0086 (std=0.0883)
+    sigma:    2.0495 (std=0.0633)
+    P(stay):  0.3681 (mean)
+    n_jumps:  538.0/540 (mean)
+  CAL n=1 (   1/d) pct=10.0% IS=0.29574861367837296 OOS=2.00239808153477 [1s]
+=== DOLLAR GRID (IS+OOS) ===
+  DOL target=  13 -> 12.41/d build=7s
+  epsilon threshold: 1e-01, stays: 199/7408 (2.7%), jumps: 7209/7408 (97.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.323, mu=-13.8804, sigma=3.9687
+  Posterior means:
+    alpha:    0.973 (std=0.012)
+    mu:       -13.8820 (std=0.0463)
+    sigma:    3.9680 (std=0.0321)
+    P(stay):  0.3780 (mean)
+    n_jumps:  7209.0/7408 (mean)
+      pct= 0.0% IS=0.1288972870832771 OOS=0.38435022406066705 [6s]
+  epsilon threshold: 1e-01, stays: 199/7402 (2.7%), jumps: 7203/7402 (97.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.215, mu=-13.8867, sigma=3.9641
+  Posterior means:
+    alpha:    0.973 (std=0.012)
+    mu:       -13.8883 (std=0.0463)
+    sigma:    3.9634 (std=0.0321)
+    P(stay):  0.3780 (mean)
+    n_jumps:  7203.0/7402 (mean)
+      pct=0.08% IS=0.08780224233418939 OOS=0.3877973112719773 [6s]
+  epsilon threshold: 1e-01, stays: 201/7370 (2.7%), jumps: 7169/7370 (97.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.264, mu=-13.9086, sigma=3.9587
+  Posterior means:
+    alpha:    0.972 (std=0.012)
+    mu:       -13.9101 (std=0.0463)
+    sigma:    3.9579 (std=0.0321)
+    P(stay):  0.3782 (mean)
+    n_jumps:  7169.0/7370 (mean)
+      pct= 0.5% IS=0.08479175145842 OOS=0.5613126079447331 [6s]
+  epsilon threshold: 1e-01, stays: 203/7333 (2.8%), jumps: 7130/7333 (97.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.263, mu=-13.9307, sigma=3.9563
+  Posterior means:
+    alpha:    0.972 (std=0.012)
+    mu:       -13.9323 (std=0.0464)
+    sigma:    3.9556 (std=0.0322)
+    P(stay):  0.3783 (mean)
+    n_jumps:  7130.0/7333 (mean)
+      pct= 1.0% IS=0.11362603399690958 OOS=0.37046677077910967 [6s]
+  epsilon threshold: 1e-01, stays: 209/7222 (2.9%), jumps: 7013/7222 (97.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.254, mu=-13.9906, sigma=3.9567
+  Posterior means:
+    alpha:    0.971 (std=0.012)
+    mu:       -13.9922 (std=0.0468)
+    sigma:    3.9559 (std=0.0324)
+    P(stay):  0.3788 (mean)
+    n_jumps:  7013.0/7222 (mean)
+      pct= 2.5% IS=0.10175827218607303 OOS=0.30574591460200057 [7s]
+  epsilon threshold: 1e-01, stays: 211/7037 (3.0%), jumps: 6826/7037 (97.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.304, mu=-14.0833, sigma=3.9662
+  Posterior means:
+    alpha:    0.970 (std=0.012)
+    mu:       -14.0850 (std=0.0475)
+    sigma:    3.9655 (std=0.0330)
+    P(stay):  0.3792 (mean)
+    n_jumps:  6826.0/7037 (mean)
+      pct= 5.0% IS=0.11745761106374708 OOS=0.32037437005039554 [7s]
+  epsilon threshold: 1e-01, stays: 214/6815 (3.1%), jumps: 6601/6815 (96.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.366, mu=-14.1899, sigma=3.9854
+  Posterior means:
+    alpha:    0.968 (std=0.012)
+    mu:       -14.1915 (std=0.0485)
+    sigma:    3.9846 (std=0.0336)
+    P(stay):  0.3797 (mean)
+    n_jumps:  6601.0/6815 (mean)
+      pct= 8.0% IS=0.09878716744913991 OOS=0.404012516105281 [8s]
+  epsilon threshold: 1e-01, stays: 215/6667 (3.2%), jumps: 6452/6667 (96.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.406, mu=-14.2595, sigma=4.0015
+  Posterior means:
+    alpha:    0.967 (std=0.012)
+    mu:       -14.2612 (std=0.0492)
+    sigma:    4.0007 (std=0.0342)
+    P(stay):  0.3801 (mean)
+    n_jumps:  6452.0/6667 (mean)
+      pct=10.0% IS=0.11347730453909044 OOS=0.15100356405927742 [7s]
+  DOL target=  26 -> 23.86/d build=8s
+  epsilon threshold: 1e-01, stays: 496/14274 (3.5%), jumps: 13778/14274 (96.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.128, mu=-14.8807, sigma=4.9373
+  Posterior means:
+    alpha:    0.965 (std=0.008)
+    mu:       -14.8821 (std=0.0415)
+    sigma:    4.9368 (std=0.0288)
+    P(stay):  0.3810 (mean)
+    n_jumps:  13778.0/14274 (mean)
+      pct= 0.0% IS=0.11033274956217316 OOS=0.8037729036916724 [14s]
+  epsilon threshold: 1e-01, stays: 496/14262 (3.5%), jumps: 13766/14262 (96.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.116, mu=-14.8865, sigma=4.9352
+  Posterior means:
+    alpha:    0.965 (std=0.008)
+    mu:       -14.8879 (std=0.0415)
+    sigma:    4.9347 (std=0.0288)
+    P(stay):  0.3810 (mean)
+    n_jumps:  13766.0/14262 (mean)
+      pct=0.08% IS=0.07607095281497618 OOS=0.8082859463850554 [16s]
+  epsilon threshold: 1e-01, stays: 497/14202 (3.5%), jumps: 13705/14202 (96.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.111, mu=-14.9087, sigma=4.9337
+  Posterior means:
+    alpha:    0.965 (std=0.008)
+    mu:       -14.9101 (std=0.0416)
+    sigma:    4.9332 (std=0.0289)
+    P(stay):  0.3811 (mean)
+    n_jumps:  13705.0/14202 (mean)
+      pct= 0.5% IS=0.08049942500410623 OOS=0.7850865271359991 [14s]
+  epsilon threshold: 1e-01, stays: 499/14131 (3.5%), jumps: 13632/14131 (96.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.114, mu=-14.9319, sigma=4.9353
+  Posterior means:
+    alpha:    0.964 (std=0.008)
+    mu:       -14.9333 (std=0.0417)
+    sigma:    4.9347 (std=0.0289)
+    P(stay):  0.3812 (mean)
+    n_jumps:  13632.0/14131 (mean)
+      pct= 1.0% IS=0.04953297480894155 OOS=0.8196721311475438 [12s]
+  epsilon threshold: 1e-01, stays: 502/13917 (3.6%), jumps: 13415/13917 (96.4%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.123, mu=-14.9956, sigma=4.9460
+  Posterior means:
+    alpha:    0.964 (std=0.008)
+    mu:       -14.9971 (std=0.0421)
+    sigma:    4.9454 (std=0.0292)
+    P(stay):  0.3815 (mean)
+    n_jumps:  13415.0/13917 (mean)
+      pct= 2.5% IS=0.11567753987642308 OOS=0.6948304613674269 [13s]
+  epsilon threshold: 1e-01, stays: 505/13560 (3.7%), jumps: 13055/13560 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.126, mu=-15.0955, sigma=4.9716
+  Posterior means:
+    alpha:    0.963 (std=0.009)
+    mu:       -15.0970 (std=0.0429)
+    sigma:    4.9711 (std=0.0298)
+    P(stay):  0.3819 (mean)
+    n_jumps:  13055.0/13560 (mean)
+      pct= 5.0% IS=0.07214315561782669 OOS=0.7051100406158474 [12s]
+  epsilon threshold: 1e-01, stays: 510/13132 (3.9%), jumps: 12622/13132 (96.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.040, mu=-15.2113, sigma=5.0097
+  Posterior means:
+    alpha:    0.961 (std=0.009)
+    mu:       -15.2128 (std=0.0439)
+    sigma:    5.0092 (std=0.0305)
+    P(stay):  0.3825 (mean)
+    n_jumps:  12622.0/13132 (mean)
+      pct= 8.0% IS=0.08071270844437528 OOS=0.8055152394775037 [12s]
+  epsilon threshold: 1e-01, stays: 508/12846 (4.0%), jumps: 12338/12846 (96.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.055, mu=-15.2878, sigma=5.0386
+  Posterior means:
+    alpha:    0.960 (std=0.009)
+    mu:       -15.2893 (std=0.0447)
+    sigma:    5.0380 (std=0.0310)
+    P(stay):  0.3828 (mean)
+    n_jumps:  12338.0/12846 (mean)
+      pct=10.0% IS=0.11598038452557151 OOS=0.7313226887443326 [13s]
+  DOL target=  40 -> 35.46/d build=8s
+  epsilon threshold: 1e-01, stays: 877/21248 (4.1%), jumps: 20371/21248 (95.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.603, mu=-15.7826, sigma=6.1344
+  Posterior means:
+    alpha:    0.959 (std=0.007)
+    mu:       -15.7840 (std=0.0423)
+    sigma:    6.1339 (std=0.0293)
+    P(stay):  0.3835 (mean)
+    n_jumps:  20371.0/21248 (mean)
+      pct= 0.0% IS=0.2133333333333353 OOS=1.1815623661834014 [20s]
+  epsilon threshold: 1e-01, stays: 877/21231 (4.1%), jumps: 20354/21231 (95.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.598, mu=-15.7879, sigma=6.1340
+  Posterior means:
+    alpha:    0.958 (std=0.007)
+    mu:       -15.7893 (std=0.0423)
+    sigma:    6.1335 (std=0.0294)
+    P(stay):  0.3835 (mean)
+    n_jumps:  20354.0/21231 (mean)
+      pct=0.08% IS=0.29499999999999993 OOS=1.0920384309405762 [22s]
+  epsilon threshold: 1e-01, stays: 879/21141 (4.2%), jumps: 20262/21141 (95.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.597, mu=-15.8108, sigma=6.1369
+  Posterior means:
+    alpha:    0.958 (std=0.007)
+    mu:       -15.8122 (std=0.0424)
+    sigma:    6.1364 (std=0.0294)
+    P(stay):  0.3836 (mean)
+    n_jumps:  20262.0/21141 (mean)
+      pct= 0.5% IS=0.2658333333333361 OOS=1.033210332103322 [20s]
+  epsilon threshold: 1e-01, stays: 880/21035 (4.2%), jumps: 20155/21035 (95.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.595, mu=-15.8355, sigma=6.1425
+  Posterior means:
+    alpha:    0.958 (std=0.007)
+    mu:       -15.8369 (std=0.0425)
+    sigma:    6.1420 (std=0.0295)
+    P(stay):  0.3837 (mean)
+    n_jumps:  20155.0/21035 (mean)
+      pct= 1.0% IS=0.23083333333333536 OOS=0.9634161413916699 [19s]
+  epsilon threshold: 1e-01, stays: 878/20716 (4.2%), jumps: 19838/20716 (95.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.597, mu=-15.9051, sigma=6.1637
+  Posterior means:
+    alpha:    0.957 (std=0.007)
+    mu:       -15.9066 (std=0.0430)
+    sigma:    6.1632 (std=0.0299)
+    P(stay):  0.3839 (mean)
+    n_jumps:  19838.0/20716 (mean)
+      pct= 2.5% IS=0.22333333333333213 OOS=0.8154829011649785 [18s]
+  epsilon threshold: 1e-01, stays: 891/20185 (4.4%), jumps: 19294/20185 (95.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.586, mu=-16.0157, sigma=6.2058
+  Posterior means:
+    alpha:    0.956 (std=0.007)
+    mu:       -16.0172 (std=0.0439)
+    sigma:    6.2053 (std=0.0305)
+    P(stay):  0.3846 (mean)
+    n_jumps:  19294.0/20185 (mean)
+      pct= 5.0% IS=0.2441666666666702 OOS=0.8746569659837888 [19s]
+  epsilon threshold: 1e-01, stays: 876/19548 (4.5%), jumps: 18672/19548 (95.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.577, mu=-16.1453, sigma=6.2638
+  Posterior means:
+    alpha:    0.955 (std=0.007)
+    mu:       -16.1468 (std=0.0450)
+    sigma:    6.2632 (std=0.0312)
+    P(stay):  0.3848 (mean)
+    n_jumps:  18672.0/19548 (mean)
+      pct= 8.0% IS=0.2896993878629767 OOS=0.8987663990601119 [17s]
+  epsilon threshold: 1e-01, stays: 861/19123 (4.5%), jumps: 18262/19123 (95.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.577, mu=-16.2317, sigma=6.3058
+  Posterior means:
+    alpha:    0.955 (std=0.007)
+    mu:       -16.2333 (std=0.0458)
+    sigma:    6.3053 (std=0.0318)
+    P(stay):  0.3849 (mean)
+    n_jumps:  18262.0/19123 (mean)
+      pct=10.0% IS=0.2874224360315143 OOS=1.38364779874214 [17s]
+  DOL target= 101 -> 78.66/d build=7s
+  epsilon threshold: 1e-01, stays: 3348/47327 (7.1%), jumps: 43979/47327 (92.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.086, mu=-18.4567, sigma=9.0346
+  Posterior means:
+    alpha:    0.929 (std=0.005)
+    mu:       -18.4581 (std=0.0417)
+    sigma:    9.0342 (std=0.0290)
+    P(stay):  0.3949 (mean)
+    n_jumps:  43979.0/47327 (mean)
+      pct= 0.0% IS=1.1383333333333325 OOS=2.0168067226890756 [27s]
+  epsilon threshold: 1e-01, stays: 3353/47289 (7.1%), jumps: 43936/47289 (92.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.080, mu=-18.4630, sigma=9.0355
+  Posterior means:
+    alpha:    0.929 (std=0.005)
+    mu:       -18.4645 (std=0.0417)
+    sigma:    9.0351 (std=0.0290)
+    P(stay):  0.3950 (mean)
+    n_jumps:  43936.0/47289 (mean)
+      pct=0.08% IS=1.0733333333333348 OOS=1.9825653100123333 [29s]
+  epsilon threshold: 1e-01, stays: 3362/47090 (7.1%), jumps: 43728/47090 (92.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.073, mu=-18.4927, sigma=9.0430
+  Posterior means:
+    alpha:    0.928 (std=0.005)
+    mu:       -18.4942 (std=0.0419)
+    sigma:    9.0425 (std=0.0291)
+    P(stay):  0.3952 (mean)
+    n_jumps:  43728.0/47090 (mean)
+      pct= 0.5% IS=1.2808333333333348 OOS=1.9255663430420722 [29s]
+  epsilon threshold: 1e-01, stays: 3374/46853 (7.2%), jumps: 43479/46853 (92.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.068, mu=-18.5263, sigma=9.0535
+  Posterior means:
+    alpha:    0.928 (std=0.005)
+    mu:       -18.5277 (std=0.0420)
+    sigma:    9.0530 (std=0.0292)
+    P(stay):  0.3954 (mean)
+    n_jumps:  43479.0/46853 (mean)
+      pct= 1.0% IS=1.0808333333333362 OOS=1.99358593992823 [29s]
+  epsilon threshold: 1e-01, stays: 3399/46143 (7.4%), jumps: 42744/46143 (92.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.061, mu=-18.6226, sigma=9.0892
+  Posterior means:
+    alpha:    0.926 (std=0.005)
+    mu:       -18.6240 (std=0.0425)
+    sigma:    9.0888 (std=0.0295)
+    P(stay):  0.3961 (mean)
+    n_jumps:  42744.0/46143 (mean)
+      pct= 2.5% IS=1.203333333333335 OOS=1.8674148319483728 [28s]
+  epsilon threshold: 1e-01, stays: 3422/44960 (7.6%), jumps: 41538/44960 (92.4%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.053, mu=-18.7792, sigma=9.1559
+  Posterior means:
+    alpha:    0.924 (std=0.005)
+    mu:       -18.7807 (std=0.0434)
+    sigma:    9.1555 (std=0.0301)
+    P(stay):  0.3970 (mean)
+    n_jumps:  41538.0/44960 (mean)
+      pct= 5.0% IS=1.1550000000000011 OOS=1.862984970290108 [28s]
+  epsilon threshold: 1e-01, stays: 3451/43540 (7.9%), jumps: 40089/43540 (92.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.047, mu=-18.9670, sigma=9.2438
+  Posterior means:
+    alpha:    0.921 (std=0.005)
+    mu:       -18.9685 (std=0.0445)
+    sigma:    9.2433 (std=0.0309)
+    P(stay):  0.3983 (mean)
+    n_jumps:  40089.0/43540 (mean)
+      pct= 8.0% IS=0.8899999999999993 OOS=1.6943322865260946 [27s]
+  epsilon threshold: 1e-01, stays: 3455/42594 (8.1%), jumps: 39139/42594 (91.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.045, mu=-19.0936, sigma=9.3063
+  Posterior means:
+    alpha:    0.919 (std=0.005)
+    mu:       -19.0952 (std=0.0453)
+    sigma:    9.3058 (std=0.0314)
+    P(stay):  0.3990 (mean)
+    n_jumps:  39139.0/42594 (mean)
+      pct=10.0% IS=1.3274999999999995 OOS=1.8161516725913749 [27s]
+  DOL target= 200 -> 132.89/d build=8s
+  epsilon threshold: 1e-01, stays: 11488/80213 (14.3%), jumps: 68725/80213 (85.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.955, mu=-22.7383, sigma=12.4341
+  Posterior means:
+    alpha:    0.857 (std=0.003)
+    mu:       -22.7398 (std=0.0441)
+    sigma:    12.4337 (std=0.0306)
+    P(stay):  0.4245 (mean)
+    n_jumps:  68725.0/80213 (mean)
+      pct= 0.0% IS=4.025000000000003 OOS=4.979850896635098 [43s]
+  epsilon threshold: 1e-01, stays: 11510/80148 (14.4%), jumps: 68638/80148 (85.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.950, mu=-22.7477, sigma=12.4347
+  Posterior means:
+    alpha:    0.856 (std=0.003)
+    mu:       -22.7492 (std=0.0441)
+    sigma:    12.4343 (std=0.0306)
+    P(stay):  0.4247 (mean)
+    n_jumps:  68638.0/80148 (mean)
+      pct=0.08% IS=4.0675 OOS=4.995798460555948 [43s]
+  epsilon threshold: 1e-01, stays: 11554/79811 (14.5%), jumps: 68257/79811 (85.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.942, mu=-22.7928, sigma=12.4415
+  Posterior means:
+    alpha:    0.855 (std=0.003)
+    mu:       -22.7943 (std=0.0442)
+    sigma:    12.4411 (std=0.0307)
+    P(stay):  0.4252 (mean)
+    n_jumps:  68257.0/79811 (mean)
+      pct= 0.5% IS=3.934166666666666 OOS=4.951942533387295 [42s]
+  epsilon threshold: 1e-01, stays: 11591/79410 (14.6%), jumps: 67819/79410 (85.4%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.937, mu=-22.8445, sigma=12.4515
+  Posterior means:
+    alpha:    0.854 (std=0.003)
+    mu:       -22.8460 (std=0.0444)
+    sigma:    12.4511 (std=0.0308)
+    P(stay):  0.4257 (mean)
+    n_jumps:  67819.0/79410 (mean)
+      pct= 1.0% IS=4.155833333333333 OOS=5.001693336720005 [38s]
+  epsilon threshold: 1e-01, stays: 11682/78207 (14.9%), jumps: 66525/78207 (85.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.926, mu=-22.9964, sigma=12.4861
+  Posterior means:
+    alpha:    0.851 (std=0.003)
+    mu:       -22.9979 (std=0.0449)
+    sigma:    12.4857 (std=0.0311)
+    P(stay):  0.4272 (mean)
+    n_jumps:  66525.0/78207 (mean)
+      pct= 2.5% IS=4.110000000000001 OOS=5.048828124999999 [54s]
+  epsilon threshold: 1e-01, stays: 11818/76202 (15.5%), jumps: 64384/76202 (84.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.913, mu=-23.2491, sigma=12.5504
+  Posterior means:
+    alpha:    0.845 (std=0.003)
+    mu:       -23.2506 (std=0.0457)
+    sigma:    12.5500 (std=0.0317)
+    P(stay):  0.4296 (mean)
+    n_jumps:  64384.0/76202 (mean)
+      pct= 5.0% IS=4.112499999999998 OOS=4.861387174390626 [36s]
+  epsilon threshold: 1e-01, stays: 11967/73795 (16.2%), jumps: 61828/73795 (83.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.902, mu=-23.5585, sigma=12.6341
+  Posterior means:
+    alpha:    0.838 (std=0.003)
+    mu:       -23.5601 (std=0.0467)
+    sigma:    12.6336 (std=0.0324)
+    P(stay):  0.4327 (mean)
+    n_jumps:  61828.0/73795 (mean)
+      pct= 8.0% IS=3.845833333333335 OOS=4.545950197529538 [38s]
+  epsilon threshold: 1e-01, stays: 12046/72191 (16.7%), jumps: 60145/72191 (83.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.898, mu=-23.7704, sigma=12.6926
+  Posterior means:
+    alpha:    0.833 (std=0.003)
+    mu:       -23.7720 (std=0.0475)
+    sigma:    12.6921 (std=0.0329)
+    P(stay):  0.4347 (mean)
+    n_jumps:  60145.0/72191 (mean)
+      pct=10.0% IS=3.267499999999998 OOS=4.088612655835422 [39s]
+  DOL target=   8 -> 7.77/d build=8s
+  epsilon threshold: 1e-01, stays: 111/4635 (2.4%), jumps: 4524/4635 (97.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.699, mu=-13.2766, sigma=3.8802
+  Posterior means:
+    alpha:    0.976 (std=0.015)
+    mu:       -13.2786 (std=0.0573)
+    sigma:    3.8792 (std=0.0397)
+    P(stay):  0.3769 (mean)
+    n_jumps:  4524.0/4635 (mean)
+      pct= 0.0% IS=0.13373597929249392 OOS=0.9198242723778142 [5s]
+  epsilon threshold: 1e-01, stays: 111/4631 (2.4%), jumps: 4520/4631 (97.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.672, mu=-13.2827, sigma=3.8764
+  Posterior means:
+    alpha:    0.976 (std=0.015)
+    mu:       -13.2847 (std=0.0572)
+    sigma:    3.8754 (std=0.0397)
+    P(stay):  0.3769 (mean)
+    n_jumps:  4520.0/4631 (mean)
+      pct=0.08% IS=0.07484168105929652 OOS=0.8573784006595245 [4s]
+  epsilon threshold: 1e-01, stays: 111/4611 (2.4%), jumps: 4500/4611 (97.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.743, mu=-13.3039, sigma=3.8712
+  Posterior means:
+    alpha:    0.976 (std=0.015)
+    mu:       -13.3059 (std=0.0573)
+    sigma:    3.8702 (std=0.0397)
+    P(stay):  0.3770 (mean)
+    n_jumps:  4500.0/4611 (mean)
+      pct= 0.5% IS=0.117085862966175 OOS=0.9933774834437082 [4s]
+  epsilon threshold: 1e-01, stays: 111/4588 (2.4%), jumps: 4477/4588 (97.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.730, mu=-13.3254, sigma=3.8690
+  Posterior means:
+    alpha:    0.975 (std=0.015)
+    mu:       -13.3274 (std=0.0574)
+    sigma:    3.8680 (std=0.0398)
+    P(stay):  0.3770 (mean)
+    n_jumps:  4477.0/4588 (mean)
+      pct= 1.0% IS=0.15726011476720045 OOS=0.8568269762299607 [4s]
+  epsilon threshold: 1e-01, stays: 111/4519 (2.5%), jumps: 4408/4519 (97.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.981, mu=-13.3842, sigma=3.8687
+  Posterior means:
+    alpha:    0.975 (std=0.015)
+    mu:       -13.3862 (std=0.0578)
+    sigma:    3.8677 (std=0.0401)
+    P(stay):  0.3772 (mean)
+    n_jumps:  4408.0/4519 (mean)
+      pct= 2.5% IS=0.22492625368731467 OOS=1.0634118967452302 [4s]
+  epsilon threshold: 1e-01, stays: 111/4403 (2.5%), jumps: 4292/4403 (97.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.016, mu=-13.4761, sigma=3.8771
+  Posterior means:
+    alpha:    0.974 (std=0.015)
+    mu:       -13.4781 (std=0.0587)
+    sigma:    3.8761 (std=0.0407)
+    P(stay):  0.3774 (mean)
+    n_jumps:  4292.0/4403 (mean)
+      pct= 5.0% IS=0.17408416590977774 OOS=1.4423353465631301 [4s]
+  epsilon threshold: 1e-01, stays: 112/4264 (2.6%), jumps: 4152/4264 (97.4%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.392, mu=-13.5807, sigma=3.8955
+  Posterior means:
+    alpha:    0.973 (std=0.015)
+    mu:       -13.5828 (std=0.0599)
+    sigma:    3.8944 (std=0.0416)
+    P(stay):  0.3778 (mean)
+    n_jumps:  4152.0/4264 (mean)
+      pct= 8.0% IS=0.08401719421648875 OOS=2.4501932798096977 [4s]
+  epsilon threshold: 1e-01, stays: 112/4171 (2.7%), jumps: 4059/4171 (97.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.6495, sigma=3.9110
+  Posterior means:
+    alpha:    0.973 (std=0.016)
+    mu:       -13.6516 (std=0.0608)
+    sigma:    3.9099 (std=0.0422)
+    P(stay):  0.3780 (mean)
+    n_jumps:  4059.0/4171 (mean)
+      pct=10.0% IS=0.12543943751997647 OOS=1.8712394705174493 [4s]
+  DOL target=   5 -> 4.91/d build=7s
+  epsilon threshold: 1e-01, stays: 81/2928 (2.8%), jumps: 2847/2928 (97.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.582, mu=-12.6383, sigma=3.2175
+  Posterior means:
+    alpha:    0.972 (std=0.019)
+    mu:       -12.6403 (std=0.0597)
+    sigma:    3.2163 (std=0.0414)
+    P(stay):  0.3783 (mean)
+    n_jumps:  2847.0/2928 (mean)
+      pct= 0.0% IS=0.16387845681119786 OOS=1.2527091460771587 [3s]
+  epsilon threshold: 1e-01, stays: 81/2925 (2.8%), jumps: 2844/2925 (97.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.573, mu=-12.6454, sigma=3.2115
+  Posterior means:
+    alpha:    0.972 (std=0.019)
+    mu:       -12.6475 (std=0.0597)
+    sigma:    3.2102 (std=0.0414)
+    P(stay):  0.3783 (mean)
+    n_jumps:  2844.0/2925 (mean)
+      pct=0.08% IS=0.109364319890636 OOS=1.228298611111106 [3s]
+  epsilon threshold: 1e-01, stays: 83/2913 (2.8%), jumps: 2830/2913 (97.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.588, mu=-12.6669, sigma=3.2001
+  Posterior means:
+    alpha:    0.971 (std=0.019)
+    mu:       -12.6690 (std=0.0596)
+    sigma:    3.1989 (std=0.0413)
+    P(stay):  0.3787 (mean)
+    n_jumps:  2830.0/2913 (mean)
+      pct= 0.5% IS=0.21276595744681082 OOS=1.1792863359442975 [3s]
+  epsilon threshold: 1e-01, stays: 83/2898 (2.9%), jumps: 2815/2898 (97.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.622, mu=-12.6877, sigma=3.1952
+  Posterior means:
+    alpha:    0.971 (std=0.019)
+    mu:       -12.6898 (std=0.0596)
+    sigma:    3.1940 (std=0.0413)
+    P(stay):  0.3787 (mean)
+    n_jumps:  2815.0/2898 (mean)
+      pct= 1.0% IS=0.16614924686673582 OOS=0.906895037329822 [3s]
+  epsilon threshold: 1e-01, stays: 84/2854 (2.9%), jumps: 2770/2854 (97.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.810, mu=-12.7436, sigma=3.1876
+  Posterior means:
+    alpha:    0.970 (std=0.019)
+    mu:       -12.7456 (std=0.0599)
+    sigma:    3.1864 (std=0.0416)
+    P(stay):  0.3790 (mean)
+    n_jumps:  2770.0/2854 (mean)
+      pct= 2.5% IS=0.06713368359602907 OOS=0.6853582554517127 [3s]
+  epsilon threshold: 1e-01, stays: 88/2781 (3.2%), jumps: 2693/2781 (96.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.909, mu=-12.8301, sigma=3.1835
+  Posterior means:
+    alpha:    0.968 (std=0.019)
+    mu:       -12.8322 (std=0.0606)
+    sigma:    3.1822 (std=0.0420)
+    P(stay):  0.3798 (mean)
+    n_jumps:  2693.0/2781 (mean)
+      pct= 5.0% IS=0.13419602204648898 OOS=0.7377049180327848 [3s]
+  epsilon threshold: 1e-01, stays: 89/2693 (3.3%), jumps: 2604/2693 (96.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.281, mu=-12.9301, sigma=3.1858
+  Posterior means:
+    alpha:    0.967 (std=0.019)
+    mu:       -12.9322 (std=0.0617)
+    sigma:    3.1845 (std=0.0428)
+    P(stay):  0.3804 (mean)
+    n_jumps:  2604.0/2693 (mean)
+      pct= 8.0% IS=0.22766641920316447 OOS=0.5088702147525682 [3s]
+  epsilon threshold: 1e-01, stays: 88/2635 (3.3%), jumps: 2547/2635 (96.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.468, mu=-12.9949, sigma=3.1903
+  Posterior means:
+    alpha:    0.966 (std=0.019)
+    mu:       -12.9970 (std=0.0624)
+    sigma:    3.1889 (std=0.0433)
+    P(stay):  0.3805 (mean)
+    n_jumps:  2547.0/2635 (mean)
+      pct=10.0% IS=0.22888214466363324 OOS=0.6015216357584402 [3s]
+  DOL target=   1 -> 1.18/d build=9s
+  epsilon threshold: 1e-01, stays: 22/597 (3.7%), jumps: 575/597 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.6291, sigma=2.2148
+  Posterior means:
+    alpha:    0.963 (std=0.041)
+    mu:       -10.6322 (std=0.0910)
+    sigma:    2.2114 (std=0.0629)
+    P(stay):  0.3816 (mean)
+    n_jumps:  575.0/597 (mean)
+      pct= 0.0% IS=0.26755852842809585 OOS=2.2784810126582293 [2s]
+  epsilon threshold: 1e-01, stays: 22/596 (3.7%), jumps: 574/596 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.6381, sigma=2.2057
+  Posterior means:
+    alpha:    0.963 (std=0.041)
+    mu:       -10.6412 (std=0.0907)
+    sigma:    2.2023 (std=0.0627)
+    P(stay):  0.3817 (mean)
+    n_jumps:  574.0/596 (mean)
+      pct=0.08% IS=0.3322166387492989 OOS=1.9002123142250522 [2s]
+  epsilon threshold: 1e-01, stays: 22/594 (3.7%), jumps: 572/594 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.6546, sigma=2.1909
+  Posterior means:
+    alpha:    0.963 (std=0.041)
+    mu:       -10.6577 (std=0.0902)
+    sigma:    2.1875 (std=0.0623)
+    P(stay):  0.3817 (mean)
+    n_jumps:  572.0/594 (mean)
+      pct= 0.5% IS=0.3921568627450978 OOS=1.369426751592357 [2s]
+  epsilon threshold: 1e-01, stays: 22/591 (3.7%), jumps: 569/591 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.6766, sigma=2.1745
+  Posterior means:
+    alpha:    0.963 (std=0.041)
+    mu:       -10.6796 (std=0.0898)
+    sigma:    2.1711 (std=0.0620)
+    P(stay):  0.3818 (mean)
+    n_jumps:  569.0/591 (mean)
+      pct= 1.0% IS=0.39414414414414206 OOS=1.369426751592357 [2s]
+  epsilon threshold: 1e-01, stays: 22/582 (3.8%), jumps: 560/582 (96.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.7307, sigma=2.1466
+  Posterior means:
+    alpha:    0.962 (std=0.041)
+    mu:       -10.7338 (std=0.0893)
+    sigma:    2.1433 (std=0.0617)
+    P(stay):  0.3820 (mean)
+    n_jumps:  560.0/582 (mean)
+      pct= 2.5% IS=0.2858776443682138 OOS=1.9892473118279532 [2s]
+  epsilon threshold: 1e-01, stays: 22/567 (3.9%), jumps: 545/567 (96.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.8114, sigma=2.1157
+  Posterior means:
+    alpha:    0.961 (std=0.042)
+    mu:       -10.8145 (std=0.0892)
+    sigma:    2.1123 (std=0.0616)
+    P(stay):  0.3824 (mean)
+    n_jumps:  545.0/567 (mean)
+      pct= 5.0% IS=0.08802816901408288 OOS=1.5894039735099323 [2s]
+  epsilon threshold: 1e-01, stays: 23/549 (4.2%), jumps: 526/549 (95.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.356, mu=-10.9002, sigma=2.0914
+  Posterior means:
+    alpha:    0.958 (std=0.042)
+    mu:       -10.9032 (std=0.0896)
+    sigma:    2.0879 (std=0.0619)
+    P(stay):  0.3835 (mean)
+    n_jumps:  526.0/549 (mean)
+      pct= 8.0% IS=0.2424242424242428 OOS=1.981981981981983 [2s]
+  epsilon threshold: 1e-01, stays: 22/537 (4.1%), jumps: 515/537 (95.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.552, mu=-10.9580, sigma=2.0780
+  Posterior means:
+    alpha:    0.959 (std=0.043)
+    mu:       -10.9611 (std=0.0900)
+    sigma:    2.0745 (std=0.0622)
+    P(stay):  0.3832 (mean)
+    n_jumps:  515.0/537 (mean)
+      pct=10.0% IS=0.19206939281288804 OOS=2.060185185185182 [2s]
+
+==============================================================================
+ANALYSIS — IS (train) vs OOS (test) AAD, 128 cells (8 bpd x 8 pct x 2 constr)
+==============================================================================
+
+Top-10 by TRAIN AAD (IS champion) -> their TEST rank (does order persist?):
+   # constr     bpd    pct  AAD_tr  AAD_te te_rank      CI95%(te)
+   1   cal    13.0    2.5   0.038   0.398      10    [0.32,1.62]
+   2   cal    13.0   10.0   0.044   0.829      74    [0.43,2.05]
+   3   dol   23.86    1.0   0.050   0.820      73    [0.46,1.43]
+   4   cal    26.0    5.0   0.051   0.399      11    [0.26,1.16]
+   5   cal    26.0    8.0   0.057   0.501      18    [0.33,1.27]
+   6   cal    26.0    2.5   0.067   0.459      14    [0.29,1.10]
+   7   dol    4.91    2.5   0.067   0.685      52    [0.47,2.62]
+   8   dol   23.86    5.0   0.072   0.705      57    [0.45,1.52]
+   9   dol    7.77   0.08   0.075   0.857      77    [0.46,2.32]
+  10   cal    26.0   10.0   0.076   0.451      13    [0.28,1.29]
+
+  1/10 of the train-top-10 stay in the test-top-10.
+
+Spearman rank corr (train vs test AAD, all 128 cells): rho=0.557 (z=6.28, p~3.4e-10)
+
+Top-10 by TEST AAD (OOS) -> their TRAIN rank:
+   # constr     bpd    pct  AAD_te  AAD_tr tr_rank      CI95%(te)  mc_se
+   1   dol   12.41   10.0   0.151   0.113      37    [0.28,1.43]  0.046
+   2   cal    13.0    1.0   0.208   0.106      33    [0.28,1.42]  0.036
+   3   cal    13.0    5.0   0.245   0.079      12    [0.29,1.44]  0.033
+   4   dol   12.41    2.5   0.306   0.102      31    [0.30,1.45]  0.054
+   5   dol   12.41    5.0   0.320   0.117      43    [0.32,1.45]  0.060
+   6   dol   12.41    1.0   0.370   0.114      38    [0.30,1.42]  0.107
+   7   dol   12.41    0.0   0.384   0.129      48    [0.33,1.53]  0.021
+   8   cal    26.0    1.0   0.386   0.090      23    [0.25,1.12]  0.029
+   9   dol   12.41   0.08   0.388   0.088      20    [0.32,1.50]  0.058
+  10   cal    13.0    2.5   0.398   0.038       1    [0.32,1.62]  0.047
+
+Is the OOS-best statistically the best?
+  best: 12.41/10.0% AAD_te=0.151 CI=[0.28,1.43] mc_se=0.046 combined_se=0.297
+  2nd:  13.0/1.0% AAD_te=0.208 CI=[0.28,1.42] combined_se=0.293
+  gap(best,2nd)=0.057pp  SE(diff)=0.417  z=0.14  p~0.89
+  cells whose 95% CI overlaps the best's CI: 109/127
+  -> NOT statistically separable at 5%.
+
+(note: CI is observation-sampling only; mc_se is n_sim noise; combined_se=quad-sum. CIs are per-cell independent, not paired — cells have different test sets after cleaning.)
+
+WROTE docs/grid_is_oos.json

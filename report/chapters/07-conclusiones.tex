@@ -9,7 +9,7 @@ Este trabajo demuestra tres hallazgos estructurales sobre el modelo SF-Harris:
 
 \begin{enumerate}
     \item \textbf{La distribuci\'{o}n emp\'{\'i}rica $Q$ supera a la param\'{e}trica.}
-    Resamplear de los datos de entrenamiento (AAD 0.2\,pp) es mejor que ajustar una
+    Resamplear de los datos de entrenamiento (AAD 0.3\,pp) es mejor que ajustar una
     GIG (AAD 0.8\,pp) o una gaussiana (AAD 26\,pp+). La distribuci\'{o}n emp\'{\'i}rica
     captura asimetr\'{\'i}a y curtosis sin imponer forma funcional.
 
@@ -45,6 +45,18 @@ valor de $\pstay$ funciona igual.
     \item \textbf{Un solo activo:} Todos los resultados son para IBM. La
     extensi\'{o}n a m\'{u}ltiples activos requiere estimaci\'{o}n conjunta de la
     matriz de covarianza.
+
+    \item \textbf{Fuga residual train/test (declarada):} Los titulares citados
+    ---AAD 0.3\,pp con barras de d\'{o}lar, calendario 15\,min 0.5\,pp, descomposici\'{o}n
+    $9.4 \to 2.0$\,pp y la Tabla~\ref{tab:table3}--- se calcularon con un protocolo
+    libre de fuga: la limpieza (umbral de saltos) y la periodicidad intrad\'{\'i}a se
+    ajustan \emph{solo} sobre la ventana de entrenamiento y se aplican al test. Los
+    AADs absolutos de las pruebas auxiliares (Tests 2--10, filtro de Kalman,
+    estimadores simples, barridos de $\pstay$ y de $\varepsilon$) conservan a\'{u}n la
+    fuga y deben leerse como \textbf{provisionales}; no obstante, sus conclusiones
+    \emph{relativas} ($\pstay$ decorativa: AAD esencialmente plano entre brazos;
+    denoising de $\tau^*$ reduce el AAD) son robustas porque la fuga desplaza ambos
+    brazos por igual.
 \end{enumerate}
 
 \section{Trabajo futuro}
