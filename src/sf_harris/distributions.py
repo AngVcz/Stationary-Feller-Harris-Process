@@ -1,14 +1,11 @@
-"""Invariant distributions for the SF-Harris process: Discrete Uniform and GIG."""
+"""Distribuciones invariantes del proceso SF-Harris: Uniforme Discreta y GIG."""
 import numpy as np
 from numpy.typing import NDArray
 from scipy.special import kv as bessel_kv
 
 
 class DiscreteUniformQ:
-    """Discrete Uniform distribution on {1, 2, ..., m}.
-
-    PMF: P(X = i) = 1/m for i = 1, 2, ..., m.
-    """
+    """Uniforme discreta en {1, ..., m}: P(X = i) = 1/m."""
 
     def __init__(self, m: int = 5):
         self.m = m
@@ -31,26 +28,15 @@ class DiscreteUniformQ:
 
     @property
     def pmf_same(self) -> float:
-        """P_Q(X_t = X_{t-1}) = 1/m for discrete uniform."""
+        # P_Q(X_t = X_{t-1}) = 1/m (uniforme discreta)
         return 1.0 / self.m
 
 
 class GIGQ:
-    """Generalized Inverse Gaussian (GIG) distribution.
+    """GIG: f(x) = eta^lam / (2 K_lam(kappa)) * x^(lam-1) * exp{-(kappa/2)(eta x + 1/(eta x))}.
 
-    Density: f(x; lambda, kappa, eta) = (eta^lambda / (2 K_lambda(kappa)))
-             * x^{lambda-1} * exp{-(kappa/2)(eta*x + 1/(eta*x))}
-
-    for x > 0, where K_lambda is the modified Bessel function of the second kind.
-
-    Standard parameterization: chi = kappa/eta, psi = kappa*eta.
-    Sampling via transformation: X = (kappa/eta) * Z where Z ~ GIG(lambda, 1, kappa^2),
-    using scipy.stats.geninvgauss.
-
-    Args:
-        lam: Shape parameter (lambda). Can be negative.
-        kappa: Concentration parameter. Must be > 0.
-        eta: Scale parameter. Must be > 0.
+    Parámetros estándar: chi = kappa/eta, psi = kappa*eta.
+    Muestreo: X = Z/eta con Z ~ GIG(lam, 1, kappa^2) (scipy).
     """
 
     def __init__(self, lam: float, kappa: float, eta: float):
@@ -63,23 +49,18 @@ class GIGQ:
         self.eta = eta
 
     def sample(self, rng: np.random.Generator) -> float:
-        """Sample from GIG(lambda, kappa, eta) via scipy transformation."""
         from scipy.stats import geninvgauss
-        # Z ~ geninvgauss(lambda, b=kappa) has density:
-        # z^(lam-1) * exp(-kappa*(z+1/z)/2) / (2*K_lam(kappa))
-        # X = Z/eta gives GIG(lam, kappa, eta) density:
-        # eta^lam/(2*K_lam(kappa)) * x^(lam-1) * exp(-kappa/2*(eta*x + 1/(eta*x)))
+        # cambio de variable: Z ~ geninvgauss(lam, kappa), X = Z/eta
+        # => densidad GIG(lam, kappa, eta) con el mismo K_lam(kappa)
         z = geninvgauss.rvs(self.lam, self.kappa, random_state=rng)
         return float(z / self.eta)
 
     def sample_n(self, n: int, rng: np.random.Generator) -> NDArray[np.float64]:
-        """Draw n samples from GIG."""
         from scipy.stats import geninvgauss
         z = geninvgauss.rvs(self.lam, self.kappa, size=n, random_state=rng)
         return z / self.eta
 
     def density(self, x: float) -> float:
-        """Evaluate GIG density at x."""
         if x <= 0:
             return 0.0
         log_f = (
@@ -91,7 +72,6 @@ class GIGQ:
         return np.exp(log_f)
 
     def density_array(self, x: NDArray[np.float64]) -> NDArray[np.float64]:
-        """Evaluate GIG density for an array of values."""
         result = np.zeros_like(x)
         mask = x > 0
         log_f = (
@@ -104,7 +84,6 @@ class GIGQ:
         return result
 
     def log_density(self, x: float) -> float:
-        """Evaluate log GIG density at x."""
         if x <= 0:
             return -np.inf
         return (
@@ -115,19 +94,10 @@ class GIGQ:
         )
 
     def kl_divergence(self, other: "GIGQ") -> float:
-        """KL(GIG(self) || GIG(other)) between two GIG distributions.
-
-        Uses analytical formula with (chi, psi) parameterization:
-            chi = kappa*eta, psi = kappa/eta
-
-        KL(p||q) = (lam_p/2)*log(chi_p/psi_p) - (lam_q/2)*log(chi_q/psi_q)
-                   - log(K_{lam_p}(omega_p)) + log(K_{lam_q}(omega_q))
-                   + (lam_p - lam_q)*E_p[log X]
-                   - (chi_p - chi_q)/2 * E_p[X]
-                   - (psi_p - psi_q)/2 * E_p[1/X]
-        """
+        """KL(GIG(self) || GIG(other)), fórmula analítica en (chi, psi)."""
         from scipy.special import kv as bessel_kv
 
+        # chi = kappa*eta, psi = kappa/eta (parámetros estándar de GIG)
         chi_p = self.kappa * self.eta
         psi_p = self.kappa / self.eta
         chi_q = other.kappa * other.eta
@@ -164,7 +134,7 @@ class GIGQ:
             return self._kl_divergence_mc(other)
 
     def _kl_divergence_mc(self, other: "GIGQ", n_samples: int = 50000) -> float:
-        """Monte Carlo fallback for KL divergence."""
+        # fallback Monte Carlo para la KL (cuando la fórmula analítica falla)
         rng = np.random.default_rng(42)
         samples = self.sample_n(n_samples, rng)
         log_ratios = np.array([
@@ -177,7 +147,7 @@ class GIGQ:
         return max(float(np.mean(log_ratios)), 0.0)
 
     def _mode(self) -> float:
-        """Compute the mode of the GIG distribution."""
+        # moda: raíz de f'(x) = 0 => x* = ((lam-1) + sqrt((lam-1)^2 + kappa^2)) / (kappa*eta)
         discriminant = (self.lam - 1) ** 2 + self.kappa ** 2
         if discriminant < 0:
             return 1.0 / self.eta

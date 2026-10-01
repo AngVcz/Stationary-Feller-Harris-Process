@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SF-Harris — modelo y workflow</title>
+<style>
+  /* ---- tokens: light is the default ground ---- */
+  :root{
+    --bg:#fcfcfb; --card:#ffffff; --ink:#0b0b0b; --ink2:#52514e;
+    --muted:#898781; --line:#e1e0d9; --soft:#f3f2ee;
+    /* accents (the encoding) stay constant across themes */
+    --blue:#2a78d6; --orange:#eb6834; --aqua:#1baf7a; --violet:#4a3aa7;
+    --magenta:#e87ba4; --green:#008300;
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  }
+  /* dark: OS prefers dark and no explicit light stamp */
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#161613; --card:#1f1e1b; --ink:#f5f4ef; --ink2:#c3c2b7;
+      --muted:#898781; --line:#33312b; --soft:#26241f;
+    }
+  }
+  /* dark: explicit toggle wins in the other direction too */
+  :root[data-theme="dark"]{
+    --bg:#161613; --card:#1f1e1b; --ink:#f5f4ef; --ink2:#c3c2b7;
+    --muted:#898781; --line:#33312b; --soft:#26241f;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:1180px; margin:0 auto; padding:48px 28px 72px; }
+
+  header{ margin-bottom:40px; }
+  .eyebrow{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--muted); margin:0 0 14px;
+  }
+  h1{
+    font-family:var(--serif); font-weight:700; font-size:2.4rem;
+    line-height:1.12; margin:0 0 10px; text-wrap:balance;
+    letter-spacing:-.01em;
+  }
+  header p{ color:var(--ink2); font-size:1.02rem; margin:0; max-width:62ch; }
+
+  section{ margin-top:54px; }
+  h2{
+    font-family:var(--serif); font-weight:700; font-size:1.45rem;
+    margin:0 0 6px; letter-spacing:-.005em;
+  }
+  .lede{ color:var(--ink2); font-size:.95rem; margin:0 0 22px; max-width:70ch; }
+
+  figure{ margin:0; }
+  svg{ width:100%; height:auto; display:block; }
+  figcaption{
+    font-family:var(--mono); font-size:.78rem; color:var(--muted);
+    margin-top:14px; line-height:1.6; max-width:90ch;
+  }
+
+  .synth{
+    margin-top:52px; padding:22px 24px; border:1px solid var(--line);
+    border-left:4px solid var(--aqua); border-radius:8px; background:var(--soft);
+  }
+  .synth h2{ font-size:1.2rem; margin:0 0 8px; }
+  .synth p{ margin:0; color:var(--ink2); font-size:.95rem; }
+  .synth b{ color:var(--ink); }
+  .pill{
+    font-family:var(--mono); font-size:.74rem; padding:2px 8px; border-radius:999px;
+    border:1px solid var(--line); color:var(--ink2); margin-right:4px;
+  }
+
+  /* ---- svg theming via classes (kept out of the <svg> itself) ---- */
+  .sf-card{ fill:var(--card); }
+  .sf-conn{ stroke:var(--line); stroke-width:2; fill:none; }
+  .sf-title{ fill:var(--ink); font-family:var(--sans); }
+  .sf-sub{ fill:var(--muted); font-family:var(--sans); }
+  .sf-bullet{ fill:var(--ink2); font-family:var(--sans); }
+  .sf-chip{ fill:var(--card); stroke:var(--line); stroke-width:1.4; }
+  .sf-chip-pivot{ stroke:var(--aqua); stroke-width:2.6; }
+  .sf-arrow{ fill:var(--muted); }
+  .sf-badge-txt{ fill:#ffffff; font-family:var(--sans); font-weight:700; }
+  .sf-center{ fill:var(--ink); }
+  .sf-center-txt{ fill:var(--bg); font-family:var(--sans); }
+  /* accent classes */
+  .st-blue{ stroke:var(--blue);} .tx-blue{ fill:var(--blue);}
+  .st-orange{ stroke:var(--orange);} .tx-orange{ fill:var(--orange);}
+  .st-aqua{ stroke:var(--aqua);} .tx-aqua{ fill:var(--aqua);}
+  .st-violet{ stroke:var(--violet);} .tx-violet{ fill:var(--violet);}
+  .st-magenta{ stroke:var(--magenta);} .tx-magenta{ fill:var(--magenta);}
+  .st-green{ stroke:var(--green);} .tx-green{ fill:var(--green);}
+  .fd-blue{ fill:var(--blue);} .fd-orange{ fill:var(--orange);} .fd-aqua{ fill:var(--aqua);}
+  .fd-violet{ fill:var(--violet);} .fd-muted{ fill:var(--muted);}
+
+  footer{ margin-top:60px; color:var(--muted); font-size:.78rem; font-family:var(--mono); }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none!important; transition:none!important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Mapa mental · modelo y workflow</p>
+    <h1>SF-Harris — volatilidad estocástica</h1>
+    <p>El modelo (sus 6 ingredientes y cómo se relacionan) y el workflow del proyecto (los 7 subsistemas que encadenan fundamentos → núcleo → replicación → tesis → aplicaciones → reporte). Replicación y extensión de Anzarut (2023). IIMAS-UNAM · Licenciatura en Actuaría · servicio social.</p>
+  </header>
+
+  <!-- ============ MODELO ============ -->
+  <section>
+    <h2>El modelo</h2>
+    <p class="lede">Un núcleo (SF-Harris) rodeado de seis ingredientes. El color codifica cada pieza; la rama <b style="color:var(--aqua)">verde-agua</b> es el resultado que el trabajo demuestra: la dinámica temporal es decorativa y el modelo se reduce a dos ingredientes esenciales.</p>
+
+    <figure>
+      <svg viewBox="0 0 1440 880" role="img" aria-label="Mapa mental del modelo SF-Harris: un núcleo central con seis ramas (cadena de Harris, Q invariante, alfa persistencia, resultado decorativa, Gibbs sampler y emisión) unidas por conectores.">
+        <!-- connectors (behind) -->
+        <line class="sf-conn" x1="720" y1="440" x2="230"  y2="130"/>
+        <line class="sf-conn" x1="720" y1="440" x2="1210" y2="130"/>
+        <line class="sf-conn" x1="720" y1="440" x2="230"  y2="440"/>
+        <line class="sf-conn" x1="720" y1="440" x2="1210" y2="440"/>
+        <line class="sf-conn" x1="720" y1="440" x2="230"  y2="750"/>
+        <line class="sf-conn" x1="720" y1="440" x2="1210" y2="750"/>
+
+        <!-- center -->
+        <rect class="sf-center" x="580" y="384" width="280" height="112" rx="14"/>
+        <text class="sf-center-txt" x="720" y="432" font-size="34" font-weight="700" text-anchor="middle">SF-Harris</text>
+        <text class="sf-center-txt" x="720" y="462" font-size="13.5" text-anchor="middle" opacity="0.72">volatilidad estocástica</text>
+
+        <!-- TL: Cadena de Harris (blue) -->
+        <rect class="sf-card st-blue"     x="40"   y="55"  width="380" height="150" rx="12" stroke-width="2.6"/>
+        <text class="sf-title tx-blue"    x="62"  y="87"  font-size="17" font-weight="700">Cadena de Harris  ·  estado latente</text>
+        <text class="sf-bullet"           x="62"  y="117" font-size="12.5">• estado latente  xₜ = log τₜ</text>
+        <text class="sf-bullet"           x="62"  y="145" font-size="12.5">• stay: copia xₜ₋₁,  P = e⁻ᵅ</text>
+        <text class="sf-bullet"           x="62"  y="173" font-size="12.5">• jump: dibuja de Q,  P = 1 − e⁻ᵅ</text>
+
+        <!-- TR: Q invariante (orange) -->
+        <rect class="sf-card st-orange"   x="1020" y="55"  width="380" height="150" rx="12" stroke-width="2.6"/>
+        <text class="sf-title tx-orange"  x="1042" y="87"  font-size="17" font-weight="700">Q invariante  ·  distribución marginal</text>
+        <text class="sf-bullet"           x="1042" y="117" font-size="12.5">• Discreta  ·  GIG  ·  Empírica</text>
+        <text class="sf-bullet"           x="1042" y="145" font-size="12.5">• marginal estacionaria = Q  (por diseño)</text>
+        <text class="sf-bullet"           x="1042" y="173" font-size="12.5">• Q empírica ≈ Historical Simulation</text>
+
+        <!-- ML: alfa persistencia (violet) -->
+        <rect class="sf-card st-violet"   x="40"   y="365" width="380" height="150" rx="12" stroke-width="2.6"/>
+        <text class="sf-title tx-violet"  x="62"  y="397" font-size="17" font-weight="700">α  ·  persistencia temporal</text>
+        <text class="sf-bullet"           x="62"  y="427" font-size="12.5">• α = −log(ρ₁)   (se estima de la ACF)</text>
+        <text class="sf-bullet"           x="62"  y="455" font-size="12.5">• P(stay) = e⁻ᵅ   gobierna lo conjunto</text>
+        <text class="sf-bullet"           x="62"  y="483" font-size="12.5">• no afecta la marginal = Q</text>
+
+        <!-- MR: resultado decorativa (aqua) -->
+        <rect class="sf-card st-aqua"     x="1020" y="365" width="380" height="150" rx="12" stroke-width="2.6"/>
+        <text class="sf-title tx-aqua"    x="1042" y="397" font-size="17" font-weight="700">Resultado:  “decorativa”</text>
+        <text class="sf-bullet"           x="1042" y="427" font-size="12.5">• la cobertura es propiedad MARGINAL</text>
+        <text class="sf-bullet"           x="1042" y="455" font-size="12.5">• → el modelo se reduce a 2 ingredientes</text>
+        <text class="sf-bullet"           x="1042" y="483" font-size="12.5">• Q empírica  +  denoising Gibbs</text>
+
+        <!-- BML: Gibbs sampler (magenta) -->
+        <rect class="sf-card st-magenta"  x="40"   y="675" width="380" height="150" rx="12" stroke-width="2.6"/>
+        <text class="sf-title tx-magenta" x="62"  y="707" font-size="17" font-weight="700">Inferencia:  Gibbs sampler</text>
+        <text class="sf-bullet"           x="62"  y="737" font-size="12.5">• denoising de τ*  (varianza latente)</text>
+        <text class="sf-bullet"           x="62"  y="765" font-size="12.5">• conjugación:  α  y  (μ, σ²)</text>
+        <text class="sf-bullet"           x="62"  y="793" font-size="12.5">• resuelve la casi-no-identific. del GIG</text>
+
+        <!-- BMR: Emision (green) -->
+        <rect class="sf-card st-green"    x="1020" y="675" width="380" height="150" rx="12" stroke-width="2.6"/>
+        <text class="sf-title tx-green"   x="1042" y="707" font-size="17" font-weight="700">Emisión  ·  observación</text>
+        <text class="sf-bullet"           x="1042" y="737" font-size="12.5">• rₜ | τₜ  ~  N(0, τₜ)</text>
+        <text class="sf-bullet"           x="1042" y="765" font-size="12.5">• condicionalmente gaussiana</text>
+        <text class="sf-bullet"           x="1042" y="793" font-size="12.5">• sólo usa τₜ actual</text>
+      </svg>
+      <figcaption>La marginal estacionaria es Q por construcción del kernel — no por un teorema derivado. Por eso, bajo estacionariedad con Q fija, P(stay) sólo reorganiza el orden temporal de los valores y no puede mover la distribución marginal: la cobertura (propiedad marginal) queda anclada a Q empírica ≈ Historical Simulation.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ WORKFLOW ============ -->
+  <section>
+    <h2>El workflow</h2>
+    <p class="lede">Seis subsistemas que se encadenan desde los fundamentos pedagógicos hasta el reporte, más un séptimo de <b>soporte transversal</b> (notas, tests y demos) que atraviesa toda la cadena en lugar de ser una etapa secuencial. El color del badge codifica la fase: <span class="pill">azul</span>construir · <span class="pill">naranja</span>replicar/aplicar · <span class="pill" style="border-color:var(--aqua);color:var(--aqua)">verde-agua</span>tesis (pivote) · <span class="pill">violeta</span>reportar · <span class="pill">gris</span>pedagogía + verificación.</p>
+
+    <figure>
+      <svg viewBox="0 0 1440 252" role="img" aria-label="Workflow del proyecto: seis etapas en pipeline horizontal (Fundamentos, Nucleo SF-Harris, Replicacion Anzarut, Tesis decorativa, Aplicaciones, Reporte LaTeX) unidas por flechas, con la tesis como pivote central; y debajo una banda transversal (subsystem 7, Notas y tests) que da soporte pedagogico y de verificacion a toda la cadena.">
+
+        <!-- arrows between chips (6 chips -> 5 arrows) -->
+        <polygon class="sf-arrow" points="230,109 240,120 230,131"/>
+        <polygon class="sf-arrow" points="470,109 480,120 470,131"/>
+        <polygon class="sf-arrow" points="710,109 720,120 710,131"/>
+        <polygon class="sf-arrow" points="950,109 960,120 950,131"/>
+        <polygon class="sf-arrow" points="1190,109 1200,120 1190,131"/>
+
+        <!-- chip 0: Fundamentos (blue) -->
+        <rect class="sf-chip" x="6"   y="40" width="228" height="150" rx="10"/>
+        <circle class="fd-blue" cx="30" cy="70" r="15"/>
+        <text class="sf-badge-txt" x="30" y="75" font-size="14" text-anchor="middle">1</text>
+        <text class="sf-title" x="52" y="75" font-size="13" font-weight="700">Fundamentos</text>
+        <text class="sf-bullet" x="24" y="107" font-size="11">SSM · Kalman · resampling</text>
+        <text class="sf-sub"    x="24" y="127" font-size="11">kernel → filtrado → IS/ESS</text>
+        <text class="sf-sub"    x="24" y="161" font-size="10.5">src/ssm · filters · resampling</text>
+
+        <!-- chip 1: Nucleo (blue) -->
+        <rect class="sf-chip" x="246" y="40" width="228" height="150" rx="10"/>
+        <circle class="fd-blue" cx="270" cy="70" r="15"/>
+        <text class="sf-badge-txt" x="270" y="75" font-size="14" text-anchor="middle">2</text>
+        <text class="sf-title" x="292" y="75" font-size="13" font-weight="700">Núcleo SF-Harris</text>
+        <text class="sf-bullet" x="264" y="107" font-size="11">cadena · Q · estimadores</text>
+        <text class="sf-sub"    x="264" y="127" font-size="11">NDNJ · MLE · EM · Gibbs</text>
+        <text class="sf-sub"    x="264" y="161" font-size="10.5">src/sf_harris</text>
+
+        <!-- chip 2: Replicacion (orange) -->
+        <rect class="sf-chip" x="486" y="40" width="228" height="150" rx="10"/>
+        <circle class="fd-orange" cx="510" cy="70" r="15"/>
+        <text class="sf-badge-txt" x="510" y="75" font-size="14" text-anchor="middle">3</text>
+        <text class="sf-title" x="532" y="75" font-size="13" font-weight="700">Replicación Anzarut</text>
+        <text class="sf-bullet" x="504" y="107" font-size="11">Tablas II/III · pipeline IBM</text>
+        <text class="sf-sub"    x="504" y="127" font-size="11">dollar vs calendar bars</text>
+        <text class="sf-sub"    x="504" y="161" font-size="10.5">anzarut_replication · table3</text>
+
+        <!-- chip 3: Tesis (aqua, pivot) -->
+        <rect class="sf-chip sf-chip-pivot" x="726" y="40" width="228" height="150" rx="10"/>
+        <circle class="fd-aqua" cx="750" cy="70" r="15"/>
+        <text class="sf-badge-txt" x="750" y="75" font-size="14" text-anchor="middle">4</text>
+        <text class="sf-title tx-aqua" x="772" y="75" font-size="13" font-weight="700">Tesis: ¿decorativa?</text>
+        <text class="sf-bullet" x="744" y="107" font-size="11">10 tests de ablación</text>
+        <text class="sf-sub"    x="744" y="127" font-size="11">aislar cada componente</text>
+        <text class="sf-sub"    x="744" y="161" font-size="10.5">coverage_decomp · sweeps</text>
+
+        <!-- chip 4: Aplicaciones (orange) -->
+        <rect class="sf-chip" x="966" y="40" width="228" height="150" rx="10"/>
+        <circle class="fd-orange" cx="990" cy="70" r="15"/>
+        <text class="sf-badge-txt" x="990" y="75" font-size="14" text-anchor="middle">5</text>
+        <text class="sf-title" x="1012" y="75" font-size="13" font-weight="700">Aplicaciones</text>
+        <text class="sf-bullet" x="984" y="107" font-size="11">mexicanos · VaR · portafolios</text>
+        <text class="sf-sub"    x="984" y="127" font-size="11">selección de modelo (CRPS)</text>
+        <text class="sf-sub"    x="984" y="161" font-size="10.5">markowitz · risk_measurement</text>
+
+        <!-- chip 5: Reporte (violet) -->
+        <rect class="sf-chip" x="1206" y="40" width="228" height="150" rx="10"/>
+        <circle class="fd-violet" cx="1230" cy="70" r="15"/>
+        <text class="sf-badge-txt" x="1230" y="75" font-size="14" text-anchor="middle">6</text>
+        <text class="sf-title" x="1252" y="75" font-size="13" font-weight="700">Reporte LaTeX</text>
+        <text class="sf-bullet" x="1224" y="107" font-size="11">narrativa académica</text>
+        <text class="sf-sub"    x="1224" y="127" font-size="11">borrador + figuras</text>
+        <text class="sf-sub"    x="1224" y="161" font-size="10.5">report/  (7 capítulos)</text>
+
+        <!-- banda transversal: subsistema 7 (soporte, no nodo del pipeline) -->
+        <rect x="6" y="204" width="1428" height="34" rx="8"
+              fill="var(--soft)" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <circle class="fd-muted" cx="30" cy="221" r="12"/>
+        <text class="sf-badge-txt" x="30" y="226" font-size="12" text-anchor="middle">7</text>
+        <text class="sf-sub" x="52" y="226" font-size="12">Notas · tests · demos  —  soporte transversal: pedagogía + verificación de TODA la cadena (no es un nodo del pipeline)</text>
+      </svg>
+      <figcaption>Hilo conductor: kernel de Markov → filtrado recursivo → aproximación Monte Carlo → modelo SF-Harris → inferencia Gibbs → validación empírica → tesis decorativa → aplicaciones → reporte. El subsistema 7 (Notas · tests · demos) es un soporte transversal —pedagogía y verificación— que atraviesa toda la cadena, no una séptima etapa secuencial. La decisión de usar Gibbs en lugar de un filtro de partículas se justifica en el paso 1→2: el objetivo es la posterior sobre parámetros, hay conjugación, y el promedio posterior resuelve la casi-no-identificabilidad del GIG que degeneraría los pesos de un particle filter.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ SYNTHESIS ============ -->
+  <div class="synth">
+    <h2>Síntesis: los dos ingredientes esenciales</h2>
+    <p>El modelo SF-Harris se reduce a <b>Q empírica</b> (≈ Historical Simulation, captura la forma exacta de la marginal) <b>+ denoising bayesiano vía Gibbs</b> (posterior sobre τ* que promedia el ruido de observación). La dinámica temporal — P(stay) = e⁻ᵅ — es <b>decorativa para cobertura</b>: bajo estacionariedad con Q fija, es el andamiaje computacional que deja correr el Gibbs, pero su valor concreto no mueve la marginal. AAD = 0.2–0.3 pp a 15 min (dollar bars); a diario gana Historical Simulation porque rₜ² es un estimador ruidoso (σ ≈ 2.27).</p>
+  </div>
+
+  <footer>Ángel Vences Adame · IIMAS-UNAM · servicio social · 2025 — mapa mental del modelo y workflow SF-Harris</footer>
+
+</div>
+</body>
+</html>

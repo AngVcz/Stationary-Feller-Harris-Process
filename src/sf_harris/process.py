@@ -1,13 +1,7 @@
-"""SF-Harris process: simulation and transition dynamics.
+"""Proceso SF-Harris: x_t | x_{t-1} ~ (1 - e^{-alpha}) Q + e^{-alpha} delta_{x_{t-1}}.
 
-The SF-Harris process is a discrete-time Markov chain with:
-  x_t | x_{t-1} ~ (1 - e^{-alpha}) Q + e^{-alpha} delta_{x_{t-1}}
-
-At each step, with probability (1 - e^{-alpha}), the process regenerates
-from invariant distribution Q. Otherwise it stays at its current value.
-
-For continuous Q, observing a change (x_t != x_{t-1}) implies a jump.
-For discrete Q, jumps can be hidden (process jumps but draws same value).
+Con prob. 1 - e^{-alpha} se regenera de Q; si no, se queda igual.
+Q continua: x_t != x_{t-1} <=> salto. Q discreta: puede haber saltos ocultos.
 """
 import numpy as np
 from numpy.typing import NDArray
@@ -15,14 +9,10 @@ from typing import Callable
 
 
 class SFHarrisProcess:
-    """SF-Harris process simulator and likelihood computation.
+    """Simulador del proceso SF-Harris.
 
-    Args:
-        alpha: Dependence/regeneration parameter. Higher alpha means more
-            frequent jumps. alpha=0 means the process never moves.
-        Q_sample: Function(rng) -> value that draws from invariant dist Q.
-        Q_density: Function(value) -> float computing Q density (or PMF).
-            Required for likelihood-based estimation methods.
+    alpha: parámetro de regeneración (alpha=0 => nunca se mueve).
+    Q_sample: rng -> valor de Q. Q_density: densidad (o PMF) de Q.
     """
 
     def __init__(
@@ -39,30 +29,23 @@ class SFHarrisProcess:
 
     @property
     def stay_prob(self) -> float:
-        """P(no jump in one time step) = e^{-alpha}."""
+        # P(no salto en un paso) = e^{-alpha}
         return np.exp(-self.alpha)
 
     @property
     def jump_prob(self) -> float:
-        """P(at least one jump in one time step) = 1 - e^{-alpha}."""
+        # P(al menos un salto) = 1 - e^{-alpha}
         return 1.0 - np.exp(-self.alpha)
 
     def simulate(self, k: int, rng: np.random.Generator | None = None) -> NDArray[np.float64]:
-        """Simulate k observations from the SF-Harris process.
-
-        Args:
-            k: Number of observations.
-            rng: Random number generator for reproducibility.
-
-        Returns:
-            Array of shape (k,) with the simulated observations.
-        """
+        """Simula k observaciones del proceso."""
         if rng is None:
             rng = np.random.default_rng()
 
         obs = np.empty(k)
-        obs[0] = self.Q_sample(rng)
+        obs[0] = self.Q_sample(rng)  # x_0 ~ Q
 
+        # paso a paso: con prob. e^{-alpha} se queda, si no salta
         p_stay = self.stay_prob
         for t in range(1, k):
             if rng.uniform() < p_stay:
@@ -73,15 +56,7 @@ class SFHarrisProcess:
         return obs
 
     def count_transitions(self, obs: NDArray[np.float64]) -> tuple[int, int]:
-        """Count stays and changes in an observation sequence.
-
-        Args:
-            obs: Observation sequence of length k.
-
-        Returns:
-            (n_stay, n_change): number of consecutive pairs where
-                x_t == x_{t-1} and x_t != x_{t-1}.
-        """
+        """Cuenta pares (x_t == x_{t-1}) y (x_t != x_{t-1}); regresa (n_stay, n_change)."""
         changes = obs[1:] != obs[:-1]
         n_change = int(np.sum(changes))
         n_stay = len(obs) - 1 - n_change
@@ -92,18 +67,9 @@ class SFHarrisProcess:
         obs: NDArray[np.float64],
         alpha: float | None = None,
     ) -> float:
-        """Log-likelihood for continuous Q (e.g., GIG).
+        """Log-verosimilitud con Q continua (x_t = x_{t-1} <=> no hubo salto).
 
-        For continuous Q, x_t = x_{t-1} only occurs when there's no jump.
-        The likelihood decomposes as:
-            L = q(x_1) * prod_{t: same} e^{-alpha} * prod_{t: diff} (1-e^{-alpha}) * q(x_t)
-
-        Args:
-            obs: Observation sequence.
-            alpha: Override alpha for likelihood evaluation. Uses self.alpha if None.
-
-        Returns:
-            Log-likelihood value.
+        L = q(x_1) * prod_{t: igual} e^{-alpha} * prod_{t: dif} (1-e^{-alpha}) q(x_t)
         """
         if self.Q_density is None:
             raise ValueError("Q_density required for likelihood computation")
@@ -111,13 +77,11 @@ class SFHarrisProcess:
         a = alpha if alpha is not None else self.alpha
         n_stay, n_change = self.count_transitions(obs)
 
-        # Contribution from stays: n_stay * log(e^{-alpha}) = -n_stay * alpha
-        # Contribution from changes: n_change * log(1 - e^{-alpha})
-        # Plus Q density at each change point and initial value
+        # estancias: n_stay * log(e^{-alpha}); saltos: n_change * log(1 - e^{-alpha})
+        # más densidad de Q en x_0 y en cada punto de cambio
         ll = -n_stay * a + n_change * np.log(1.0 - np.exp(-a))
 
-        # Initial observation
-        ll += np.log(max(self.Q_density(obs[0]), 1e-300))
+        ll += np.log(max(self.Q_density(obs[0]), 1e-300))  # x_0
 
         # Change observations
         changes = obs[1:] != obs[:-1]
@@ -132,17 +96,9 @@ class SFHarrisProcess:
         obs: NDArray[np.float64],
         alpha: float | None = None,
     ) -> float:
-        """Log-likelihood for discrete Q (e.g., Uniform{1,...,5}).
+        """Log-verosimilitud con Q discreta (puede haber saltos ocultos).
 
-        For discrete Q, hidden jumps are possible (jump occurs but lands on
-        same value). P(observe same) = e^{-alpha} + (1-e^{-alpha}) * P_Q(x_t = x_{t-1}).
-
-        Args:
-            obs: Observation sequence.
-            alpha: Override alpha for likelihood evaluation.
-
-        Returns:
-            Log-likelihood value.
+        P(observar igual) = e^{-alpha} + (1-e^{-alpha}) * P_Q(x_t = x_{t-1})
         """
         if self.Q_density is None:
             raise ValueError("Q_density (PMF) required for likelihood computation")
@@ -158,11 +114,11 @@ class SFHarrisProcess:
         for t in range(1, len(obs)):
             q_t = self.Q_density(obs[t])
             if np.isclose(obs[t], obs[t - 1]):
-                # P(x_t = x_{t-1}) = e^{-alpha} + (1-e^{-alpha}) * P_Q(same)
+                # P(igual) = e^{-alpha} + (1-e^{-alpha}) * P_Q(mismo valor)
                 p_same = p_stay + p_jump * self.Q_pmf_same
                 ll += np.log(max(p_same, 1e-300))
             else:
-                # P(x_t != x_{t-1}, x_t) = (1-e^{-alpha}) * P_Q(x_t)
+                # P(diferente, x_t) = (1-e^{-alpha}) * P_Q(x_t)
                 ll += np.log(max(p_jump * q_t, 1e-300))
 
         return ll

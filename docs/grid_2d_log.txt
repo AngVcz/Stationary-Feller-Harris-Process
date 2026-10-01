@@ -1,0 +1,608 @@
+=== CALENDAR GRID ===
+  epsilon threshold: 1e-05, stays: 0/7801 (0.0%), jumps: 7801/7801 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.579, mu=-13.8176, sigma=4.0942
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.8170 (std=0.0464)
+    sigma:    4.0939 (std=0.0334)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7801.0/7801 (mean)
+  CAL  30min ( 13.0/d)  pct= 0.0%  AAD=0.619  p_stay=0.368  [2s]
+  epsilon threshold: 1e-05, stays: 0/7794 (0.0%), jumps: 7794/7794 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.579, mu=-13.8335, sigma=4.0913
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.8328 (std=0.0464)
+    sigma:    4.0910 (std=0.0334)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7794.0/7794 (mean)
+  CAL  30min ( 13.0/d)  pct=0.08%  AAD=0.582  p_stay=0.368  [2s]
+  epsilon threshold: 1e-05, stays: 0/7761 (0.0%), jumps: 7761/7761 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.642, mu=-13.8873, sigma=4.0885
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.8867 (std=0.0465)
+    sigma:    4.0882 (std=0.0335)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7761.0/7761 (mean)
+  CAL  30min ( 13.0/d)  pct= 0.5%  AAD=0.545  p_stay=0.368  [1s]
+  epsilon threshold: 1e-05, stays: 0/7722 (0.0%), jumps: 7722/7722 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.684, mu=-13.9462, sigma=4.0883
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.9456 (std=0.0466)
+    sigma:    4.0880 (std=0.0335)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7722.0/7722 (mean)
+  CAL  30min ( 13.0/d)  pct= 1.0%  AAD=0.208  p_stay=0.368  [1s]
+  epsilon threshold: 1e-05, stays: 0/7605 (0.0%), jumps: 7605/7605 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.797, mu=-14.0727, sigma=4.0923
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -14.0720 (std=0.0470)
+    sigma:    4.0921 (std=0.0338)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7605.0/7605 (mean)
+  CAL  30min ( 13.0/d)  pct= 2.5%  AAD=0.398  p_stay=0.368  [1s]
+  epsilon threshold: 1e-05, stays: 0/7410 (0.0%), jumps: 7410/7410 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.018, mu=-14.2218, sigma=4.1013
+  Posterior means:
+    alpha:    1.000 (std=0.012)
+    mu:       -14.2212 (std=0.0477)
+    sigma:    4.1011 (std=0.0343)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7410.0/7410 (mean)
+  CAL  30min ( 13.0/d)  pct= 5.0%  AAD=0.245  p_stay=0.368  [1s]
+  epsilon threshold: 1e-05, stays: 8/15604 (0.1%), jumps: 15596/15604 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.146, mu=-14.5887, sigma=4.3121
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.5882 (std=0.0346)
+    sigma:    4.3120 (std=0.0249)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15596.0/15604 (mean)
+  CAL  15min ( 26.0/d)  pct= 0.0%  AAD=0.614  p_stay=0.368  [3s]
+  epsilon threshold: 1e-05, stays: 8/15591 (0.1%), jumps: 15583/15591 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.153, mu=-14.6109, sigma=4.3090
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.6104 (std=0.0346)
+    sigma:    4.3089 (std=0.0249)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15583.0/15591 (mean)
+  CAL  15min ( 26.0/d)  pct=0.08%  AAD=0.547  p_stay=0.368  [3s]
+  epsilon threshold: 1e-05, stays: 8/15525 (0.1%), jumps: 15517/15525 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.162, mu=-14.6889, sigma=4.3051
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.6884 (std=0.0346)
+    sigma:    4.3051 (std=0.0249)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15517.0/15525 (mean)
+  CAL  15min ( 26.0/d)  pct= 0.5%  AAD=0.469  p_stay=0.368  [3s]
+  epsilon threshold: 1e-05, stays: 8/15447 (0.1%), jumps: 15439/15447 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.178, mu=-14.7555, sigma=4.3040
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.7550 (std=0.0347)
+    sigma:    4.3039 (std=0.0250)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15439.0/15447 (mean)
+  CAL  15min ( 26.0/d)  pct= 1.0%  AAD=0.386  p_stay=0.368  [3s]
+  epsilon threshold: 1e-05, stays: 8/15213 (0.1%), jumps: 15205/15213 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.238, mu=-14.8896, sigma=4.3054
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.8891 (std=0.0350)
+    sigma:    4.3054 (std=0.0252)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15205.0/15213 (mean)
+  CAL  15min ( 26.0/d)  pct= 2.5%  AAD=0.459  p_stay=0.368  [3s]
+  epsilon threshold: 1e-05, stays: 9/14823 (0.1%), jumps: 14814/14823 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.331, mu=-15.0372, sigma=4.3180
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -15.0367 (std=0.0355)
+    sigma:    4.3179 (std=0.0256)
+    P(stay):  0.3680 (mean)
+    n_jumps:  14814.0/14823 (mean)
+  CAL  15min ( 26.0/d)  pct= 5.0%  AAD=0.399  p_stay=0.368  [3s]
+  epsilon threshold: 1e-05, stays: 35/46816 (0.1%), jumps: 46781/46816 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.362, mu=-15.8438, sigma=5.0923
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -15.8434 (std=0.0236)
+    sigma:    5.0923 (std=0.0170)
+    P(stay):  0.3681 (mean)
+    n_jumps:  46781.0/46816 (mean)
+  CAL   5min ( 78.0/d)  pct= 0.0%  AAD=0.532  p_stay=0.368  [9s]
+  epsilon threshold: 1e-05, stays: 35/46778 (0.1%), jumps: 46743/46778 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.371, mu=-15.8897, sigma=5.0865
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -15.8894 (std=0.0236)
+    sigma:    5.0865 (std=0.0170)
+    P(stay):  0.3681 (mean)
+    n_jumps:  46743.0/46778 (mean)
+  CAL   5min ( 78.0/d)  pct=0.08%  AAD=0.544  p_stay=0.368  [10s]
+  epsilon threshold: 1e-05, stays: 35/46581 (0.1%), jumps: 46546/46581 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.387, mu=-16.0018, sigma=5.0772
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.0015 (std=0.0236)
+    sigma:    5.0772 (std=0.0170)
+    P(stay):  0.3681 (mean)
+    n_jumps:  46546.0/46581 (mean)
+  CAL   5min ( 78.0/d)  pct= 0.5%  AAD=0.539  p_stay=0.368  [9s]
+  epsilon threshold: 1e-05, stays: 35/46347 (0.1%), jumps: 46312/46347 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.409, mu=-16.0804, sigma=5.0737
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.0800 (std=0.0236)
+    sigma:    5.0737 (std=0.0170)
+    P(stay):  0.3681 (mean)
+    n_jumps:  46312.0/46347 (mean)
+  CAL   5min ( 78.0/d)  pct= 1.0%  AAD=0.530  p_stay=0.368  [9s]
+  epsilon threshold: 1e-05, stays: 35/45645 (0.1%), jumps: 45610/45645 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.467, mu=-16.2154, sigma=5.0781
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.2150 (std=0.0238)
+    sigma:    5.0781 (std=0.0171)
+    P(stay):  0.3681 (mean)
+    n_jumps:  45610.0/45645 (mean)
+  CAL   5min ( 78.0/d)  pct= 2.5%  AAD=0.537  p_stay=0.368  [9s]
+  epsilon threshold: 1e-05, stays: 35/44475 (0.1%), jumps: 44440/44475 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.640, mu=-16.3584, sigma=5.1013
+  Posterior means:
+    alpha:    0.999 (std=0.005)
+    mu:       -16.3581 (std=0.0242)
+    sigma:    5.1013 (std=0.0174)
+    P(stay):  0.3681 (mean)
+    n_jumps:  44440.0/44475 (mean)
+  CAL   5min ( 78.0/d)  pct= 5.0%  AAD=0.472  p_stay=0.368  [9s]
+  epsilon threshold: 1e-05, stays: 104/78028 (0.1%), jumps: 77924/78028 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.454, mu=-16.5526, sigma=5.6389
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.5523 (std=0.0202)
+    sigma:    5.6389 (std=0.0146)
+    P(stay):  0.3683 (mean)
+    n_jumps:  77924.0/78028 (mean)
+  CAL   3min (130.0/d)  pct= 0.0%  AAD=0.600  p_stay=0.368  [15s]
+  epsilon threshold: 1e-05, stays: 104/77965 (0.1%), jumps: 77861/77965 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.462, mu=-16.6151, sigma=5.6297
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.6148 (std=0.0202)
+    sigma:    5.6297 (std=0.0145)
+    P(stay):  0.3683 (mean)
+    n_jumps:  77861.0/77965 (mean)
+  CAL   3min (130.0/d)  pct=0.08%  AAD=0.657  p_stay=0.368  [14s]
+  epsilon threshold: 1e-05, stays: 104/77637 (0.1%), jumps: 77533/77637 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.467, mu=-16.7529, sigma=5.6149
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.7526 (std=0.0202)
+    sigma:    5.6149 (std=0.0145)
+    P(stay):  0.3683 (mean)
+    n_jumps:  77533.0/77637 (mean)
+  CAL   3min (130.0/d)  pct= 0.5%  AAD=0.703  p_stay=0.368  [15s]
+  epsilon threshold: 1e-05, stays: 104/77247 (0.1%), jumps: 77143/77247 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.496, mu=-16.8200, sigma=5.6130
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.8197 (std=0.0202)
+    sigma:    5.6130 (std=0.0146)
+    P(stay):  0.3683 (mean)
+    n_jumps:  77143.0/77247 (mean)
+  CAL   3min (130.0/d)  pct= 1.0%  AAD=0.726  p_stay=0.368  [14s]
+  epsilon threshold: 1e-05, stays: 105/76077 (0.1%), jumps: 75972/76077 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.529, mu=-16.9423, sigma=5.6222
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -16.9420 (std=0.0204)
+    sigma:    5.6222 (std=0.0147)
+    P(stay):  0.3683 (mean)
+    n_jumps:  75972.0/76077 (mean)
+  CAL   3min (130.0/d)  pct= 2.5%  AAD=0.650  p_stay=0.368  [13s]
+  epsilon threshold: 1e-05, stays: 106/74126 (0.1%), jumps: 74020/74126 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.618, mu=-17.0883, sigma=5.6514
+  Posterior means:
+    alpha:    0.999 (std=0.004)
+    mu:       -17.0880 (std=0.0208)
+    sigma:    5.6514 (std=0.0150)
+    P(stay):  0.3684 (mean)
+    n_jumps:  74020.0/74126 (mean)
+  CAL   3min (130.0/d)  pct= 5.0%  AAD=0.666  p_stay=0.368  [13s]
+  epsilon threshold: 1e-05, stays: 963/234032 (0.4%), jumps: 233069/234032 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.200, mu=-18.0661, sigma=6.8559
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.0659 (std=0.0142)
+    sigma:    6.8560 (std=0.0102)
+    P(stay):  0.3694 (mean)
+    n_jumps:  233069.0/234032 (mean)
+  CAL   1min (390.0/d)  pct= 0.0%  AAD=0.564  p_stay=0.369  [46s]
+  epsilon threshold: 1e-05, stays: 962/233844 (0.4%), jumps: 232882/233844 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.204, mu=-18.1783, sigma=6.8325
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.1781 (std=0.0142)
+    sigma:    6.8325 (std=0.0102)
+    P(stay):  0.3694 (mean)
+    n_jumps:  232882.0/233844 (mean)
+  CAL   1min (390.0/d)  pct=0.08%  AAD=0.555  p_stay=0.369  [46s]
+  epsilon threshold: 1e-05, stays: 962/232861 (0.4%), jumps: 231899/232861 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.216, mu=-18.3064, sigma=6.8145
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.3062 (std=0.0141)
+    sigma:    6.8146 (std=0.0102)
+    P(stay):  0.3694 (mean)
+    n_jumps:  231899.0/232861 (mean)
+  CAL   1min (390.0/d)  pct= 0.5%  AAD=0.534  p_stay=0.369  [45s]
+  epsilon threshold: 1e-05, stays: 965/231691 (0.4%), jumps: 230726/231691 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.230, mu=-18.3684, sigma=6.8141
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.3682 (std=0.0142)
+    sigma:    6.8142 (std=0.0102)
+    P(stay):  0.3694 (mean)
+    n_jumps:  230726.0/231691 (mean)
+  CAL   1min (390.0/d)  pct= 1.0%  AAD=0.486  p_stay=0.369  [47s]
+  epsilon threshold: 1e-05, stays: 966/228181 (0.4%), jumps: 227215/228181 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.284, mu=-18.4927, sigma=6.8290
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.4924 (std=0.0143)
+    sigma:    6.8291 (std=0.0103)
+    P(stay):  0.3694 (mean)
+    n_jumps:  227215.0/228181 (mean)
+  CAL   1min (390.0/d)  pct= 2.5%  AAD=0.598  p_stay=0.369  [46s]
+  epsilon threshold: 1e-05, stays: 970/222330 (0.4%), jumps: 221360/222330 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.380, mu=-18.6481, sigma=6.8701
+  Posterior means:
+    alpha:    0.996 (std=0.002)
+    mu:       -18.6478 (std=0.0146)
+    sigma:    6.8702 (std=0.0105)
+    P(stay):  0.3695 (mean)
+    n_jumps:  221360.0/222330 (mean)
+  CAL   1min (390.0/d)  pct= 5.0%  AAD=0.638  p_stay=0.369  [44s]
+=== DOLLAR GRID ===
+  DOL target=  13 -> 12.4/d  build=7s
+  epsilon threshold: 1e-01, stays: 199/7408 (2.7%), jumps: 7209/7408 (97.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.323, mu=-13.8804, sigma=3.9687
+  Posterior means:
+    alpha:    0.973 (std=0.012)
+    mu:       -13.8820 (std=0.0463)
+    sigma:    3.9680 (std=0.0321)
+    P(stay):  0.3780 (mean)
+    n_jumps:  7209.0/7408 (mean)
+      pct= 0.0%  AAD=0.384  p_stay=0.378  n=7409/1934  [1s]
+  epsilon threshold: 1e-01, stays: 199/7402 (2.7%), jumps: 7203/7402 (97.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.215, mu=-13.8867, sigma=3.9641
+  Posterior means:
+    alpha:    0.973 (std=0.012)
+    mu:       -13.8883 (std=0.0463)
+    sigma:    3.9634 (std=0.0321)
+    P(stay):  0.3780 (mean)
+    n_jumps:  7203.0/7402 (mean)
+      pct=0.08%  AAD=0.388  p_stay=0.378  n=7403/1934  [1s]
+  epsilon threshold: 1e-01, stays: 201/7370 (2.7%), jumps: 7169/7370 (97.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.264, mu=-13.9086, sigma=3.9587
+  Posterior means:
+    alpha:    0.972 (std=0.012)
+    mu:       -13.9101 (std=0.0463)
+    sigma:    3.9579 (std=0.0321)
+    P(stay):  0.3782 (mean)
+    n_jumps:  7169.0/7370 (mean)
+      pct= 0.5%  AAD=0.561  p_stay=0.378  n=7371/1930  [1s]
+  epsilon threshold: 1e-01, stays: 203/7333 (2.8%), jumps: 7130/7333 (97.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.263, mu=-13.9307, sigma=3.9563
+  Posterior means:
+    alpha:    0.972 (std=0.012)
+    mu:       -13.9323 (std=0.0464)
+    sigma:    3.9556 (std=0.0322)
+    P(stay):  0.3783 (mean)
+    n_jumps:  7130.0/7333 (mean)
+      pct= 1.0%  AAD=0.370  p_stay=0.378  n=7334/1921  [1s]
+  epsilon threshold: 1e-01, stays: 209/7222 (2.9%), jumps: 7013/7222 (97.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.254, mu=-13.9906, sigma=3.9567
+  Posterior means:
+    alpha:    0.971 (std=0.012)
+    mu:       -13.9922 (std=0.0468)
+    sigma:    3.9559 (std=0.0324)
+    P(stay):  0.3788 (mean)
+    n_jumps:  7013.0/7222 (mean)
+      pct= 2.5%  AAD=0.306  p_stay=0.379  n=7223/1897  [1s]
+  epsilon threshold: 1e-01, stays: 211/7037 (3.0%), jumps: 6826/7037 (97.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.304, mu=-14.0833, sigma=3.9662
+  Posterior means:
+    alpha:    0.970 (std=0.012)
+    mu:       -14.0850 (std=0.0475)
+    sigma:    3.9655 (std=0.0330)
+    P(stay):  0.3792 (mean)
+    n_jumps:  6826.0/7037 (mean)
+      pct= 5.0%  AAD=0.320  p_stay=0.379  n=7038/1852  [1s]
+  DOL target=  26 -> 23.9/d  build=8s
+  epsilon threshold: 1e-01, stays: 496/14274 (3.5%), jumps: 13778/14274 (96.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.128, mu=-14.8807, sigma=4.9373
+  Posterior means:
+    alpha:    0.965 (std=0.008)
+    mu:       -14.8821 (std=0.0415)
+    sigma:    4.9368 (std=0.0288)
+    P(stay):  0.3810 (mean)
+    n_jumps:  13778.0/14274 (mean)
+      pct= 0.0%  AAD=0.804  p_stay=0.381  n=14275/3693  [2s]
+  epsilon threshold: 1e-01, stays: 496/14262 (3.5%), jumps: 13766/14262 (96.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.116, mu=-14.8865, sigma=4.9352
+  Posterior means:
+    alpha:    0.965 (std=0.008)
+    mu:       -14.8879 (std=0.0415)
+    sigma:    4.9347 (std=0.0288)
+    P(stay):  0.3810 (mean)
+    n_jumps:  13766.0/14262 (mean)
+      pct=0.08%  AAD=0.808  p_stay=0.381  n=14263/3693  [2s]
+  epsilon threshold: 1e-01, stays: 497/14202 (3.5%), jumps: 13705/14202 (96.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.111, mu=-14.9087, sigma=4.9337
+  Posterior means:
+    alpha:    0.965 (std=0.008)
+    mu:       -14.9101 (std=0.0416)
+    sigma:    4.9332 (std=0.0289)
+    P(stay):  0.3811 (mean)
+    n_jumps:  13705.0/14202 (mean)
+      pct= 0.5%  AAD=0.785  p_stay=0.381  n=14203/3679  [2s]
+  epsilon threshold: 1e-01, stays: 499/14131 (3.5%), jumps: 13632/14131 (96.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.114, mu=-14.9319, sigma=4.9353
+  Posterior means:
+    alpha:    0.964 (std=0.008)
+    mu:       -14.9333 (std=0.0417)
+    sigma:    4.9347 (std=0.0289)
+    P(stay):  0.3812 (mean)
+    n_jumps:  13632.0/14131 (mean)
+      pct= 1.0%  AAD=0.820  p_stay=0.381  n=14132/3660  [2s]
+  epsilon threshold: 1e-01, stays: 502/13917 (3.6%), jumps: 13415/13917 (96.4%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.123, mu=-14.9956, sigma=4.9460
+  Posterior means:
+    alpha:    0.964 (std=0.008)
+    mu:       -14.9971 (std=0.0421)
+    sigma:    4.9454 (std=0.0292)
+    P(stay):  0.3815 (mean)
+    n_jumps:  13415.0/13917 (mean)
+      pct= 2.5%  AAD=0.695  p_stay=0.381  n=13918/3598  [2s]
+  epsilon threshold: 1e-01, stays: 505/13560 (3.7%), jumps: 13055/13560 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.126, mu=-15.0955, sigma=4.9716
+  Posterior means:
+    alpha:    0.963 (std=0.009)
+    mu:       -15.0970 (std=0.0429)
+    sigma:    4.9711 (std=0.0298)
+    P(stay):  0.3819 (mean)
+    n_jumps:  13055.0/13560 (mean)
+      pct= 5.0%  AAD=0.705  p_stay=0.382  n=13561/3529  [2s]
+  DOL target=  40 -> 35.5/d  build=7s
+  epsilon threshold: 1e-01, stays: 877/21248 (4.1%), jumps: 20371/21248 (95.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.603, mu=-15.7826, sigma=6.1344
+  Posterior means:
+    alpha:    0.959 (std=0.007)
+    mu:       -15.7840 (std=0.0423)
+    sigma:    6.1339 (std=0.0293)
+    P(stay):  0.3835 (mean)
+    n_jumps:  20371.0/21248 (mean)
+      pct= 0.0%  AAD=1.182  p_stay=0.383  n=21249/5449  [4s]
+  epsilon threshold: 1e-01, stays: 877/21231 (4.1%), jumps: 20354/21231 (95.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.598, mu=-15.7879, sigma=6.1340
+  Posterior means:
+    alpha:    0.958 (std=0.007)
+    mu:       -15.7893 (std=0.0423)
+    sigma:    6.1335 (std=0.0294)
+    P(stay):  0.3835 (mean)
+    n_jumps:  20354.0/21231 (mean)
+      pct=0.08%  AAD=1.092  p_stay=0.383  n=21232/5447  [4s]
+  epsilon threshold: 1e-01, stays: 879/21141 (4.2%), jumps: 20262/21141 (95.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.597, mu=-15.8108, sigma=6.1369
+  Posterior means:
+    alpha:    0.958 (std=0.007)
+    mu:       -15.8122 (std=0.0424)
+    sigma:    6.1364 (std=0.0294)
+    P(stay):  0.3836 (mean)
+    n_jumps:  20262.0/21141 (mean)
+      pct= 0.5%  AAD=1.033  p_stay=0.384  n=21142/5420  [4s]
+  epsilon threshold: 1e-01, stays: 880/21035 (4.2%), jumps: 20155/21035 (95.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.595, mu=-15.8355, sigma=6.1425
+  Posterior means:
+    alpha:    0.958 (std=0.007)
+    mu:       -15.8369 (std=0.0425)
+    sigma:    6.1420 (std=0.0295)
+    P(stay):  0.3837 (mean)
+    n_jumps:  20155.0/21035 (mean)
+      pct= 1.0%  AAD=0.963  p_stay=0.384  n=21036/5394  [3s]
+  epsilon threshold: 1e-01, stays: 878/20716 (4.2%), jumps: 19838/20716 (95.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.597, mu=-15.9051, sigma=6.1637
+  Posterior means:
+    alpha:    0.957 (std=0.007)
+    mu:       -15.9066 (std=0.0430)
+    sigma:    6.1632 (std=0.0299)
+    P(stay):  0.3839 (mean)
+    n_jumps:  19838.0/20716 (mean)
+      pct= 2.5%  AAD=0.815  p_stay=0.384  n=20717/5322  [3s]
+  epsilon threshold: 1e-01, stays: 891/20185 (4.4%), jumps: 19294/20185 (95.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.586, mu=-16.0157, sigma=6.2058
+  Posterior means:
+    alpha:    0.956 (std=0.007)
+    mu:       -16.0172 (std=0.0439)
+    sigma:    6.2053 (std=0.0305)
+    P(stay):  0.3846 (mean)
+    n_jumps:  19294.0/20185 (mean)
+      pct= 5.0%  AAD=0.875  p_stay=0.385  n=20186/5223  [3s]
+  DOL target= 101 -> 78.7/d  build=8s
+  epsilon threshold: 1e-01, stays: 3348/47327 (7.1%), jumps: 43979/47327 (92.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.086, mu=-18.4567, sigma=9.0346
+  Posterior means:
+    alpha:    0.929 (std=0.005)
+    mu:       -18.4581 (std=0.0417)
+    sigma:    9.0342 (std=0.0290)
+    P(stay):  0.3949 (mean)
+    n_jumps:  43979.0/47327 (mean)
+      pct= 0.0%  AAD=2.017  p_stay=0.395  n=47328/11900  [8s]
+  epsilon threshold: 1e-01, stays: 3353/47289 (7.1%), jumps: 43936/47289 (92.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.080, mu=-18.4630, sigma=9.0355
+  Posterior means:
+    alpha:    0.929 (std=0.005)
+    mu:       -18.4645 (std=0.0417)
+    sigma:    9.0351 (std=0.0290)
+    P(stay):  0.3950 (mean)
+    n_jumps:  43936.0/47289 (mean)
+      pct=0.08%  AAD=1.983  p_stay=0.395  n=47290/11892  [8s]
+  epsilon threshold: 1e-01, stays: 3362/47090 (7.1%), jumps: 43728/47090 (92.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.073, mu=-18.4927, sigma=9.0430
+  Posterior means:
+    alpha:    0.928 (std=0.005)
+    mu:       -18.4942 (std=0.0419)
+    sigma:    9.0425 (std=0.0291)
+    P(stay):  0.3952 (mean)
+    n_jumps:  43728.0/47090 (mean)
+      pct= 0.5%  AAD=1.926  p_stay=0.395  n=47091/11845  [8s]
+  epsilon threshold: 1e-01, stays: 3374/46853 (7.2%), jumps: 43479/46853 (92.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.068, mu=-18.5263, sigma=9.0535
+  Posterior means:
+    alpha:    0.928 (std=0.005)
+    mu:       -18.5277 (std=0.0420)
+    sigma:    9.0530 (std=0.0292)
+    P(stay):  0.3954 (mean)
+    n_jumps:  43479.0/46853 (mean)
+      pct= 1.0%  AAD=1.994  p_stay=0.395  n=46854/11797  [8s]
+  epsilon threshold: 1e-01, stays: 3399/46143 (7.4%), jumps: 42744/46143 (92.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.061, mu=-18.6226, sigma=9.0892
+  Posterior means:
+    alpha:    0.926 (std=0.005)
+    mu:       -18.6240 (std=0.0425)
+    sigma:    9.0888 (std=0.0295)
+    P(stay):  0.3961 (mean)
+    n_jumps:  42744.0/46143 (mean)
+      pct= 2.5%  AAD=1.867  p_stay=0.396  n=46144/11673  [7s]
+  epsilon threshold: 1e-01, stays: 3422/44960 (7.6%), jumps: 41538/44960 (92.4%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=1.053, mu=-18.7792, sigma=9.1559
+  Posterior means:
+    alpha:    0.924 (std=0.005)
+    mu:       -18.7807 (std=0.0434)
+    sigma:    9.1555 (std=0.0301)
+    P(stay):  0.3970 (mean)
+    n_jumps:  41538.0/44960 (mean)
+      pct= 5.0%  AAD=1.863  p_stay=0.397  n=44961/11444  [7s]
+  DOL target= 200 -> 132.9/d  build=7s
+  epsilon threshold: 1e-01, stays: 11488/80213 (14.3%), jumps: 68725/80213 (85.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.955, mu=-22.7383, sigma=12.4341
+  Posterior means:
+    alpha:    0.857 (std=0.003)
+    mu:       -22.7398 (std=0.0441)
+    sigma:    12.4337 (std=0.0306)
+    P(stay):  0.4245 (mean)
+    n_jumps:  68725.0/80213 (mean)
+      pct= 0.0%  AAD=4.980  p_stay=0.425  n=80214/19852  [14s]
+  epsilon threshold: 1e-01, stays: 11510/80148 (14.4%), jumps: 68638/80148 (85.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.950, mu=-22.7477, sigma=12.4347
+  Posterior means:
+    alpha:    0.856 (std=0.003)
+    mu:       -22.7492 (std=0.0441)
+    sigma:    12.4343 (std=0.0306)
+    P(stay):  0.4247 (mean)
+    n_jumps:  68638.0/80148 (mean)
+      pct=0.08%  AAD=4.996  p_stay=0.425  n=80149/19834  [14s]
+  epsilon threshold: 1e-01, stays: 11554/79811 (14.5%), jumps: 68257/79811 (85.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.942, mu=-22.7928, sigma=12.4415
+  Posterior means:
+    alpha:    0.855 (std=0.003)
+    mu:       -22.7943 (std=0.0442)
+    sigma:    12.4411 (std=0.0307)
+    P(stay):  0.4252 (mean)
+    n_jumps:  68257.0/79811 (mean)
+      pct= 0.5%  AAD=4.952  p_stay=0.425  n=79812/19768  [13s]
+  epsilon threshold: 1e-01, stays: 11591/79410 (14.6%), jumps: 67819/79410 (85.4%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.937, mu=-22.8445, sigma=12.4515
+  Posterior means:
+    alpha:    0.854 (std=0.003)
+    mu:       -22.8460 (std=0.0444)
+    sigma:    12.4511 (std=0.0308)
+    P(stay):  0.4257 (mean)
+    n_jumps:  67819.0/79410 (mean)
+      pct= 1.0%  AAD=5.002  p_stay=0.426  n=79411/19685  [14s]
+  epsilon threshold: 1e-01, stays: 11682/78207 (14.9%), jumps: 66525/78207 (85.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.926, mu=-22.9964, sigma=12.4861
+  Posterior means:
+    alpha:    0.851 (std=0.003)
+    mu:       -22.9979 (std=0.0449)
+    sigma:    12.4857 (std=0.0311)
+    P(stay):  0.4272 (mean)
+    n_jumps:  66525.0/78207 (mean)
+      pct= 2.5%  AAD=5.049  p_stay=0.427  n=78208/19456  [21s]
+  epsilon threshold: 1e-01, stays: 11818/76202 (15.5%), jumps: 64384/76202 (84.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=0.913, mu=-23.2491, sigma=12.5504
+  Posterior means:
+    alpha:    0.845 (std=0.003)
+    mu:       -23.2506 (std=0.0457)
+    sigma:    12.5500 (std=0.0317)
+    P(stay):  0.4296 (mean)
+    n_jumps:  64384.0/76202 (mean)
+      pct= 5.0%  AAD=4.861  p_stay=0.430  n=76203/19118  [13s]
+RESULT_JSON {"pcts": [0.0, 0.08, 0.5, 1.0, 2.5, 5.0], "calendar": [{"bpd": 13.0, "minutes": 30, "pct": 0.0, "aad": 0.6189986282578873, "p_stay": 0.3677194983585142, "n_train": 7802, "n_test": 1944}, {"bpd": 13.0, "minutes": 30, "pct": 0.08, "aad": 0.582432664264885, "p_stay": 0.3677194056429299, "n_train": 7795, "n_test": 1943}, {"bpd": 13.0, "minutes": 30, "pct": 0.5, "aad": 0.5452356381148983, "p_stay": 0.36771896661250686, "n_train": 7762, "n_test": 1938}, {"bpd": 13.0, "minutes": 30, "pct": 1.0, "aad": 0.2079002079002059, "p_stay": 0.36771844358688954, "n_train": 7723, "n_test": 1924}, {"bpd": 13.0, "minutes": 30, "pct": 2.5, "aad": 0.3980752405949269, "p_stay": 0.36771684677581273, "n_train": 7606, "n_test": 1905}, {"bpd": 13.0, "minutes": 30, "pct": 5.0, "aad": 0.24499284692417808, "p_stay": 0.3677140889532536, "n_train": 7411, "n_test": 1864}, {"bpd": 26.0, "minutes": 15, "pct": 0.0, "aad": 0.6144413000600295, "p_stay": 0.3679646173895512, "n_train": 15605, "n_test": 3887}, {"bpd": 26.0, "minutes": 15, "pct": 0.08, "aad": 0.5469755469755478, "p_stay": 0.3679647218636296, "n_train": 15592, "n_test": 3885}, {"bpd": 26.0, "minutes": 15, "pct": 0.5, "aad": 0.46887109274089295, "p_stay": 0.3679652551864792, "n_train": 15526, "n_test": 3871}, {"bpd": 26.0, "minutes": 15, "pct": 1.0, "aad": 0.3858144972720184, "p_stay": 0.3679658918249794, "n_train": 15448, "n_test": 3849}, {"bpd": 26.0, "minutes": 15, "pct": 2.5, "aad": 0.4587597306043918, "p_stay": 0.367967844065342, "n_train": 15214, "n_test": 3811}, {"bpd": 26.0, "minutes": 15, "pct": 5.0, "aad": 0.398745519713259, "p_stay": 0.36799607375682675, "n_train": 14824, "n_test": 3720}, {"bpd": 78.0, "minutes": 5, "pct": 0.0, "aad": 0.5322068788060731, "p_stay": 0.36810050776664804, "n_train": 46817, "n_test": 11659}, {"bpd": 78.0, "minutes": 5, "pct": 0.08, "aad": 0.5436368317171532, "p_stay": 0.3681007062243208, "n_train": 46779, "n_test": 11653}, {"bpd": 78.0, "minutes": 5, "pct": 0.5, "aad": 0.5391988062442644, "p_stay": 0.36810174038629817, "n_train": 46582, "n_test": 11616}, {"bpd": 78.0, "minutes": 5, "pct": 1.0, "aad": 0.5297727076311473, "p_stay": 0.3681029804804495, "n_train": 46348, "n_test": 11571}, {"bpd": 78.0, "minutes": 5, "pct": 2.5, "aad": 0.5372009464551759, "p_stay": 0.3681067788956076, "n_train": 45646, "n_test": 11411}, {"bpd": 78.0, "minutes": 5, "pct": 5.0, "aad": 0.4716587734191169, "p_stay": 0.3681133825121778, "n_train": 44476, "n_test": 11191}, {"bpd": 130.0, "minutes": 3, "pct": 0.0, "aad": 0.5999862762252768, "p_stay": 0.3683295617931365, "n_train": 78029, "n_test": 19431}, {"bpd": 130.0, "minutes": 3, "pct": 0.08, "aad": 0.6570025919631975, "p_stay": 0.3683299402525384, "n_train": 77966, "n_test": 19419}, {"bpd": 130.0, "minutes": 3, "pct": 0.5, "aad": 0.7030293625752163, "p_stay": 0.3683319206695415, "n_train": 77638, "n_test": 19333}, {"bpd": 130.0, "minutes": 3, "pct": 1.0, "aad": 0.7259001161440217, "p_stay": 0.3683342975454442, "n_train": 77248, "n_test": 19229}, {"bpd": 130.0, "minutes": 3, "pct": 2.5, "aad": 0.6502824264112554, "p_stay": 0.3683464178609761, "n_train": 76078, "n_test": 19002}, {"bpd": 130.0, "minutes": 3, "pct": 5.0, "aad": 0.6660930666093078, "p_stay": 0.3683641682220161, "n_train": 74127, "n_test": 18596}, {"bpd": 390.0, "minutes": 1, "pct": 0.0, "aad": 0.5638925613685668, "p_stay": 0.3693740165208233, "n_train": 234033, "n_test": 58241}, {"bpd": 390.0, "minutes": 1, "pct": 0.08, "aad": 0.5552691867124881, "p_stay": 0.3693736492842548, "n_train": 233845, "n_test": 58200}, {"bpd": 390.0, "minutes": 1, "pct": 0.5, "aad": 0.5343871516992221, "p_stay": 0.3693800138094356, "n_train": 232862, "n_test": 57948}, {"bpd": 390.0, "minutes": 1, "pct": 1.0, "aad": 0.4861785235519835, "p_stay": 0.36939244284580636, "n_train": 231692, "n_test": 57688}, {"bpd": 390.0, "minutes": 1, "pct": 2.5, "aad": 0.5975102277316383, "p_stay": 0.36941754580632, "n_train": 228182, "n_test": 56953}, {"bpd": 390.0, "minutes": 1, "pct": 5.0, "aad": 0.6378951014290214, "p_stay": 0.36946503714099643, "n_train": 222331, "n_test": 55819}], "dollar": [{"bpd": 12.41, "target": 13, "pct": 0.0, "aad": 0.38435022406066705, "p_stay": 0.37801385151308853, "n_train": 7409, "n_test": 1934}, {"bpd": 12.41, "target": 13, "pct": 0.08, "aad": 0.3877973112719773, "p_stay": 0.3780221080596764, "n_train": 7403, "n_test": 1934}, {"bpd": 12.41, "target": 13, "pct": 0.5, "aad": 0.5613126079447331, "p_stay": 0.37816895872842965, "n_train": 7371, "n_test": 1930}, {"bpd": 12.41, "target": 13, "pct": 1.0, "aad": 0.37046677077910967, "p_stay": 0.37832430436362174, "n_train": 7334, "n_test": 1921}, {"bpd": 12.41, "target": 13, "pct": 2.5, "aad": 0.30574591460200057, "p_stay": 0.37880028075643374, "n_train": 7223, "n_test": 1897}, {"bpd": 12.41, "target": 13, "pct": 5.0, "aad": 0.32037437005039554, "p_stay": 0.37919710755193087, "n_train": 7038, "n_test": 1852}, {"bpd": 23.86, "target": 26, "pct": 0.0, "aad": 0.8037729036916724, "p_stay": 0.3809830800301917, "n_train": 14275, "n_test": 3693}, {"bpd": 23.86, "target": 26, "pct": 0.08, "aad": 0.8082859463850554, "p_stay": 0.3809942462388237, "n_train": 14263, "n_test": 3693}, {"bpd": 23.86, "target": 26, "pct": 0.5, "aad": 0.7850865271359991, "p_stay": 0.38107719213372077, "n_train": 14203, "n_test": 3679}, {"bpd": 23.86, "target": 26, "pct": 1.0, "aad": 0.8196721311475438, "p_stay": 0.38119830364912277, "n_train": 14132, "n_test": 3660}, {"bpd": 23.86, "target": 26, "pct": 2.5, "aad": 0.6948304613674269, "p_stay": 0.381488053250776, "n_train": 13918, "n_test": 3598}, {"bpd": 23.86, "target": 26, "pct": 5.0, "aad": 0.7051100406158474, "p_stay": 0.38193582162124545, "n_train": 13561, "n_test": 3529}, {"bpd": 35.46, "target": 40, "pct": 0.0, "aad": 1.1815623661834014, "p_stay": 0.3834637582705578, "n_train": 21249, "n_test": 5449}, {"bpd": 35.46, "target": 40, "pct": 0.08, "aad": 1.0920384309405762, "p_stay": 0.38347645569916333, "n_train": 21232, "n_test": 5447}, {"bpd": 35.46, "target": 40, "pct": 0.5, "aad": 1.033210332103322, "p_stay": 0.38358030547893246, "n_train": 21142, "n_test": 5420}, {"bpd": 35.46, "target": 40, "pct": 1.0, "aad": 0.9634161413916699, "p_stay": 0.38367907027891324, "n_train": 21036, "n_test": 5394}, {"bpd": 35.46, "target": 40, "pct": 2.5, "aad": 0.8154829011649785, "p_stay": 0.38388972030147295, "n_train": 20717, "n_test": 5322}, {"bpd": 35.46, "target": 40, "pct": 5.0, "aad": 0.8746569659837888, "p_stay": 0.3845663233570773, "n_train": 20186, "n_test": 5223}, {"bpd": 78.66, "target": 101, "pct": 0.0, "aad": 2.0168067226890756, "p_stay": 0.39490654183131724, "n_train": 47328, "n_test": 11900}, {"bpd": 78.66, "target": 101, "pct": 0.08, "aad": 1.9825653100123333, "p_stay": 0.39497076525292374, "n_train": 47290, "n_test": 11892}, {"bpd": 78.66, "target": 101, "pct": 0.5, "aad": 1.9255663430420722, "p_stay": 0.39516474040982824, "n_train": 47091, "n_test": 11845}, {"bpd": 78.66, "target": 101, "pct": 1.0, "aad": 1.99358593992823, "p_stay": 0.39540884446242686, "n_train": 46854, "n_test": 11797}, {"bpd": 78.66, "target": 101, "pct": 2.5, "aad": 1.8674148319483728, "p_stay": 0.3960620823812679, "n_train": 46144, "n_test": 11673}, {"bpd": 78.66, "target": 101, "pct": 5.0, "aad": 1.862984970290108, "p_stay": 0.39703412876277044, "n_train": 44961, "n_test": 11444}, {"bpd": 132.89, "target": 200, "pct": 0.0, "aad": 4.979850896635098, "p_stay": 0.4245480095889805, "n_train": 80214, "n_test": 19852}, {"bpd": 132.89, "target": 200, "pct": 0.08, "aad": 4.995798460555948, "p_stay": 0.42471388411680866, "n_train": 80149, "n_test": 19834}, {"bpd": 132.89, "target": 200, "pct": 0.5, "aad": 4.951942533387295, "p_stay": 0.4252058326948938, "n_train": 79812, "n_test": 19768}, {"bpd": 132.89, "target": 200, "pct": 1.0, "aad": 5.001693336720005, "p_stay": 0.42571506936093534, "n_train": 79411, "n_test": 19685}, {"bpd": 132.89, "target": 200, "pct": 2.5, "aad": 5.048828124999999, "p_stay": 0.42716865138173743, "n_train": 78208, "n_test": 19456}, {"bpd": 132.89, "target": 200, "pct": 5.0, "aad": 4.861387174390626, "p_stay": 0.4296167439346833, "n_train": 76203, "n_test": 19118}]}

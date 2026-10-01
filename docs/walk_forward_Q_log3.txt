@@ -1,0 +1,10 @@
+## 15min/0.08% (headline)  (15min bars, clean 0.08%)
+   STATIC  fit-once pre-CUTOFF: AAD=0.547  n_pred=3885  p_stay=0.368  [3s]
+   -- cal=expanding  (expanding(anchor600))
+     30        6    3911     0.537     0.547  -0.010  0.65 1.00 2.35 2.56 2.38 1.15  [6s]
+    100        2    3911     0.451     0.547  -0.096  0.74 1.90  [3s]
+## 30min/1% (argmin cal)  (30min bars, clean 1.0%)
+   STATIC  fit-once pre-CUTOFF: AAD=0.208  n_pred=1924  p_stay=0.368  [1s]
+   -- cal=expanding  (expanding(anchor600))
+     30        6    1937     0.414     0.208  +0.206  1.45 0.83 3.97 4.78 1.46 3.07  [4s]
+    100        2    1937     0.358     0.208  +0.150  1.31 2.50  [2s]

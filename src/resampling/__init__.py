@@ -1,4 +1,4 @@
-"""Importance sampling and resampling algorithms for particle filtering."""
+"""Importance sampling y resampleo para filtrado de partículas."""
 from src.resampling.ess import effective_sample_size
 from src.resampling.importance import importance_weights, normalize_weights, is_estimate
 from src.resampling.multinomial import multinomial_resample

@@ -1,0 +1,339 @@
+<title>Cómo se calcula f(j) — factor de periodicidad intradía</title>
+<style>
+  :root{
+    --bg:#FAFAF6; --surface:#FFFFFF; --surface-2:#F4F4EE;
+    --ink:#1B2330; --ink-2:#3C4654; --muted:#6A7480;
+    --rule:#E6E6DF; --grid:#EEEEE7;
+    --hero:#1F4E79; --hero-soft:rgba(31,78,121,.12);
+    --recessive:#C7D0DA; --recessive-2:#8A95A2;
+    --warm:#A8541C; --warm-soft:rgba(168,84,28,.10);
+    --serif:"Iowan Old Style","Charter","Source Serif Pro",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0E1418; --surface:#161D23; --surface-2:#1A2228;
+      --ink:#E6EAEE; --ink-2:#B6C0CA; --muted:#8A94A0;
+      --rule:#243038; --grid:#1B252C;
+      --hero:#6BA3D8; --hero-soft:rgba(107,163,216,.14);
+      --recessive:#2C3944; --recessive-2:#4E5B68;
+      --warm:#D49A4A; --warm-soft:rgba(212,154,74,.12);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E1418; --surface:#161D23; --surface-2:#1A2228;
+    --ink:#E6EAEE; --ink-2:#B6C0CA; --muted:#8A94A0;
+    --rule:#243038; --grid:#1B252C;
+    --hero:#6BA3D8; --hero-soft:rgba(107,163,216,.14);
+    --recessive:#2C3944; --recessive-2:#4E5B68;
+    --warm:#D49A4A; --warm-soft:rgba(212,154,74,.12);
+  }
+  *{box-sizing:border-box}
+  html{background:var(--bg)}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:740px; margin:0 auto; padding:48px 24px 80px;}
+  header{margin-bottom:40px;}
+  .eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); margin:0 0 12px;}
+  h1{font-family:var(--serif); font-weight:600; font-size:2rem; line-height:1.15;
+    margin:0 0 14px; text-wrap:balance; letter-spacing:-.01em;}
+  .lede{font-family:var(--serif); font-size:1.1rem; line-height:1.5; color:var(--ink-2);
+    margin:0; max-width:60ch;}
+  .formula{
+    background:var(--surface); border:1px solid var(--rule); border-radius:8px;
+    padding:26px 24px; margin:28px 0 8px; overflow-x:auto;
+  }
+  .eq{font-family:var(--serif); font-size:1.2rem; text-align:center; line-height:2.4; color:var(--ink);}
+  .eq + .eq{margin-top:14px;}
+  .eq i{font-style:italic;}
+  .eq .lhs{color:var(--hero); font-weight:700; font-style:italic;}
+  .eq .op{color:var(--muted); padding:0 .18em;}
+  .sb{font-size:.6em; vertical-align:-.32em; line-height:0; font-style:normal;}
+  .sp{font-size:.6em; vertical-align:.62em; line-height:0;}
+  .frac{display:inline-flex; flex-direction:column; vertical-align:-.5em; text-align:center; font-size:.8em; line-height:1.1; margin:0 .25em;}
+  .frac .n{border-bottom:1.5px solid var(--ink-2); padding:0 .3em .1em;}
+  .frac .d{padding:.1em .3em 0;}
+  .eq .tag{font-family:var(--sans); font-size:.6em; color:var(--muted); font-style:normal; margin-left:.7em;}
+  .formula .note{font-family:var(--sans); font-size:.84rem; color:var(--muted); line-height:1.5; margin-top:18px; padding-top:14px; border-top:1px solid var(--rule);}
+  sub{font-size:.72em;}
+  .step{margin-top:44px;}
+  .step-head{display:flex; align-items:baseline; gap:14px; margin-bottom:10px;}
+  .num{font-family:var(--mono); font-size:.78rem; color:var(--warm); letter-spacing:.1em;}
+  .step h2{font-family:var(--serif); font-weight:600; font-size:1.28rem; margin:0;
+    text-wrap:balance;}
+  .step p{margin:6px 0 16px; color:var(--ink-2); max-width:62ch;}
+  .chart{background:var(--surface); border:1px solid var(--rule); border-radius:8px;
+    padding:14px 10px 6px; overflow:hidden;}
+  svg{display:block; width:100%; height:auto;}
+  .axis text{fill:var(--muted); font-family:var(--mono); font-size:11px;}
+  .axis line{stroke:var(--rule); stroke-width:1;}
+  .grid line{stroke:var(--grid); stroke-width:1;}
+  .grid text{fill:var(--muted); font-family:var(--mono); font-size:10.5px;}
+  .ylabel{fill:var(--muted); font-family:var(--sans); font-size:11px;}
+  .refline{stroke:var(--recessive-2); stroke-width:1.25; stroke-dasharray:5 4;}
+  .reflabel{fill:var(--recessive-2); font-family:var(--mono); font-size:10.5px;}
+  .bars rect{fill:var(--recessive);}
+  .bars rect.hi{fill:var(--warm); fill-opacity:.85;}
+  .fline{fill:none; stroke:var(--hero); stroke-width:2.2; stroke-linejoin:round; stroke-linecap:round;}
+  .farea{fill:var(--hero-soft); stroke:none;}
+  .fdot{fill:var(--hero);}
+  .anno{fill:var(--ink-2); font-family:var(--sans); font-size:11px;}
+  .anno strong{color:var(--warm);}
+  .cap{font-family:var(--sans); font-size:.84rem; color:var(--muted);
+    margin:10px 4px 0; line-height:1.45;}
+  .cap b{color:var(--ink-2); font-weight:600;}
+  .pill{display:inline-block; padding:2px 8px; border-radius:99px; font-family:var(--mono);
+    font-size:.72rem; background:var(--surface-2); color:var(--ink-2); border:1px solid var(--rule);}
+  .closing{margin-top:48px; padding-top:24px; border-top:1px solid var(--rule);
+    font-family:var(--serif); font-size:1.02rem; color:var(--ink-2); line-height:1.55;}
+  .closing b{color:var(--ink); font-family:var(--sans); font-weight:600;}
+  .legend{display:flex; gap:18px; flex-wrap:wrap; margin:2px 4px 12px;
+    font-family:var(--sans); font-size:.78rem; color:var(--muted);}
+  .legend .sw{display:inline-block; width:14px; height:8px; border-radius:2px;
+    margin-right:6px; vertical-align:middle;}
+  .legend .ln{display:inline-block; width:16px; height:2px; margin-right:6px; vertical-align:middle;}
+  .legend .dl{display:inline-block; width:16px; height:0; border-top:1.5px dashed var(--recessive-2); margin-right:6px; vertical-align:middle;}
+  .tt{pointer-events:none; opacity:0; transition:opacity .12s;}
+  .crosshair{stroke:var(--recessive-2); stroke-width:1; stroke-dasharray:3 3;}
+  .tt-bg{fill:var(--surface); stroke:var(--rule);}
+  .tt-tx{fill:var(--ink); font-family:var(--mono); font-size:11px;}
+  .nums{font-variant-numeric:tabular-nums;}
+  footer{margin-top:36px; font-family:var(--mono); font-size:.72rem; color:var(--muted);
+    letter-spacing:.04em;}
+</style>
+
+<header>
+  <p class="eyebrow">SF-Harris · periodicidad intradía</p>
+  <h1>Cómo se calcula f(j), el factor de periodicidad</h1>
+  <p class="lede">Un día real de IBM y la forma promedio del train. <span class="nums">f(j)</span> es la proporción de la varianza del bucket <span class="nums">j</span> respecto a la media diaria por bucket — un factor de escala que captura la curva en U determinista y se usa como divisor para desestacionalizar los retornos intradiarios.</p>
+</header>
+
+<div class="formula">
+  <div class="eq">
+    <span class="lhs">f</span>(j)
+    <span class="op">=</span>
+    <span class="frac"><span class="n">1</span><span class="d">D</span></span>
+    <span class="op">·</span> ∑<span class="sb">t</span>
+    <span class="op">[</span> <i>r</i><span class="sb">t,j</span><span class="sp">2</span> <span class="op">⁄</span> (RV<span class="sb">t</span> <span class="op">⁄</span> n) <span class="op">]</span>
+    <span class="tag">luego escalado a E[<i>f</i>(j)] = 1</span>
+  </div>
+  <div class="eq">
+    <span class="lhs">RV</span><span class="sb">t</span>
+    <span class="op">=</span> ∑<span class="sb">j=1</span><span class="sp">n</span> <i>r</i><span class="sb">t,j</span><span class="sp">2</span>
+    <span class="op">,</span> <span class="lhs">n</span> = 26
+  </div>
+  <div class="note">D = número de días en train. El denominador <span class="nums">RV<span class="sb">t</span>/n</span> es la media por-bucket <em>de ese mismo día</em>, así que f captura solo la <strong>forma</strong> intradía, no el nivel de volatilidad del día.</div>
+</div>
+
+<div class="step">
+  <div class="step-head"><span class="num">01</span><h2>Un día: la materia prima r²</h2></div>
+  <p>Retornos al cuadrado de cada bucket de 15 min para el <span class="nums">2013-02-08</span> (día de RV mediana en train). La barra ámbar es el primer bucket (09:30–09:45): la subasta de apertura concentra la volatilidad. La línea punteada es la media del día <span class="nums">RV<span class="sb">t</span>/n</span> — el nivel de referencia contra el que se normaliza.</p>
+  <div class="chart"><svg id="c1" viewBox="0 0 720 300" role="img" aria-label="r² por bucket del día 2013-02-08"></svg></div>
+  <p class="cap"><b>Datos:</b> el primer bucket aporta <span class="nums">4.1×10⁻⁵</span>, ~16.7× la media diaria <span class="nums">(0.246×10⁻⁵)</span>; el mediodía baja a ~<span class="nums">10⁻⁷</span>. Un solo día es <b>muy</b> ruidoso — por eso hace falta el promedio.</p>
+</div>
+
+<div class="step">
+  <div class="step-head"><span class="num">02</span><h2>El cociente del día vs. la f promediada</h2></div>
+  <p>Cada barra gris es el cociente <span class="nums">r²<span class="sb">t,j</span> / (RV<span class="sb">t</span>/n)</span> para ese día — ruidoso, un bucket suelto puede valer 16. La curva azul es <b>f</b>, el promedio de ese cociente sobre ~500 días de train. El promedio suaviza el ruido del día individual y revela la forma estable.</p>
+  <div class="chart"><svg id="c2" viewBox="0 0 720 300" role="img" aria-label="cociente de un día vs f promediada"></svg></div>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--recessive)"></span>cociente de un día (ruidoso)</span>
+    <span><span class="ln" style="background:var(--hero)"></span>f(j) = promedio sobre train</span>
+  </div>
+  <p class="cap"><b>Lección:</b> un día solo no es f. <span class="nums">f</span> es el <em>promedio</em> del cociente a través de todos los días — la parte determinista y repetible de la forma intradía.</p>
+</div>
+
+<div class="step">
+  <div class="step-head"><span class="num">03</span><h2>f(j): la forma intradía promedio de IBM</h2></div>
+  <p>La curva final. Pico de <span class="nums">7.9</span> en la apertura, desciende a <span class="nums">~1</span> hacia las 10:15, valle de <span class="nums">0.40</span> al mediodía, leve repunte a <span class="nums">0.89</span> al cierre. Media <span class="nums">= 1</span> por construcción. Pasa el cursor sobre la curva.</p>
+  <div class="chart"><svg id="c3" viewBox="0 0 720 300" role="img" aria-label="f(j) promediada sobre train"></svg></div>
+  <div class="legend">
+    <span><span class="ln" style="background:var(--hero)"></span>f(j)</span>
+    <span><span class="ln" style="background:var(--recessive-2)"></span>E[f] = 1</span>
+    <span class="pill">train: 2012-01 → 2014-05</span>
+  </div>
+  <p class="cap"><b>Lectura:</b> f&gt;1 ⇒ ese bucket es <b>más</b> volátil que la media del día (apertura). f&lt;1 ⇒ más tranquilo (mediodía). Es la <em>huella dactilar</em> intradía de IBM, fija durante todo el horizonte de test.</p>
+</div>
+
+<div class="step">
+  <div class="step-head"><span class="num">04</span><h2>Todo el train: la nube y su media f</h2></div>
+  <p>Los <span class="nums">15 580</span> cocientes <span class="nums">r²<span class="sb">t,j</span> / (RV<span class="sb">t</span>/n)</span> de cada bucket de cada día del train (eje y log). La nube es ancha — un día puede estar 10× arriba o abajo. La curva azul es <b>f</b>, la <em>media aritmética</em> por bucket (el factor que usa el modelo). La curva punteada es la <em>mediana</em>: f queda por arriba de ella porque la distribución tiene sesgo positivo — unos pocos días con salto pegan fuerte en la media.</p>
+  <div class="chart"><svg id="c4" viewBox="0 0 720 340" role="img" aria-label="scatter de ratios del train con f y mediana"></svg></div>
+  <div class="legend">
+    <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--recessive);opacity:.5;margin-right:6px;vertical-align:middle"></span>cociente por día (15 580 pts)</span>
+    <span><span class="ln" style="background:var(--hero)"></span>f = media aritmética (usa el modelo)</span>
+    <span><span class="dl"></span>mediana (día típico)</span>
+  </div>
+  <p class="cap"><b>Lectura:</b> el sesgo (media &gt; mediana) es fuerte al mediodía: <span class="nums">f≈0.40</span> vs mediana <span class="nums">≈0.13</span> a las 13:00, porque unos pocos días con saltos pegan la media arriba. La apertura (<span class="nums">f≈7.9</span>, mediana <span class="nums">≈6.5</span>) es más simétrica — la U la domina el efecto subasta. La nube justifica por qué f se estima <em>una sola vez</em> y se congela: el promedio es estable aunque cada día sea ruidoso.</p>
+</div>
+
+<div class="closing">
+  <b>Y en el modelo, ¿para qué sirve?</b> Se divide cada retorno al cuadrado por su f(j): r²<span class="sb">adj</span> = r²<span class="sb">t,j</span> / f(j). Eso remueve la U determinista y deja <span class="nums">r²<span class="sb">adj</span> = τ<span class="sb">t</span> · z²</span>, con z ~ N(0,1) iid — la base para que la varianza realizada ajustada siga <span class="nums">RV<span class="sb">adj</span> = τ<span class="sb">t</span> · χ²(26)</span>. Sin este paso, la forma en U queda metida en el ruido observacional y σ<span class="sb">obs</span> se infla aún más de los <span class="nums">0.28</span> teóricos.
+</div>
+
+<footer>IBM 2012–2014 · train 2012-01 → 2014-05-28 · f estimada sobre train (leak-free) · día ilustrado: 2013-02-08 (RV mediana, 26 buckets)</footer>
+
+<script src="scatter_data.js"></script>
+<script>
+const T=["09:30","09:45","10:00","10:15","10:30","10:45","11:00","11:15","11:30","11:45","12:00","12:15","12:30","12:45","13:00","13:15","13:30","13:45","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45"];
+const r2s=[4.117,0.732,0.010,0.130,0.0005,0.0011,0.0004,0.041,0.111,0.040,0.252,0.088,0.063,0.373,0.0024,0.0076,0.126,0.063,0.0021,0.0063,0.152,0.0086,0.0024,0.0067,0.017,0.045];
+const mean_s=0.246;
+const ratio=[16.729,2.974,0.041,0.528,0.002,0.004,0.001,0.166,0.451,0.161,1.023,0.359,0.256,1.517,0.010,0.031,0.512,0.256,0.009,0.025,0.618,0.035,0.010,0.027,0.070,0.184];
+const f=[7.893,1.944,1.698,1.104,0.921,0.943,0.880,0.684,0.743,0.616,0.560,0.469,0.500,0.432,0.396,0.544,0.476,0.427,0.575,0.506,0.470,0.479,0.631,0.548,0.666,0.895];
+
+const W=720,H=300,PL=46,PR=18,PT=16,PB=36;
+const pw=W-PL-PR, ph=H-PT-PB, N=26, step=pw/N;
+const X=i=>PL+(i+0.5)*step;
+const Ymax=ymax=>v=>PT+ph-(v/ymax)*ph;
+const NS="http://www.w3.org/2000/svg";
+function el(t,a={},c){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(c)e.textContent=c;return e;}
+function grid(svg,ymax,Y,labelEvery,ylab){
+  for(let k=0;k<=4;k++){
+    const v=ymax*k/4, y=Y(v);
+    svg.appendChild(el("line",{class:"grid",x1:PL,x2:W-PR,y1:y,y2:y}));
+    svg.appendChild(el("text",{x:PL-8,y:y+3.5,"text-anchor":"end"},(labelEvery?fmt(v):"")));
+  }
+  if(ylab) svg.appendChild(el("text",{class:"ylabel",x:10,y:PT-4},ylab));
+}
+function xticks(svg,Y){
+  const idx=[0,4,8,12,16,20,24];
+  idx.forEach(i=>{
+    svg.appendChild(el("line",{class:"axis",x1:X(i),x2:X(i),y1:PT+ph,y2:PT+ph+4}));
+    svg.appendChild(el("text",{class:"axis",x:X(i),y:PT+ph+18,"text-anchor":"middle"},T[i]));
+  });
+  svg.appendChild(el("line",{class:"axis",x1:PL,x2:W-PR,y1:PT+ph,y2:PT+ph}));
+}
+function fmt(v){
+  if(v>=1)return (Math.round(v*10)/10).toString();
+  if(v>=0.01)return (Math.round(v*100)/100).toString();
+  if(v===0)return "0";
+  return (Math.round(v*1000)/1000).toString();
+}
+function bars(svg,vals,ymax,Y,hiIdx){
+  const bw=step*0.62;
+  vals.forEach((v,i)=>{
+    const y=Y(v), h=(PT+ph)-y;
+    svg.appendChild(el("rect",{class:"bars"+(i===hiIdx?" hi":""),x:X(i)-bw/2,y:y,width:bw,height:Math.max(h,0.4)}));
+  });
+}
+function line(svg,vals,ymax,Y,area){
+  let d="",da="";
+  vals.forEach((v,i)=>{const x=X(i),y=Y(v);d+=(i?" L":"M")+x.toFixed(1)+" "+y.toFixed(1);
+    if(area)da+=(i?" L":"M")+x.toFixed(1)+" "+y.toFixed(1);});
+  if(area){da+=` L ${X(N-1).toFixed(1)} ${(PT+ph)} L ${X(0).toFixed(1)} ${(PT+ph)} Z`;
+    svg.appendChild(el("path",{class:"farea",d:da}));}
+  svg.appendChild(el("path",{class:"fline",d:d}));
+  vals.forEach((v,i)=>svg.appendChild(el("circle",{class:"fdot",cx:X(i),cy:Y(v),r:2.6})));
+}
+
+// Chart 1
+(function(){
+  const svg=document.getElementById("c1");
+  const ymax=4.5, Y=Ymax(ymax);
+  grid(svg,ymax,Y,true,"r² (×10⁻⁵)");
+  xticks(svg,Y);
+  svg.appendChild(el("line",{class:"refline",x1:PL,x2:W-PR,y1:Y(mean_s),y2:Y(mean_s)}));
+  svg.appendChild(el("text",{class:"reflabel",x:W-PR-4,y:Y(mean_s)-5,"text-anchor":"end"},"media del día = "+mean_s));
+  bars(svg,r2s,ymax,Y,0);
+  svg.appendChild(el("text",{class:"anno",x:X(0)+22,y:Y(r2s[0])-8},"abertura <strong>×16.7</strong>"));
+})();
+
+// Chart 2
+(function(){
+  const svg=document.getElementById("c2");
+  const ymax=18, Y=Ymax(ymax);
+  grid(svg,ymax,Y,true,"ratio (adim.)");
+  xticks(svg,Y);
+  bars(svg,ratio,ymax,Y,0);
+  line(svg,f,ymax,Y,false);
+  svg.appendChild(el("text",{class:"anno",x:X(2),y:Y(f[2])-16},"día suelto: ruidoso"));
+  svg.appendChild(el("text",{class:"anno",x:X(13),y:Y(f[13])+22,fill:"var(--hero)"},"f promediada: la forma"));
+})();
+
+// Chart 3 — hero, with hover
+(function(){
+  const svg=document.getElementById("c3");
+  const ymax=8.5, Y=Ymax(ymax);
+  grid(svg,ymax,Y,true,"f(j)");
+  xticks(svg,Y);
+  svg.appendChild(el("line",{class:"refline",x1:PL,x2:W-PR,y1:Y(1),y2:Y(1)}));
+  svg.appendChild(el("text",{class:"reflabel",x:W-PR-4,y:Y(1)-5,"text-anchor":"end"},"E[f] = 1"));
+  line(svg,f,ymax,Y,true);
+  // annotations
+  svg.appendChild(el("text",{class:"anno",x:X(0)-4,y:Y(f[0])-8},"apertura <strong>7.9</strong>"));
+  svg.appendChild(el("text",{class:"anno",x:X(14)-14,y:Y(f[14])+20,fill:"var(--muted)"},"valle mediodía <strong>0.40</strong>"));
+  svg.appendChild(el("text",{class:"anno",x:X(25)-10,y:Y(f[25])-10},"cierre <strong>0.89</strong>"));
+  // hover
+  const tg=el("g",{class:"tt"});
+  const cb=el("rect",{class:"tt-bg",x:0,y:0,width:108,height:34,rx:5});
+  const ct=el("text",{class:"tt-tx",x:8,y:15},""); const cv=el("text",{class:"tt-tx",x:8,y:28,"fill":"var(--hero)"},"");
+  const ch=el("line",{class:"crosshair",x1:0,x2:0,y1:PT,y2:PT+ph});
+  const ov=el("rect",{x:PL,y:PT,width:pw,height:ph,fill:"transparent"});
+  tg.appendChild(cb);tg.appendChild(ct);tg.appendChild(cv);
+  svg.appendChild(ch);svg.appendChild(tg);svg.appendChild(ov);
+  ov.addEventListener("mousemove",e=>{
+    const r=svg.getBoundingClientRect(), sx=(e.clientX-r.left)/r.width*W, sy=(e.clientY-r.top)/r.height*H;
+    if(sx<PL||sx>W-PR){tg.style.opacity=0;ch.style.opacity=0;return;}
+    let i=Math.round((sx-PL)/step-0.5);i=Math.max(0,Math.min(N-1,i));
+    ch.style.opacity=1;ch.setAttribute("x1",X(i));ch.setAttribute("x2",X(i));
+    const x=X(i),bx=x+10,by=Math.min(Y(f[i])-40,PT+ph-40);
+    tg.style.opacity=1;tg.setAttribute("transform",`translate(${Math.min(bx,W-PR-110)},${by})`);
+    ct.textContent=T[i];cv.textContent="f = "+f[i].toFixed(3);
+  });
+  ov.addEventListener("mouseleave",()=>{tg.style.opacity=0;ch.style.opacity=0;});
+})();
+
+// Chart 4 — train scatter + f (log y)
+(function(){
+  const svg=document.getElementById("c4");
+  const S=window.SCATTER; if(!S){svg.textContent="datos no cargados";return;}
+  const W=720,H=340,PL=46,PR=18,PT=16,PB=40;
+  const pw=W-PL-PR, ph=H-PT-PB, N=26, step=pw/N;
+  const X=i=>PL+(i+0.5)*step;
+  const ymin=0.001, ymax=30;
+  const ly=Math.log10(ymin), lh=Math.log10(ymax)-ly;
+  const Yv=v=>PT+ph-(Math.log10(Math.max(v,ymin))-ly)/lh*ph;
+  [0.001,0.01,0.1,1,10].forEach(v=>{
+    const y=Yv(v);
+    svg.appendChild(el("line",{class:"grid",x1:PL,x2:W-PR,y1:y,y2:y}));
+    svg.appendChild(el("text",{class:"grid",x:PL-8,y:y+3.5,"text-anchor":"end"},v.toString()));
+  });
+  svg.appendChild(el("text",{class:"ylabel",x:10,y:PT-4},"ratio (log)"));
+  const idx=[0,4,8,12,16,20,24];
+  idx.forEach(i=>{
+    svg.appendChild(el("line",{class:"axis",x1:X(i),x2:X(i),y1:PT+ph,y2:PT+ph+4}));
+    svg.appendChild(el("text",{class:"axis",x:X(i),y:PT+ph+18,"text-anchor":"middle"},S.times[i]));
+  });
+  svg.appendChild(el("line",{class:"axis",x1:PL,x2:W-PR,y1:PT+ph,y2:PT+ph}));
+  svg.appendChild(el("line",{class:"refline",x1:PL,x2:W-PR,y1:Yv(1),y2:Yv(1)}));
+  svg.appendChild(el("text",{class:"reflabel",x:W-PR-4,y:Yv(1)-5,"text-anchor":"end"},"E[f] = 1"));
+  // scatter — innerHTML string for speed (no hover: density scatter)
+  let pts="";
+  for(let k=0;k<S.j.length;k++){
+    const jit=((k*2654435761)%1000)/1000-0.5;  // deterministic jitter
+    const cx=X(S.j[k])+jit*step*0.7;
+    const cy=Yv(S.r[k]);
+    pts+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="1.3" fill="var(--recessive)" fill-opacity="0.16"/>`;
+  }
+  const g=el("g",{}); g.innerHTML=pts; svg.appendChild(g);
+  // median per bucket
+  const byj={};
+  for(let k=0;k<S.j.length;k++)(byj[S.j[k]]=byj[S.j[k]]||[]).push(S.r[k]);
+  let md="";
+  for(let i=0;i<N;i++){
+    const a=(byj[i]||[]).slice().sort((a,b)=>a-b);
+    const m=a.length?a[Math.floor(a.length/2)]:1;
+    md+=(i?" L":"M")+X(i).toFixed(1)+" "+Yv(m).toFixed(1);
+  }
+  svg.appendChild(el("path",{d:md,fill:"none",stroke:"var(--recessive-2)","stroke-width":1.4,"stroke-dasharray":"5 4"}));
+  // f line (hero)
+  let fd=""; S.f.forEach((v,i)=>{fd+=(i?" L":"M")+X(i).toFixed(1)+" "+Yv(v).toFixed(1);});
+  svg.appendChild(el("path",{class:"fline",d:fd}));
+  S.f.forEach((v,i)=>svg.appendChild(el("circle",{class:"fdot",cx:X(i),cy:Yv(v),r:2.6})));
+})();
+</script>

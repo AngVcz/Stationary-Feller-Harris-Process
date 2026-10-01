@@ -1,0 +1,372 @@
+=== CAL EXT (8,5,1 bpd) ===
+C:\Users\angve\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\numpy\_core\fromnumeric.py:57: FutureWarning: 'Series.swapaxes' is deprecated and will be removed in a future version. Please use 'Series.transpose' instead.
+  return bound(*args, **kwds)
+  epsilon threshold: 1e-05, stays: 1/4822 (0.0%), jumps: 4821/4822 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.3929, sigma=3.7014
+  Posterior means:
+    alpha:    1.000 (std=0.014)
+    mu:       -13.3922 (std=0.0534)
+    sigma:    3.7010 (std=0.0384)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4821.0/4822 (mean)
+  CAL n=8 (48.8/d) pct= 0.0% AAD=0.5022075055187637 n=4823/1208 p_stay=0.36773617757289645 [1s]
+  epsilon threshold: 1e-05, stays: 1/4818 (0.0%), jumps: 4817/4818 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.4051, sigma=3.6984
+  Posterior means:
+    alpha:    1.000 (std=0.014)
+    mu:       -13.4043 (std=0.0533)
+    sigma:    3.6980 (std=0.0384)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4817.0/4818 (mean)
+  CAL n=8 (48.8/d) pct=0.08% AAD=0.5813311239988946 n=4819/1207 p_stay=0.3677361185102636 [1s]
+  epsilon threshold: 1e-05, stays: 1/4797 (0.0%), jumps: 4796/4797 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.4557, sigma=3.6931
+  Posterior means:
+    alpha:    1.000 (std=0.014)
+    mu:       -13.4550 (std=0.0534)
+    sigma:    3.6927 (std=0.0384)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4796.0/4797 (mean)
+  CAL n=8 (48.8/d) pct= 0.5% AAD=0.6636187309503979 n=4798/1203 p_stay=0.36773580722584215 [1s]
+  epsilon threshold: 1e-05, stays: 1/4773 (0.0%), jumps: 4772/4773 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.5094, sigma=3.6918
+  Posterior means:
+    alpha:    1.000 (std=0.014)
+    mu:       -13.5087 (std=0.0535)
+    sigma:    3.6914 (std=0.0385)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4772.0/4773 (mean)
+  CAL n=8 (48.8/d) pct= 1.0% AAD=0.7464553794829024 n=4774/1199 p_stay=0.367735448971011 [1s]
+  epsilon threshold: 1e-05, stays: 1/4701 (0.0%), jumps: 4700/4701 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.6234, sigma=3.6938
+  Posterior means:
+    alpha:    1.000 (std=0.015)
+    mu:       -13.6226 (std=0.0539)
+    sigma:    3.6934 (std=0.0388)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4700.0/4701 (mean)
+  CAL n=8 (48.8/d) pct= 2.5% AAD=0.5030916245081519 n=4702/1186 p_stay=0.36773435786884 [1s]
+  epsilon threshold: 1e-05, stays: 1/4580 (0.0%), jumps: 4579/4580 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.7488, sigma=3.7041
+  Posterior means:
+    alpha:    1.000 (std=0.015)
+    mu:       -13.7480 (std=0.0548)
+    sigma:    3.7037 (std=0.0394)
+    P(stay):  0.3677 (mean)
+    n_jumps:  4579.0/4580 (mean)
+  CAL n=8 (48.8/d) pct= 5.0% AAD=0.6752873563218375 n=4581/1160 p_stay=0.36773246685134137 [1s]
+C:\Users\angve\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\numpy\_core\fromnumeric.py:57: FutureWarning: 'Series.swapaxes' is deprecated and will be removed in a future version. Please use 'Series.transpose' instead.
+  return bound(*args, **kwds)
+  epsilon threshold: 1e-05, stays: 0/3012 (0.0%), jumps: 3012/3012 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.338, mu=-12.9652, sigma=3.7822
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -12.9642 (std=0.0690)
+    sigma:    3.7815 (std=0.0496)
+    P(stay):  0.3676 (mean)
+    n_jumps:  3012.0/3012 (mean)
+  CAL n=5 (78.0/d) pct= 0.0% AAD=0.7117595048629551 n=3013/754 p_stay=0.36757640515425305 [1s]
+  epsilon threshold: 1e-05, stays: 0/3009 (0.0%), jumps: 3009/3009 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.345, mu=-12.9766, sigma=3.7787
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -12.9756 (std=0.0690)
+    sigma:    3.7781 (std=0.0496)
+    P(stay):  0.3676 (mean)
+    n_jumps:  3009.0/3009 (mean)
+  CAL n=5 (78.0/d) pct=0.08% AAD=0.6285967242142529 n=3010/753 p_stay=0.3675761940472817 [1s]
+  epsilon threshold: 1e-05, stays: 0/2996 (0.0%), jumps: 2996/2996 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.441, mu=-13.0162, sigma=3.7738
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -13.0152 (std=0.0690)
+    sigma:    3.7731 (std=0.0497)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2996.0/2996 (mean)
+  CAL n=5 (78.0/d) pct= 0.5% AAD=0.7333333333333331 n=2997/750 p_stay=0.3675752748931629 [1s]
+  epsilon threshold: 1e-05, stays: 0/2981 (0.0%), jumps: 2981/2981 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.498, mu=-13.0544, sigma=3.7729
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -13.0535 (std=0.0692)
+    sigma:    3.7722 (std=0.0498)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2981.0/2981 (mean)
+  CAL n=5 (78.0/d) pct= 1.0% AAD=0.7219251336898408 n=2982/748 p_stay=0.36757420544650715 [1s]
+  epsilon threshold: 1e-05, stays: 0/2936 (0.0%), jumps: 2936/2936 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.532, mu=-13.1563, sigma=3.7762
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -13.1553 (std=0.0698)
+    sigma:    3.7755 (std=0.0502)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2936.0/2936 (mean)
+  CAL n=5 (78.0/d) pct= 2.5% AAD=1.1050724637681164 n=2937/736 p_stay=0.3675709386606056 [1s]
+  epsilon threshold: 1e-05, stays: 0/2861 (0.0%), jumps: 2861/2861 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.595, mu=-13.2828, sigma=3.7889
+  Posterior means:
+    alpha:    1.001 (std=0.019)
+    mu:       -13.2819 (std=0.0709)
+    sigma:    3.7882 (std=0.0510)
+    P(stay):  0.3676 (mean)
+    n_jumps:  2861.0/2861 (mean)
+  CAL n=5 (78.0/d) pct= 5.0% AAD=1.3167587476979719 n=2862/724 p_stay=0.3675652905720653 [1s]
+C:\Users\angve\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\numpy\_core\fromnumeric.py:57: FutureWarning: 'Series.swapaxes' is deprecated and will be removed in a future version. Please use 'Series.transpose' instead.
+  return bound(*args, **kwds)
+  epsilon threshold: 1e-05, stays: 2/601 (0.3%), jumps: 599/601 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.428, mu=-10.6632, sigma=2.2134
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.6620 (std=0.0903)
+    sigma:    2.2110 (std=0.0647)
+    P(stay):  0.3681 (mean)
+    n_jumps:  599.0/601 (mean)
+  CAL n=1 (390.0/d) pct= 0.0% AAD=2.5055187637969105 n=602/151 p_stay=0.3680908986775131 [0s]
+  epsilon threshold: 1e-05, stays: 2/600 (0.3%), jumps: 598/600 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.483, mu=-10.6728, sigma=2.2025
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.6717 (std=0.0899)
+    sigma:    2.2002 (std=0.0645)
+    P(stay):  0.3681 (mean)
+    n_jumps:  598.0/600 (mean)
+  CAL n=1 (390.0/d) pct=0.08% AAD=2.6158940397351 n=601/151 p_stay=0.36809159229099536 [0s]
+  epsilon threshold: 1e-05, stays: 2/597 (0.3%), jumps: 595/597 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.562, mu=-10.6967, sigma=2.1819
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.6955 (std=0.0893)
+    sigma:    2.1796 (std=0.0640)
+    P(stay):  0.3681 (mean)
+    n_jumps:  595.0/597 (mean)
+  CAL n=1 (390.0/d) pct= 0.5% AAD=2.4444444444444433 n=598/150 p_stay=0.3680936888022815 [0s]
+  epsilon threshold: 1e-05, stays: 2/594 (0.3%), jumps: 592/594 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.663, mu=-10.7177, sigma=2.1672
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.7165 (std=0.0889)
+    sigma:    2.1649 (std=0.0637)
+    P(stay):  0.3681 (mean)
+    n_jumps:  592.0/594 (mean)
+  CAL n=1 (390.0/d) pct= 1.0% AAD=2.7069351230425034 n=595/149 p_stay=0.3680958091122771 [0s]
+  epsilon threshold: 1e-05, stays: 2/585 (0.3%), jumps: 583/585 (99.7%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.649, mu=-10.7732, sigma=2.1364
+  Posterior means:
+    alpha:    0.999 (std=0.041)
+    mu:       -10.7721 (std=0.0883)
+    sigma:    2.1341 (std=0.0633)
+    P(stay):  0.3681 (mean)
+    n_jumps:  583.0/585 (mean)
+  CAL n=1 (390.0/d) pct= 2.5% AAD=2.374429223744291 n=586/146 p_stay=0.36810231670090016 [0s]
+  epsilon threshold: 1e-05, stays: 2/570 (0.4%), jumps: 568/570 (99.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.691, mu=-10.8556, sigma=2.1020
+  Posterior means:
+    alpha:    0.999 (std=0.042)
+    mu:       -10.8545 (std=0.0880)
+    sigma:    2.0996 (std=0.0631)
+    P(stay):  0.3681 (mean)
+    n_jumps:  568.0/570 (mean)
+  CAL n=1 (390.0/d) pct= 5.0% AAD=2.1264367816091947 n=571/145 p_stay=0.36811367600477296 [0s]
+=== DOL EXT (8,5,1 bpd) ===
+  DOL target=8 -> 7.77/d build=7s n=4636/1214
+  epsilon threshold: 1e-01, stays: 111/4635 (2.4%), jumps: 4524/4635 (97.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.699, mu=-13.2766, sigma=3.8802
+  Posterior means:
+    alpha:    0.976 (std=0.015)
+    mu:       -13.2786 (std=0.0573)
+    sigma:    3.8792 (std=0.0397)
+    P(stay):  0.3769 (mean)
+    n_jumps:  4524.0/4635 (mean)
+      pct= 0.0% AAD=0.9198242723778142 p_stay=0.3769281305166989 n=4636/1214 [1s]
+  epsilon threshold: 1e-01, stays: 111/4631 (2.4%), jumps: 4520/4631 (97.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.672, mu=-13.2827, sigma=3.8764
+  Posterior means:
+    alpha:    0.976 (std=0.015)
+    mu:       -13.2847 (std=0.0572)
+    sigma:    3.8754 (std=0.0397)
+    P(stay):  0.3769 (mean)
+    n_jumps:  4520.0/4631 (mean)
+      pct=0.08% AAD=0.8573784006595245 p_stay=0.3769359470828444 n=4632/1213 [1s]
+  epsilon threshold: 1e-01, stays: 111/4611 (2.4%), jumps: 4500/4611 (97.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.743, mu=-13.3039, sigma=3.8712
+  Posterior means:
+    alpha:    0.976 (std=0.015)
+    mu:       -13.3059 (std=0.0573)
+    sigma:    3.8702 (std=0.0397)
+    P(stay):  0.3770 (mean)
+    n_jumps:  4500.0/4611 (mean)
+      pct= 0.5% AAD=0.9933774834437082 p_stay=0.3769752351600845 n=4612/1208 [1s]
+  epsilon threshold: 1e-01, stays: 111/4588 (2.4%), jumps: 4477/4588 (97.6%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.730, mu=-13.3254, sigma=3.8690
+  Posterior means:
+    alpha:    0.975 (std=0.015)
+    mu:       -13.3274 (std=0.0574)
+    sigma:    3.8680 (std=0.0398)
+    P(stay):  0.3770 (mean)
+    n_jumps:  4477.0/4588 (mean)
+      pct= 1.0% AAD=0.8568269762299607 p_stay=0.37702084371973027 n=4589/1206 [1s]
+  epsilon threshold: 1e-01, stays: 111/4519 (2.5%), jumps: 4408/4519 (97.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.981, mu=-13.3842, sigma=3.8687
+  Posterior means:
+    alpha:    0.975 (std=0.015)
+    mu:       -13.3862 (std=0.0578)
+    sigma:    3.8677 (std=0.0401)
+    P(stay):  0.3772 (mean)
+    n_jumps:  4408.0/4519 (mean)
+      pct= 2.5% AAD=1.0634118967452302 p_stay=0.37716048057435636 n=4520/1188 [1s]
+  epsilon threshold: 1e-01, stays: 111/4403 (2.5%), jumps: 4292/4403 (97.5%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.016, mu=-13.4761, sigma=3.8771
+  Posterior means:
+    alpha:    0.974 (std=0.015)
+    mu:       -13.4781 (std=0.0587)
+    sigma:    3.8761 (std=0.0407)
+    P(stay):  0.3774 (mean)
+    n_jumps:  4292.0/4403 (mean)
+      pct= 5.0% AAD=1.4423353465631301 p_stay=0.3774051896879731 n=4404/1159 [1s]
+  DOL target=5 -> 4.91/d build=7s n=2929/769
+  epsilon threshold: 1e-01, stays: 81/2928 (2.8%), jumps: 2847/2928 (97.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.582, mu=-12.6383, sigma=3.2175
+  Posterior means:
+    alpha:    0.972 (std=0.019)
+    mu:       -12.6403 (std=0.0597)
+    sigma:    3.2163 (std=0.0414)
+    P(stay):  0.3783 (mean)
+    n_jumps:  2847.0/2928 (mean)
+      pct= 0.0% AAD=1.2527091460771587 p_stay=0.3783385146896631 n=2929/769 [1s]
+  epsilon threshold: 1e-01, stays: 81/2925 (2.8%), jumps: 2844/2925 (97.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.573, mu=-12.6454, sigma=3.2115
+  Posterior means:
+    alpha:    0.972 (std=0.019)
+    mu:       -12.6475 (std=0.0597)
+    sigma:    3.2102 (std=0.0414)
+    P(stay):  0.3783 (mean)
+    n_jumps:  2844.0/2925 (mean)
+      pct=0.08% AAD=1.228298611111106 p_stay=0.37834925100398054 n=2926/768 [1s]
+  epsilon threshold: 1e-01, stays: 83/2913 (2.8%), jumps: 2830/2913 (97.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.588, mu=-12.6669, sigma=3.2001
+  Posterior means:
+    alpha:    0.971 (std=0.019)
+    mu:       -12.6690 (std=0.0596)
+    sigma:    3.1989 (std=0.0413)
+    P(stay):  0.3787 (mean)
+    n_jumps:  2830.0/2913 (mean)
+      pct= 0.5% AAD=1.1792863359442975 p_stay=0.37865220826093077 n=2914/766 [1s]
+  epsilon threshold: 1e-01, stays: 83/2898 (2.9%), jumps: 2815/2898 (97.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.622, mu=-12.6877, sigma=3.1952
+  Posterior means:
+    alpha:    0.971 (std=0.019)
+    mu:       -12.6898 (std=0.0596)
+    sigma:    3.1940 (std=0.0413)
+    P(stay):  0.3787 (mean)
+    n_jumps:  2815.0/2898 (mean)
+      pct= 1.0% AAD=0.906895037329822 p_stay=0.3787080596643513 n=2899/759 [1s]
+  epsilon threshold: 1e-01, stays: 84/2854 (2.9%), jumps: 2770/2854 (97.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.810, mu=-12.7436, sigma=3.1876
+  Posterior means:
+    alpha:    0.970 (std=0.019)
+    mu:       -12.7456 (std=0.0599)
+    sigma:    3.1864 (std=0.0416)
+    P(stay):  0.3790 (mean)
+    n_jumps:  2770.0/2854 (mean)
+      pct= 2.5% AAD=0.6853582554517127 p_stay=0.37900804109142106 n=2855/749 [1s]
+  epsilon threshold: 1e-01, stays: 88/2781 (3.2%), jumps: 2693/2781 (96.8%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.909, mu=-12.8301, sigma=3.1835
+  Posterior means:
+    alpha:    0.968 (std=0.019)
+    mu:       -12.8322 (std=0.0606)
+    sigma:    3.1822 (std=0.0420)
+    P(stay):  0.3798 (mean)
+    n_jumps:  2693.0/2781 (mean)
+      pct= 5.0% AAD=0.7377049180327848 p_stay=0.37984667608146494 n=2782/732 [1s]
+  DOL target=1 -> 1.18/d build=7s n=598/158
+  epsilon threshold: 1e-01, stays: 22/597 (3.7%), jumps: 575/597 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.6291, sigma=2.2148
+  Posterior means:
+    alpha:    0.963 (std=0.041)
+    mu:       -10.6322 (std=0.0910)
+    sigma:    2.2114 (std=0.0629)
+    P(stay):  0.3816 (mean)
+    n_jumps:  575.0/597 (mean)
+      pct= 0.0% AAD=2.2784810126582293 p_stay=0.38164803460400776 n=598/158 [0s]
+  epsilon threshold: 1e-01, stays: 22/596 (3.7%), jumps: 574/596 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.6381, sigma=2.2057
+  Posterior means:
+    alpha:    0.963 (std=0.041)
+    mu:       -10.6412 (std=0.0907)
+    sigma:    2.2023 (std=0.0627)
+    P(stay):  0.3817 (mean)
+    n_jumps:  574.0/596 (mean)
+      pct=0.08% AAD=1.9002123142250522 p_stay=0.3816710419281562 n=597/157 [0s]
+  epsilon threshold: 1e-01, stays: 22/594 (3.7%), jumps: 572/594 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.6546, sigma=2.1909
+  Posterior means:
+    alpha:    0.963 (std=0.041)
+    mu:       -10.6577 (std=0.0902)
+    sigma:    2.1875 (std=0.0623)
+    P(stay):  0.3817 (mean)
+    n_jumps:  572.0/594 (mean)
+      pct= 0.5% AAD=1.369426751592357 p_stay=0.38171729179795977 n=595/157 [0s]
+  epsilon threshold: 1e-01, stays: 22/591 (3.7%), jumps: 569/591 (96.3%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.6766, sigma=2.1745
+  Posterior means:
+    alpha:    0.963 (std=0.041)
+    mu:       -10.6796 (std=0.0898)
+    sigma:    2.1711 (std=0.0620)
+    P(stay):  0.3818 (mean)
+    n_jumps:  569.0/591 (mean)
+      pct= 1.0% AAD=1.369426751592357 p_stay=0.38178726071544955 n=592/157 [0s]
+  epsilon threshold: 1e-01, stays: 22/582 (3.8%), jumps: 560/582 (96.2%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.7307, sigma=2.1466
+  Posterior means:
+    alpha:    0.962 (std=0.041)
+    mu:       -10.7338 (std=0.0893)
+    sigma:    2.1433 (std=0.0617)
+    P(stay):  0.3820 (mean)
+    n_jumps:  560.0/582 (mean)
+      pct= 2.5% AAD=1.9892473118279532 p_stay=0.38200154953716714 n=583/155 [0s]
+  epsilon threshold: 1e-01, stays: 22/567 (3.9%), jumps: 545/567 (96.1%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-10.8114, sigma=2.1157
+  Posterior means:
+    alpha:    0.961 (std=0.042)
+    mu:       -10.8145 (std=0.0892)
+    sigma:    2.1123 (std=0.0616)
+    P(stay):  0.3824 (mean)
+    n_jumps:  545.0/567 (mean)
+      pct= 5.0% AAD=1.5894039735099323 p_stay=0.3823740108949233 n=568/151 [0s]
+RESULT_JSON {"calendar": [{"bpd": 48.75, "n_bpd": 8, "pct": 0.0, "aad": 0.5022075055187637, "p_stay": 0.36773617757289645, "n_train": 4823, "n_test": 1208}, {"bpd": 48.75, "n_bpd": 8, "pct": 0.08, "aad": 0.5813311239988946, "p_stay": 0.3677361185102636, "n_train": 4819, "n_test": 1207}, {"bpd": 48.75, "n_bpd": 8, "pct": 0.5, "aad": 0.6636187309503979, "p_stay": 0.36773580722584215, "n_train": 4798, "n_test": 1203}, {"bpd": 48.75, "n_bpd": 8, "pct": 1.0, "aad": 0.7464553794829024, "p_stay": 0.367735448971011, "n_train": 4774, "n_test": 1199}, {"bpd": 48.75, "n_bpd": 8, "pct": 2.5, "aad": 0.5030916245081519, "p_stay": 0.36773435786884, "n_train": 4702, "n_test": 1186}, {"bpd": 48.75, "n_bpd": 8, "pct": 5.0, "aad": 0.6752873563218375, "p_stay": 0.36773246685134137, "n_train": 4581, "n_test": 1160}, {"bpd": 78.0, "n_bpd": 5, "pct": 0.0, "aad": 0.7117595048629551, "p_stay": 0.36757640515425305, "n_train": 3013, "n_test": 754}, {"bpd": 78.0, "n_bpd": 5, "pct": 0.08, "aad": 0.6285967242142529, "p_stay": 0.3675761940472817, "n_train": 3010, "n_test": 753}, {"bpd": 78.0, "n_bpd": 5, "pct": 0.5, "aad": 0.7333333333333331, "p_stay": 0.3675752748931629, "n_train": 2997, "n_test": 750}, {"bpd": 78.0, "n_bpd": 5, "pct": 1.0, "aad": 0.7219251336898408, "p_stay": 0.36757420544650715, "n_train": 2982, "n_test": 748}, {"bpd": 78.0, "n_bpd": 5, "pct": 2.5, "aad": 1.1050724637681164, "p_stay": 0.3675709386606056, "n_train": 2937, "n_test": 736}, {"bpd": 78.0, "n_bpd": 5, "pct": 5.0, "aad": 1.3167587476979719, "p_stay": 0.3675652905720653, "n_train": 2862, "n_test": 724}, {"bpd": 390.0, "n_bpd": 1, "pct": 0.0, "aad": 2.5055187637969105, "p_stay": 0.3680908986775131, "n_train": 602, "n_test": 151}, {"bpd": 390.0, "n_bpd": 1, "pct": 0.08, "aad": 2.6158940397351, "p_stay": 0.36809159229099536, "n_train": 601, "n_test": 151}, {"bpd": 390.0, "n_bpd": 1, "pct": 0.5, "aad": 2.4444444444444433, "p_stay": 0.3680936888022815, "n_train": 598, "n_test": 150}, {"bpd": 390.0, "n_bpd": 1, "pct": 1.0, "aad": 2.7069351230425034, "p_stay": 0.3680958091122771, "n_train": 595, "n_test": 149}, {"bpd": 390.0, "n_bpd": 1, "pct": 2.5, "aad": 2.374429223744291, "p_stay": 0.36810231670090016, "n_train": 586, "n_test": 146}, {"bpd": 390.0, "n_bpd": 1, "pct": 5.0, "aad": 2.1264367816091947, "p_stay": 0.36811367600477296, "n_train": 571, "n_test": 145}], "dollar": [{"bpd": 7.77, "target": 8, "pct": 0.0, "aad": 0.9198242723778142, "p_stay": 0.3769281305166989, "n_train": 4636, "n_test": 1214}, {"bpd": 7.77, "target": 8, "pct": 0.08, "aad": 0.8573784006595245, "p_stay": 0.3769359470828444, "n_train": 4632, "n_test": 1213}, {"bpd": 7.77, "target": 8, "pct": 0.5, "aad": 0.9933774834437082, "p_stay": 0.3769752351600845, "n_train": 4612, "n_test": 1208}, {"bpd": 7.77, "target": 8, "pct": 1.0, "aad": 0.8568269762299607, "p_stay": 0.37702084371973027, "n_train": 4589, "n_test": 1206}, {"bpd": 7.77, "target": 8, "pct": 2.5, "aad": 1.0634118967452302, "p_stay": 0.37716048057435636, "n_train": 4520, "n_test": 1188}, {"bpd": 7.77, "target": 8, "pct": 5.0, "aad": 1.4423353465631301, "p_stay": 0.3774051896879731, "n_train": 4404, "n_test": 1159}, {"bpd": 4.91, "target": 5, "pct": 0.0, "aad": 1.2527091460771587, "p_stay": 0.3783385146896631, "n_train": 2929, "n_test": 769}, {"bpd": 4.91, "target": 5, "pct": 0.08, "aad": 1.228298611111106, "p_stay": 0.37834925100398054, "n_train": 2926, "n_test": 768}, {"bpd": 4.91, "target": 5, "pct": 0.5, "aad": 1.1792863359442975, "p_stay": 0.37865220826093077, "n_train": 2914, "n_test": 766}, {"bpd": 4.91, "target": 5, "pct": 1.0, "aad": 0.906895037329822, "p_stay": 0.3787080596643513, "n_train": 2899, "n_test": 759}, {"bpd": 4.91, "target": 5, "pct": 2.5, "aad": 0.6853582554517127, "p_stay": 0.37900804109142106, "n_train": 2855, "n_test": 749}, {"bpd": 4.91, "target": 5, "pct": 5.0, "aad": 0.7377049180327848, "p_stay": 0.37984667608146494, "n_train": 2782, "n_test": 732}, {"bpd": 1.18, "target": 1, "pct": 0.0, "aad": 2.2784810126582293, "p_stay": 0.38164803460400776, "n_train": 598, "n_test": 158}, {"bpd": 1.18, "target": 1, "pct": 0.08, "aad": 1.9002123142250522, "p_stay": 0.3816710419281562, "n_train": 597, "n_test": 157}, {"bpd": 1.18, "target": 1, "pct": 0.5, "aad": 1.369426751592357, "p_stay": 0.38171729179795977, "n_train": 595, "n_test": 157}, {"bpd": 1.18, "target": 1, "pct": 1.0, "aad": 1.369426751592357, "p_stay": 0.38178726071544955, "n_train": 592, "n_test": 157}, {"bpd": 1.18, "target": 1, "pct": 2.5, "aad": 1.9892473118279532, "p_stay": 0.38200154953716714, "n_train": 583, "n_test": 155}, {"bpd": 1.18, "target": 1, "pct": 5.0, "aad": 1.5894039735099323, "p_stay": 0.3823740108949233, "n_train": 568, "n_test": 151}]}

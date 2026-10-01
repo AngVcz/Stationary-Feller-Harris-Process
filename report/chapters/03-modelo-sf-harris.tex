@@ -49,12 +49,12 @@ Replicamos la Tabla~3 con dos variantes de agregaci\'{o}n temporal:
 \centering
 \caption{Cobertura predictiva de $\log(\RV_t)$: SF-Harris vs.\ benchmarks.}
 \label{tab:table3}
-\begin{tabular}{lccccccc}
+\begin{tabular}{lcccccccc}
 \toprule
 Modelo & Barras & $p=0.25$ & $0.50$ & $0.75$ & $0.85$ & $0.90$ & $0.95$ & $\AAD$ \\
 \midrule
-SF-Harris Gibbs ($\varepsilon=0.1$) & D\'{o}lar & 25.1\% & 50.2\% & 75.0\% & 84.9\% & 90.0\% & 95.1\% & \textbf{0.2} \\
-SF-Harris Gibbs ($\varepsilon=0.1$) & 15\,min & 25.2\% & 50.5\% & 75.3\% & 85.1\% & 90.2\% & 94.8\% & 0.3 \\
+SF-Harris Gibbs ($\varepsilon=0.1$) & D\'{o}lar & 24.4\% & 50.0\% & 74.8\% & 85.3\% & 90.1\% & 94.4\% & \textbf{0.3} \\
+SF-Harris Gibbs ($\varepsilon=0.1$) & 15\,min & 25.9\% & 50.8\% & 74.4\% & 84.7\% & 90.1\% & 94.7\% & 0.5 \\
 Anzarut (GIG+Gibbs) & 15\,min & 25\% & 51\% & 75\% & 84\% & 89\% & 93\% & 0.8 \\
 GARCH(1,1) & 15\,min & 23.1\% & 46.6\% & 70.1\% & 80.6\% & 86.6\% & 92.7\% & 3.4 \\
 Sim.\ Hist\'{o}rica & 15\,min & 25.0\% & 50.1\% & 75.2\% & 85.0\% & 90.0\% & 95.1\% & 0.4 \\
@@ -62,8 +62,8 @@ Sim.\ Hist\'{o}rica & 15\,min & 25.0\% & 50.1\% & 75.2\% & 85.0\% & 90.0\% & 95.
 \end{tabular}
 \end{table}
 
-Nuestro resultado de 0.2\,pp con barras de d\'{o}lar supera los 0.8\,pp originales por un
-factor de $4\times$. La mejora se debe al uso de la distribuci\'{o}n emp\'{\'i}rica en
+Nuestro resultado de 0.3\,pp con barras de d\'{o}lar supera los 0.8\,pp originales por un
+factor de $\sim$2.7$\times$. La mejora se debe al uso de la distribuci\'{o}n emp\'{\'i}rica en
 lugar de la GIG param\'{e}trica y a barras de d\'{o}lar que reducen la curtosis
 (curtosis 0.09 vs 35.5 para barras de calendario).
 
@@ -79,7 +79,7 @@ Estad\'{\'i}stica & 15\,min & D\'{o}lar \\
 Curtosis & 35.5 & 0.09 \\
 Asimetr\'{\'i}a & $-$4.8 & 0.03 \\
 Desv.\ est\'{a}ndar & 1.04 & 0.78 \\
-AAD (Gibbs $\varepsilon=0.1$) & 0.3\,pp & 0.2\,pp \\
+AAD (Gibbs $\varepsilon=0.1$) & 0.5\,pp & 0.3\,pp \\
 \bottomrule
 \end{tabular}
 \end{table}

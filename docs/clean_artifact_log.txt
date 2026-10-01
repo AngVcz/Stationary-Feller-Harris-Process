@@ -1,0 +1,16 @@
+==========================================================================================
+Cleaning artifact check: AAD on CLEANED test (standard) vs FULL test (no test trimming)
+If AAD_full does NOT improve with pct while AAD_clean drops -> artifact of test trimming.
+==========================================================================================
+## cal 30min(13/d)
+    pct  n_clean   n_full  AAD_clean   AAD_full  drop(clean)  drop(full)
+    0.0     1944     1944      0.619      0.619       +0.000      +0.000
+    1.0     1924     1944      0.208      0.761       -0.411      +0.142
+    5.0     1864     1944      0.245      2.759       -0.374      +2.140
+   10.0     1774     1944      0.829      5.271       +0.210      +4.652
+## dol 13(12.41/d)
+    pct  n_clean   n_full  AAD_clean   AAD_full  drop(clean)  drop(full)
+    0.0     1934     1934      0.384      0.384       +0.000      +0.000
+    1.0     1921     1934      0.370      0.627       -0.014      +0.243
+    5.0     1852     1934      0.320      3.032       -0.064      +2.647
+   10.0     1777     1934      0.151      5.798       -0.233      +5.414

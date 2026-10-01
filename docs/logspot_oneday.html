@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>log(spot) — un día de trading (IBM, 15-min)</title>
+<style>
+  :root{
+    --surface:#fbfbfc; --ink:#1a1d23; --muted:#6b7280; --grid:#e6e8ec;
+    --axis:#9aa0a8; --accent:#1f6f8b; --accent2:#9aa0a8;
+    --tt-bg:#ffffff; --tt-border:#d6d9de;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --surface:#15171c; --ink:#e8eaed; --muted:#9aa0a8; --grid:#262a32;
+      --axis:#5b626c; --accent:#5fb4cf; --accent2:#5b626c;
+      --tt-bg:#1d2027; --tt-border:#2c3038;
+    }
+  }
+  :root[data-theme="dark"]{
+    --surface:#15171c; --ink:#e8eaed; --muted:#9aa0a8; --grid:#262a32;
+    --axis:#5b626c; --accent:#5fb4cf; --accent2:#5b626c;
+    --tt-bg:#1d2027; --tt-border:#2c3038;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:24px}
+  .wrap{max-width:880px;margin:0 auto}
+  h1{font-size:18px;font-weight:600;margin:0 0 4px;letter-spacing:-0.01em}
+  .sub{font-size:13px;color:var(--muted);margin:0 0 18px}
+  .legend{display:flex;gap:18px;font-size:12px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .swatch{width:18px;height:2px;border-radius:2px;display:inline-block}
+  .swatch.dash{background:repeating-linear-gradient(90deg,var(--accent2) 0 4px,transparent 4px 7px)}
+  svg{width:100%;height:auto;display:block;border-radius:6px}
+  .footer{margin-top:14px;font-size:11px;color:var(--muted);line-height:1.5}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    background:rgba(125,125,125,0.12);padding:1px 5px;border-radius:3px;font-size:11px}
+  .tt{font-size:11px;pointer-events:none}
+  .tt .k{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>log(spot) — IBM, 15-min bars, 2014-06-02</h1>
+  <p class="sub">Volatilidad spot en escala log: <code>log(r²/f(tᵢ))</code>. Comparación con <code>log(r²)</code> (sin quitar estacional) para ver el efecto de dividir por f(tᵢ).</p>
+  <div class="legend">
+    <span><i class="swatch" style="background:var(--accent)"></i> log(spot) = log(r²/f(tᵢ))</span>
+    <span><i class="swatch dash"></i> log(r²) crudo</span>
+  </div>
+  <svg id="chart" viewBox="0 0 860 380"></svg>
+  <p class="footer">
+    Cada punto es una barra de 15 min. <b>r²/f(tᵢ)</b> es un proxy ruidoso de σ² (varianza spot): <code>r²/f ~ σ²·χ²(1)</code>, por eso la línea es tan jagged — una sola barra barely estima σ². El spike de apertura visible en <code>log(r²)</code> (09:30) se elimina al dividir por f(09:30)≈7.47, dejando log(spot) más plano. El Gibbs integra el ruido log(χ²₁) vía la cadena de Harris sobre log σ².
+  </p>
+</div>
+<script>
+const DATA = {"day":"2014-06-02","times":["09:30","09:45","10:00","10:15","10:30","10:45","11:00","11:15","11:30","11:45","12:00","12:15","12:30","12:45","13:00","13:15","13:30","13:45","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45"],"log_r2":[-9.3819,-12.7919,-11.5719,-17.4225,-15.2633,-12.4932,-13.668,-16.8545,-13.0495,-14.9915,-12.3874,-15.7818,-16.9382,-15.1577,-14.1635,-16.0959,-18.2372,-16.8512,-12.6597,-12.7222,-14.6814,-16.9349,-17.4248,-17.4248,-13.1462,-16.8522],"log_spot":[-11.3927,-13.4801,-12.1096,-17.5423,-15.259,-12.4686,-13.5757,-16.5132,-12.771,-14.5233,-11.854,-15.0445,-16.2746,-14.3329,-13.2566,-15.4961,-17.5128,-16.0107,-12.1327,-12.0533,-13.9422,-16.2012,-16.9794,-16.8432,-12.7474,-16.7535],"f_t":[7.4694,1.9901,1.712,1.1273,0.9957,0.9757,0.9118,0.7108,0.7569,0.6261,0.5867,0.4784,0.515,0.4383,0.4038,0.549,0.4847,0.4315,0.5904,0.5123,0.4775,0.4801,0.6406,0.559,0.6711,0.906]};
+
+const W=860,H=380, M={l:52,r:18,t:14,b:38};
+const PW=W-M.l-M.r, PH=H-M.t-M.b;
+const svg=document.getElementById('chart');
+const NS="http://www.w3.org/2000/svg";
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const el=(t,a={},tx)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(tx!=null)e.textContent=tx;return e;};
+
+const all=[...DATA.log_r2,...DATA.log_spot].filter(v=>v!=null);
+let yMin=Math.min(...all)-0.5, yMax=Math.max(...all)+0.5;
+const X=i=>M.l+(i/(DATA.times.length-1))*PW;
+const Y=v=>M.t+(1-(v-yMin)/(yMax-yMin))*PH;
+
+// grid + y axis
+const nTicks=6;
+for(let i=0;i<=nTicks;i++){
+  const v=yMin+(yMax-yMin)*i/nTicks;
+  const y=Y(v);
+  svg.appendChild(el('line',{x1:M.l,y1:y,x2:W-M.r,y2:y,stroke:'var(--grid)','stroke-width':1}));
+  svg.appendChild(el('text',{x:M.l-8,y:y+3.5,'text-anchor':'end',fill:'var(--axis)','font-size':10},v.toFixed(0)));
+}
+// x axis labels (every 4th)
+DATA.times.forEach((t,i)=>{ if(i%4===0||i===DATA.times.length-1)
+  svg.appendChild(el('text',{x:X(i),y:H-M.b+16,'text-anchor':'middle',fill:'var(--axis)','font-size':10},t));
+});
+
+function path(series){
+  let d='';
+  series.forEach((v,i)=>{ if(v==null)return; d+=(d?' L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);});
+  return d;
+}
+// raw log(r2) — muted dashed
+svg.appendChild(el('path',{d:path(DATA.log_r2),fill:'none',stroke:'var(--accent2)','stroke-width':1.6,'stroke-dasharray':'4 4','stroke-linejoin':'round','stroke-linecap':'round'}));
+// log(spot) — primary
+svg.appendChild(el('path',{d:path(DATA.log_spot),fill:'none',stroke:'var(--accent)','stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'}));
+DATA.log_spot.forEach((v,i)=>{ if(v!=null)
+  svg.appendChild(el('circle',{cx:X(i),cy:Y(v),r:3.2,fill:'var(--surface)',stroke:'var(--accent)','stroke-width':1.6}));
+});
+
+// hover layer
+const cross=el('line',{y1:M.t,y2:H-M.b,stroke:'var(--muted)','stroke-width':1,opacity:0.5});
+cross.style.display='none'; svg.appendChild(cross);
+const tt=el('g',{class:'tt'}); tt.style.display='none'; svg.appendChild(tt);
+const ttBg=el('rect',{rx:5,ry:5,fill:'var(--tt-bg)',stroke:'var(--tt-border)','stroke-width':1});
+const ttT=[el('text',{fill:'var(--ink)','font-size':11,'font-weight':600}),
+  el('text',{y:15,fill:'var(--accent)','font-size':11}),
+  el('text',{y:30,fill:'var(--accent2)','font-size':11}),
+  el('text',{y:45,fill:'var(--muted)','font-size':10})];
+tt.appendChild(ttBg); ttT.forEach(t=>tt.appendChild(t));
+
+const overlay=el('rect',{x:M.l,y:M.t,width:PW,height:PH,fill:'transparent'});
+svg.appendChild(overlay);
+overlay.addEventListener('mousemove',ev=>{
+  const r=svg.getBoundingClientRect();
+  const px=(ev.clientX-r.left)*(W/r.width);
+  const i=Math.round(((px-M.l)/PW)*(DATA.times.length-1));
+  if(i<0||i>=DATA.times.length){tt.style.display='none';cross.style.display='none';return;}
+  cross.style.display=''; cross.setAttribute('x1',X(i)); cross.setAttribute('x2',X(i));
+  const ls=DATA.log_spot[i], lr=DATA.log_r2[i], ft=DATA.f_t[i];
+  const lines=[DATA.times[i], `log(spot)=${ls.toFixed(2)}`, `log(r²)=${lr.toFixed(2)}`, `f(t)=${ft.toFixed(2)}`];
+  ttT.forEach((t,k)=>t.textContent=lines[k]);
+  ttT.forEach((t,k)=>t.setAttribute('x',8));
+  tt.appendChild(ttBg); // reflow
+  const bw=120, bh=64;
+  let bx=X(i)+10, by=Y(Math.max(ls,lr))-10;
+  if(bx+bw>W-M.r)bx=X(i)-bw-10;
+  if(by-bh<M.t)by=Y(Math.min(ls,lr))+bh+10;
+  tt.setAttribute('transform',`translate(${bx},${by-bh})`);
+  ttBg.setAttribute('width',bw); ttBg.setAttribute('height',bh);
+  tt.style.display='';
+});
+overlay.addEventListener('mouseleave',()=>{tt.style.display='none';cross.style.display='none';});
+</script>
+</body>
+</html>

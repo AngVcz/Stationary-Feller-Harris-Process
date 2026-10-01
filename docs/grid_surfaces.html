@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AAD 3D — grid (barras/día × %removal) calendar vs dollar</title>
+<style>
+  :root{
+    --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9; --surface:#fcfcfb;
+    --dollar:#2a78d6; --calendar:#eb6834; --opt:#0ca30c;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#f4f3ef; --ink2:#c9c7bf; --muted:#8e8d85; --grid:#3a3a36; --surface:#23231f;
+      --dollar:#7fb2ff; --calendar:#f59a6a; --opt:#5fd45f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#f4f3ef; --ink2:#c9c7bf; --muted:#8e8d85; --grid:#3a3a36; --surface:#23231f;
+    --dollar:#7fb2ff; --calendar:#f59a6a; --opt:#5fd45f;
+  }
+  html,body{margin:0;padding:0}
+  body{background:var(--surface);color:var(--ink);
+    font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.5;padding:24px 20px 40px;}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}
+  h2{font-size:17px;margin:26px 0 2px}
+  .sub{color:var(--ink2);font-size:14px;margin:0 0 14px}
+  .panel{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+  .chart{width:100%;max-width:470px;height:auto;display:block;cursor:grab;touch-action:none}
+  .chart:active{cursor:grabbing}
+  .col{flex:1 1 470px;min-width:300px}
+  .read{font-size:14px;color:var(--ink2);margin:8px 0}
+  .read b{color:var(--ink)}
+  .tag{font-size:12px;font-weight:600;padding:2px 7px;border-radius:9px;color:#fff}
+  .tag.dollar{background:var(--dollar)} .tag.calendar{background:var(--calendar)}
+  .tag.opt{background:var(--opt)}
+  .note{font-size:12.5px;color:var(--muted);margin-top:10px;border-top:1px solid var(--grid);padding-top:8px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0 4px;font-size:13px;color:var(--ink2)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .swatch{width:14px;height:14px;border-radius:3px;display:inline-block}
+  .ctrl{display:flex;align-items:center;gap:14px;margin:0 0 10px;font-size:13px;color:var(--ink2)}
+  .ctrl button{font:inherit;font-size:13px;padding:4px 12px;border:1px solid var(--grid);
+    border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer}
+  .ctrl button:hover{border-color:var(--muted)}
+  .ctrl .spd{width:120px}
+  .ctrl .hint{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AAD sobre el plano (barras/día × %removal) — calendar vs dollar</h1>
+  <p class="sub">Grid 2D, top-removal por |r| en ambas construcciones, pipeline nativo cada una (calendar ε=1e-5+f_t seeds 42/123; dollar ε=0.1 seeds 55/321). Eje vertical = AAD (pp), más bajo = mejor calibración. <span style="color:var(--opt)">●</span> verde = mínimo del plano.</p>
+
+  <div class="ctrl">
+    <button id="play" type="button">⏸ Pausar</button>
+    <label>velocidad <input id="spd" class="spd" type="range" min="0" max="1.5" step="0.05" value="0.55"></label>
+    <span class="hint">arrastra: horizontal = girar (azimut), vertical = inclinar (ver z). Plano verde = AAD 0.4; celdas con borde verde &lt; 0.4</span>
+  </div>
+
+  <div class="panel">
+    <div class="col">
+      <h2><span class="tag calendar">Calendar</span> superficie AAD</h2>
+      <svg id="cal" class="chart" viewBox="0 0 470 400"></svg>
+    </div>
+    <div class="col">
+      <h2><span class="tag dollar">Dollar</span> superficie AAD</h2>
+      <svg id="dol" class="chart" viewBox="0 0 470 400"></svg>
+    </div>
+  </div>
+
+  <h2>Empalmado — calendar vs dollar (mismo plano)</h2>
+  <p class="sub">Dos superficies en la misma proyección: calendar (sólida naranja) y dollar (malla azul translúcida). Calendar domina el centro del plano (8–130/d, cleaning moderado); dollar gana en su fondo ∪ (13/d low-clean), a 5/d con cleaning pesado, y en el extremo diario 1/d.</p>
+  <svg id="both" class="chart" viewBox="0 0 760 470" style="max-width:760px"></svg>
+
+  <div class="legend">
+    <span><i class="swatch" style="background:var(--calendar)"></i> Calendar (sólida)</span>
+    <span><i class="swatch" style="background:var(--dollar)"></i> Dollar (malla)</span>
+    <span><i class="swatch" style="background:var(--opt);border-radius:50%"></i> mínimo AAD del plano</span>
+  </div>
+
+  <div class="read" id="readout"></div>
+  <div class="read" id="count"></div>
+  <div class="note" id="noteline"></div>
+</div>
+
+<script>
+const GRID = {"calendar":[{"bpd":1.0,"pct":0.0,"aad":2.5055187637969105,"p_stay":0.3680908986775131},{"bpd":1.0,"pct":0.08,"aad":2.6158940397351,"p_stay":0.36809159229099536},{"bpd":1.0,"pct":0.5,"aad":2.4444444444444433,"p_stay":0.3680936888022815},{"bpd":1.0,"pct":1.0,"aad":2.7069351230425034,"p_stay":0.3680958091122771},{"bpd":1.0,"pct":2.5,"aad":2.374429223744291,"p_stay":0.36810231670090016},{"bpd":1.0,"pct":5.0,"aad":2.1264367816091947,"p_stay":0.36811367600477296},{"bpd":1.0,"pct":8.0,"aad":2.511737089201878,"p_stay":0.3681282222276313},{"bpd":1.0,"pct":10.0,"aad":2.00239808153477,"p_stay":0.3681385230652143},{"bpd":5.0,"pct":0.0,"aad":0.7117595048629551,"p_stay":0.36757640515425305},{"bpd":5.0,"pct":0.08,"aad":0.6285967242142529,"p_stay":0.3675761940472817},{"bpd":5.0,"pct":0.5,"aad":0.7333333333333331,"p_stay":0.3675752748931629},{"bpd":5.0,"pct":1.0,"aad":0.7219251336898408,"p_stay":0.36757420544650715},{"bpd":5.0,"pct":2.5,"aad":1.1050724637681164,"p_stay":0.3675709386606056},{"bpd":5.0,"pct":5.0,"aad":1.3167587476979719,"p_stay":0.3675652905720653},{"bpd":5.0,"pct":8.0,"aad":0.8568738229755178,"p_stay":0.36755807168919474},{"bpd":5.0,"pct":10.0,"aad":0.7027540360873689,"p_stay":0.36755307537734005},{"bpd":8.0,"pct":0.0,"aad":0.5022075055187637,"p_stay":0.36773617757289645},{"bpd":8.0,"pct":0.08,"aad":0.5813311239988946,"p_stay":0.3677361185102636},{"bpd":8.0,"pct":0.5,"aad":0.6636187309503979,"p_stay":0.36773580722584215},{"bpd":8.0,"pct":1.0,"aad":0.7464553794829024,"p_stay":0.367735448971011},{"bpd":8.0,"pct":2.5,"aad":0.5030916245081519,"p_stay":0.36773435786884},{"bpd":8.0,"pct":5.0,"aad":0.6752873563218375,"p_stay":0.36773246685134137},{"bpd":8.0,"pct":8.0,"aad":0.7780725022104337,"p_stay":0.36773011678502393},{"bpd":8.0,"pct":10.0,"aad":0.6384892086330934,"p_stay":0.3677284685413449},{"bpd":13.0,"pct":0.0,"aad":0.6189986282578873,"p_stay":0.3677194983585142},{"bpd":13.0,"pct":0.08,"aad":0.582432664264885,"p_stay":0.3677194056429299},{"bpd":13.0,"pct":0.5,"aad":0.5452356381148983,"p_stay":0.36771896661250686},{"bpd":13.0,"pct":1.0,"aad":0.2079002079002059,"p_stay":0.36771844358688954},{"bpd":13.0,"pct":2.5,"aad":0.3980752405949269,"p_stay":0.36771684677581273},{"bpd":13.0,"pct":5.0,"aad":0.24499284692417808,"p_stay":0.3677140889532536},{"bpd":13.0,"pct":8.0,"aad":0.5825510767531767,"p_stay":0.3677106092681715},{"bpd":13.0,"pct":10.0,"aad":0.8286358511837632,"p_stay":0.36770817836376435},{"bpd":26.0,"pct":0.0,"aad":0.6144413000600295,"p_stay":0.3679646173895512},{"bpd":26.0,"pct":0.08,"aad":0.5469755469755478,"p_stay":0.3679647218636296},{"bpd":26.0,"pct":0.5,"aad":0.46887109274089295,"p_stay":0.3679652551864792},{"bpd":26.0,"pct":1.0,"aad":0.3858144972720184,"p_stay":0.3679658918249794},{"bpd":26.0,"pct":2.5,"aad":0.4587597306043918,"p_stay":0.367967844065342},{"bpd":26.0,"pct":5.0,"aad":0.398745519713259,"p_stay":0.36799607375682675},{"bpd":26.0,"pct":8.0,"aad":0.5012427506213761,"p_stay":0.3679755914286048},{"bpd":26.0,"pct":10.0,"aad":0.45088113985751593,"p_stay":0.367978662008475},{"bpd":78.0,"pct":0.0,"aad":0.5322068788060731,"p_stay":0.36810050776664804},{"bpd":78.0,"pct":0.08,"aad":0.5436368317171532,"p_stay":0.3681007062243208},{"bpd":78.0,"pct":0.5,"aad":0.5391988062442644,"p_stay":0.36810174038629817},{"bpd":78.0,"pct":1.0,"aad":0.5297727076311473,"p_stay":0.3681029804804495},{"bpd":78.0,"pct":2.5,"aad":0.5372009464551759,"p_stay":0.3681067788956076},{"bpd":78.0,"pct":5.0,"aad":0.4716587734191169,"p_stay":0.3681133825121778},{"bpd":78.0,"pct":8.0,"aad":0.6257454812368101,"p_stay":0.3681217980362397},{"bpd":78.0,"pct":10.0,"aad":0.6900311526479737,"p_stay":0.36812772326008925},{"bpd":130.0,"pct":0.0,"aad":0.5999862762252768,"p_stay":0.3683295617931365},{"bpd":130.0,"pct":0.08,"aad":0.6570025919631975,"p_stay":0.3683299402525384},{"bpd":130.0,"pct":0.5,"aad":0.7030293625752163,"p_stay":0.3683319206695415},{"bpd":130.0,"pct":1.0,"aad":0.7259001161440217,"p_stay":0.3683342975454442},{"bpd":130.0,"pct":2.5,"aad":0.6502824264112554,"p_stay":0.3683464178609761},{"bpd":130.0,"pct":5.0,"aad":0.6660930666093078,"p_stay":0.3683641682220161},{"bpd":130.0,"pct":8.0,"aad":0.7317813206818577,"p_stay":0.3683959886163923},{"bpd":130.0,"pct":10.0,"aad":0.6443173748925499,"p_stay":0.3684131363497645},{"bpd":390.0,"pct":0.0,"aad":0.5638925613685668,"p_stay":0.3693740165208233},{"bpd":390.0,"pct":0.08,"aad":0.5552691867124881,"p_stay":0.3693736492842548},{"bpd":390.0,"pct":0.5,"aad":0.5343871516992221,"p_stay":0.3693800138094356},{"bpd":390.0,"pct":1.0,"aad":0.4861785235519835,"p_stay":0.36939244284580636},{"bpd":390.0,"pct":2.5,"aad":0.5975102277316383,"p_stay":0.36941754580632},{"bpd":390.0,"pct":5.0,"aad":0.6378951014290214,"p_stay":0.36946503714099643},{"bpd":390.0,"pct":8.0,"aad":0.6842793585606698,"p_stay":0.36953265478132125},{"bpd":390.0,"pct":10.0,"aad":0.8086291922414374,"p_stay":0.36958551517498006}],"dollar":[{"bpd":1.18,"pct":0.0,"aad":2.2784810126582293,"p_stay":0.38164803460400776},{"bpd":1.18,"pct":0.08,"aad":1.9002123142250522,"p_stay":0.3816710419281562},{"bpd":1.18,"pct":0.5,"aad":1.369426751592357,"p_stay":0.38171729179795977},{"bpd":1.18,"pct":1.0,"aad":1.369426751592357,"p_stay":0.38178726071544955},{"bpd":1.18,"pct":2.5,"aad":1.9892473118279532,"p_stay":0.38200154953716714},{"bpd":1.18,"pct":5.0,"aad":1.5894039735099323,"p_stay":0.3823740108949233},{"bpd":1.18,"pct":8.0,"aad":1.981981981981983,"p_stay":0.38354557967517033},{"bpd":1.18,"pct":10.0,"aad":2.060185185185182,"p_stay":0.38318222898148374},{"bpd":4.91,"pct":0.0,"aad":1.2527091460771587,"p_stay":0.3783385146896631},{"bpd":4.91,"pct":0.08,"aad":1.228298611111106,"p_stay":0.37834925100398054},{"bpd":4.91,"pct":0.5,"aad":1.1792863359442975,"p_stay":0.37865220826093077},{"bpd":4.91,"pct":1.0,"aad":0.906895037329822,"p_stay":0.3787080596643513},{"bpd":4.91,"pct":2.5,"aad":0.6853582554517127,"p_stay":0.37900804109142106},{"bpd":4.91,"pct":5.0,"aad":0.7377049180327848,"p_stay":0.37984667608146494},{"bpd":4.91,"pct":8.0,"aad":0.5088702147525682,"p_stay":0.38038068270133707},{"bpd":4.91,"pct":10.0,"aad":0.6015216357584402,"p_stay":0.380512973420263},{"bpd":7.77,"pct":0.0,"aad":0.9198242723778142,"p_stay":0.3769281305166989},{"bpd":7.77,"pct":0.08,"aad":0.8573784006595245,"p_stay":0.3769359470828444},{"bpd":7.77,"pct":0.5,"aad":0.9933774834437082,"p_stay":0.3769752351600845},{"bpd":7.77,"pct":1.0,"aad":0.8568269762299607,"p_stay":0.37702084371973027},{"bpd":7.77,"pct":2.5,"aad":1.0634118967452302,"p_stay":0.37716048057435636},{"bpd":7.77,"pct":5.0,"aad":1.4423353465631301,"p_stay":0.3774051896879731},{"bpd":7.77,"pct":8.0,"aad":2.4501932798096977,"p_stay":0.3778046947070868},{"bpd":7.77,"pct":10.0,"aad":1.8712394705174493,"p_stay":0.37802645081856223},{"bpd":12.41,"pct":0.0,"aad":0.38435022406066705,"p_stay":0.37801385151308853},{"bpd":12.41,"pct":0.08,"aad":0.3877973112719773,"p_stay":0.3780221080596764},{"bpd":12.41,"pct":0.5,"aad":0.5613126079447331,"p_stay":0.37816895872842965},{"bpd":12.41,"pct":1.0,"aad":0.37046677077910967,"p_stay":0.37832430436362174},{"bpd":12.41,"pct":2.5,"aad":0.30574591460200057,"p_stay":0.37880028075643374},{"bpd":12.41,"pct":5.0,"aad":0.32037437005039554,"p_stay":0.37919710755193087},{"bpd":12.41,"pct":8.0,"aad":0.404012516105281,"p_stay":0.37973571704701853},{"bpd":12.41,"pct":10.0,"aad":0.15100356405927742,"p_stay":0.3800581508298768},{"bpd":23.86,"pct":0.0,"aad":0.8037729036916724,"p_stay":0.3809830800301917},{"bpd":23.86,"pct":0.08,"aad":0.8082859463850554,"p_stay":0.3809942462388237},{"bpd":23.86,"pct":0.5,"aad":0.7850865271359991,"p_stay":0.38107719213372077},{"bpd":23.86,"pct":1.0,"aad":0.8196721311475438,"p_stay":0.38119830364912277},{"bpd":23.86,"pct":2.5,"aad":0.6948304613674269,"p_stay":0.381488053250776},{"bpd":23.86,"pct":5.0,"aad":0.7051100406158474,"p_stay":0.38193582162124545},{"bpd":23.86,"pct":8.0,"aad":0.8055152394775037,"p_stay":0.3825463290556498},{"bpd":23.86,"pct":10.0,"aad":0.7313226887443326,"p_stay":0.38281835172633244},{"bpd":35.46,"pct":0.0,"aad":1.1815623661834014,"p_stay":0.3834637582705578},{"bpd":35.46,"pct":0.08,"aad":1.0920384309405762,"p_stay":0.38347645569916333},{"bpd":35.46,"pct":0.5,"aad":1.033210332103322,"p_stay":0.38358030547893246},{"bpd":35.46,"pct":1.0,"aad":0.9634161413916699,"p_stay":0.38367907027891324},{"bpd":35.46,"pct":2.5,"aad":0.8154829011649785,"p_stay":0.38388972030147295},{"bpd":35.46,"pct":5.0,"aad":0.8746569659837888,"p_stay":0.3845663233570773},{"bpd":35.46,"pct":8.0,"aad":0.8987663990601119,"p_stay":0.3848254976977731},{"bpd":35.46,"pct":10.0,"aad":1.38364779874214,"p_stay":0.3849076270783055},{"bpd":78.66,"pct":0.0,"aad":2.0168067226890756,"p_stay":0.39490654183131724},{"bpd":78.66,"pct":0.08,"aad":1.9825653100123333,"p_stay":0.39497076525292374},{"bpd":78.66,"pct":0.5,"aad":1.9255663430420722,"p_stay":0.39516474040982824},{"bpd":78.66,"pct":1.0,"aad":1.99358593992823,"p_stay":0.39540884446242686},{"bpd":78.66,"pct":2.5,"aad":1.8674148319483728,"p_stay":0.3960620823812679},{"bpd":78.66,"pct":5.0,"aad":1.862984970290108,"p_stay":0.39703412876277044},{"bpd":78.66,"pct":8.0,"aad":1.6943322865260946,"p_stay":0.3982868304189495},{"bpd":78.66,"pct":10.0,"aad":1.8161516725913749,"p_stay":0.3990265579827055},{"bpd":132.89,"pct":0.0,"aad":4.979850896635098,"p_stay":0.4245480095889805},{"bpd":132.89,"pct":0.08,"aad":4.995798460555948,"p_stay":0.42471388411680866},{"bpd":132.89,"pct":0.5,"aad":4.951942533387295,"p_stay":0.4252058326948938},{"bpd":132.89,"pct":1.0,"aad":5.001693336720005,"p_stay":0.42571506936093534},{"bpd":132.89,"pct":2.5,"aad":5.048828124999999,"p_stay":0.42716865138173743},{"bpd":132.89,"pct":5.0,"aad":4.861387174390626,"p_stay":0.4296167439346833},{"bpd":132.89,"pct":8.0,"aad":4.545950197529538,"p_stay":0.4326680081264799},{"bpd":132.89,"pct":10.0,"aad":4.088612655835422,"p_stay":0.43470507445512285}]};
+
+const css=(n,v)=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||v;
+const el=(t,a,tx)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);if(tx!=null)e.textContent=tx;return e;};
+function lerpHex(a,b,t){const pa=parseInt(a.slice(1),16),pb=parseInt(b.slice(1),16);
+  const r=Math.round((pa>>16&255)*(1-t)+(pb>>16&255)*t),
+  g=Math.round((pa>>8&255)*(1-t)+(pb>>8&255)*t),
+  bl=Math.round((pa&255)*(1-t)+(pb&255)*t);
+  return `rgb(${r},${g},${bl})`;}
+
+// Isometric surface, LOG x-axis, turntable azimuth `az` (rad) around vertical axis.
+// az=0 -> original iso (x right-down, y left-down). Painter's algorithm reorders by rotated depth.
+function drawSurface(svg, opts){
+  const {Z,xvals,yvals,xlogMin,xlogMax,zmin,zmax,az=0,tilt=0,th=null}=opts;
+  const nx=Z.length, ny=Z[0].length;
+  const zlo=zmin, zhi=zmax, zr=(zhi-zlo)||1;
+  const w=opts.w, h=opts.h;
+  const lg=v=>Math.log10(v);
+  const ux=v=>(lg(v)-lg(xlogMin))/(lg(xlogMax)-lg(xlogMin));
+  const s=Math.min((w-40)/((1+1)*0.866),(h-30)/((1+1)*0.5+3));
+  const zscale=Math.max(8,(h-30-(1+1)*0.5*s)/3*0.95);
+  const cx=w*0.46;
+  const ca=Math.cos(az), sa=Math.sin(az);
+  const gyf=0.5+tilt*0.5, zf=1-tilt*0.85;                 // tilt: iso -> top-down
+  const upExt=zscale*3*zf, dnExt=2*gyf*s+30;              // ponytail: center surface vertically in viewBox (was cy=h*0.30 -> top cut off, bottom empty)
+  const cy=upExt+(h-upExt-dnExt)/2;
+  const P=(ix,iy,z)=>{const u=ux(xvals[ix]),v=iy/(ny-1);
+    const X=u*ca-v*sa, Y=u*sa+v*ca;                      // rotate ground plane
+    const zc=Math.max(zlo,Math.min(zhi,z));              // clamp height
+    return [cx+(X-Y)*0.866*s, cy+(X+Y)*gyf*s-(zc-zlo)/zr*zscale*3*zf];};
+  const dep=(ix,iy)=>{const u=ux(xvals[ix]),v=iy/(ny-1);return u*(ca+sa)+v*(ca-sa);};
+  const mc=css('--muted','#888'), i2=css('--ink2','#555');
+  const pt=p=>p[0].toFixed(1)+' '+p[1].toFixed(1);
+  const line=(p1,p2,a)=>svg.appendChild(el('line',{x1:p1[0].toFixed(1),y1:p1[1].toFixed(1),
+    x2:p2[0].toFixed(1),y2:p2[1].toFixed(1),...a}));
+  // back corner = min-depth ground corner; the 2 walls meeting there are the back walls
+  const gc=[[0,0],[nx-1,0],[0,ny-1],[nx-1,ny-1]].map(([i,j])=>({i,j,d:dep(i,j)}));
+  gc.sort((a,b)=>a.d-b.d);
+  const bk=gc[0], fr=gc[3];
+  const wallX=`M ${pt(P(0,bk.j,zlo))} L ${pt(P(nx-1,bk.j,zlo))} L ${pt(P(nx-1,bk.j,zhi))} L ${pt(P(0,bk.j,zhi))} Z`;
+  const wallY=`M ${pt(P(bk.i,0,zlo))} L ${pt(P(bk.i,ny-1,zlo))} L ${pt(P(bk.i,ny-1,zhi))} L ${pt(P(bk.i,0,zhi))} Z`;
+  svg.appendChild(el('path',{d:wallX,fill:'var(--grid)','fill-opacity':0.35,stroke:'none'}));
+  svg.appendChild(el('path',{d:wallY,fill:'var(--grid)','fill-opacity':0.22,stroke:'none'}));
+  for(let k=0;k<=3;k++){const z=zlo+zr*k/3;
+    line(P(0,bk.j,z),P(nx-1,bk.j,z),{stroke:'var(--grid)','stroke-width':1,'stroke-opacity':.6});
+    line(P(bk.i,0,z),P(bk.i,ny-1,z),{stroke:'var(--grid)','stroke-width':1,'stroke-opacity':.6});
+    if(opts.zticks) svg.appendChild(el('text',{x:P(bk.i,bk.j,z)[0]-6,y:P(bk.i,bk.j,z)[1]+3,
+      'text-anchor':'end','font-size':9,fill:mc},opts.zticks[k]));
+  }
+  // surface cells, painter's order back->front by rotated depth
+  const cells=[];
+  for(let ix=0;ix<nx-1;ix++)for(let iy=0;iy<ny-1;iy++){
+    const a=P(ix,iy,Z[ix][iy]),b=P(ix+1,iy,Z[ix+1][iy]),c=P(ix+1,iy+1,Z[ix+1][iy+1]),d=P(ix,iy+1,Z[ix][iy+1]);
+    const zm=(Z[ix][iy]+Z[ix+1][iy]+Z[ix+1][iy+1]+Z[ix][iy+1])/4;
+    cells.push({a,b,c,d,zm,dd:dep(ix,iy)+dep(ix+1,iy)+dep(ix+1,iy+1)+dep(ix,iy+1)});
+  }
+  // threshold plane at z=th (e.g. AAD=0.4 water level), drawn behind cells
+  if(th!=null && th>zlo && th<zhi){
+    const pp=[P(0,0,th),P(nx-1,0,th),P(nx-1,ny-1,th),P(0,ny-1,th)];
+    svg.appendChild(el('polygon',{points:pp.map(pt).join(' '),fill:'var(--opt)','fill-opacity':0.10,
+      stroke:'var(--opt)','stroke-width':0.8,'stroke-opacity':0.55,'stroke-dasharray':'4 3'}));
+  }
+  cells.sort((p,q)=>p.dd-q.dd);
+  cells.forEach(c=>{
+    const t=Math.max(0,Math.min(1,(c.zm-zlo)/zr));
+    const fill=lerpHex(opts.color,opts.colorHi,t);
+    svg.appendChild(el('polygon',{points:`${pt(c.a)} ${pt(c.b)} ${pt(c.c)} ${pt(c.d)}`,
+      fill,'fill-opacity':opts.fillOpacity!=null?opts.fillOpacity:0.92,
+      stroke:opts.mesh?(opts.meshColor||mc):'none','stroke-width':0.6,'stroke-opacity':opts.mesh?0.5:0}));
+  });
+  if(opts.mesh){
+    for(let ix=0;ix<nx;ix++){let d='';for(let iy=0;iy<ny;iy++){const p=P(ix,iy,Z[ix][iy]);d+=(iy?'L':'M')+pt(p)+' ';}svg.appendChild(el('path',{d,fill:'none',stroke:opts.meshColor||mc,'stroke-width':0.9,'stroke-opacity':0.55}));}
+    for(let iy=0;iy<ny;iy++){let d='';for(let ix=0;ix<nx;ix++){const p=P(ix,iy,Z[ix][iy]);d+=(ix?'L':'M')+pt(p)+' ';}svg.appendChild(el('path',{d,fill:'none',stroke:opts.meshColor||mc,'stroke-width':0.9,'stroke-opacity':0.55}));}
+  }
+  // green markers at (x,y) vertices with AAD < th (the well-calibrated points)
+  if(th!=null){
+    for(let ix=0;ix<nx;ix++)for(let iy=0;iy<ny;iy++){
+      if(isFinite(Z[ix][iy])&&Z[ix][iy]<th){
+        const p=P(ix,iy,Z[ix][iy]);
+        svg.appendChild(el('circle',{cx:p[0].toFixed(1),cy:p[1].toFixed(1),r:4.2,fill:'var(--opt)',stroke:'var(--surface)','stroke-width':1.3}));
+      }
+    }
+  }
+  // red markers at explicit (bpd,pct) cells — the robust plateau (calendar, 0.08% clean)
+  if(opts.markPts){
+    opts.markPts.forEach(([bx,by])=>{
+      const ix=xvals.findIndex(v=>Math.abs(v-bx)<1e-6);
+      const iy=yvals.findIndex(v=>Math.abs(v-by)<1e-6);
+      if(ix>=0&&iy>=0&&isFinite(Z[ix][iy])){
+        const p=P(ix,iy,Z[ix][iy]);
+        svg.appendChild(el('circle',{cx:p[0].toFixed(1),cy:p[1].toFixed(1),r:5.6,fill:'#d6363a',stroke:'var(--surface)','stroke-width':1.7}));
+      }
+    });
+  }
+  // axis labels on the FRONT edges (max-depth corner side), text upright
+  const fmt=opts.labelFmt||(x=>String(x));
+  for(let ix=0;ix<nx;ix++){const p=P(ix,fr.j,zlo);svg.appendChild(el('text',{x:p[0].toFixed(1),y:(p[1]+13).toFixed(1),'text-anchor':'middle','font-size':9,fill:mc},fmt(xvals[ix])));}
+  for(let iy=0;iy<ny;iy++){const p=P(fr.i,iy,zlo);svg.appendChild(el('text',{x:(p[0]-8).toFixed(1),y:(p[1]+3).toFixed(1),'text-anchor':'end','font-size':9,fill:mc},String(yvals[iy])));}
+  if(opts.xtitle){const p=P(nx-1,fr.j,zlo);svg.appendChild(el('text',{x:p[0].toFixed(1),y:(p[1]+26).toFixed(1),'text-anchor':'middle','font-size':10,fill:i2},opts.xtitle));}
+  if(opts.ytitle){const p=P(fr.i,ny-1,zlo);svg.appendChild(el('text',{x:(p[0]-14).toFixed(1),y:(p[1]+24).toFixed(1),'text-anchor':'end','font-size':10,fill:i2},opts.ytitle));}
+  if(opts.ztitle){const p=P(bk.i,bk.j,zhi);svg.appendChild(el('text',{x:(p[0]-22).toFixed(1),y:p[1].toFixed(1),'text-anchor':'end','font-size':10,fill:i2,transform:`rotate(-90 ${(p[0]-22).toFixed(1)} ${p[1].toFixed(1)})`},opts.ztitle));}
+  if(opts.markMin){
+    let mi=0,mj=0,mv=Infinity;
+    for(let ix=0;ix<nx;ix++)for(let iy=0;iy<ny;iy++)if(Z[ix][iy]<mv){mv=Z[ix][iy];mi=ix;mj=iy;}
+    const p=P(mi,mj,mv),p0=P(mi,mj,zlo);
+    svg.appendChild(el('line',{x1:p[0].toFixed(1),y1:p[1].toFixed(1),x2:p0[0].toFixed(1),y2:p0[1].toFixed(1),stroke:'var(--opt)','stroke-width':1,'stroke-dasharray':'2 2','opacity':.6}));
+    svg.appendChild(el('circle',{cx:p[0].toFixed(1),cy:p[1].toFixed(1),r:5,fill:'var(--opt)',stroke:'var(--surface)','stroke-width':1.5}));
+    svg.appendChild(el('text',{x:(p[0]+7).toFixed(1),y:(p[1]-4).toFixed(1),'font-size':10,fill:'var(--opt)','font-weight':700},`min ${mv.toFixed(2)}`));
+  }
+}
+
+function pivot(rows,key){
+  const xs=[...new Set(rows.map(r=>r[key]))].sort((a,b)=>a-b);
+  const ys=[...new Set(rows.map(r=>r.pct))].sort((a,b)=>a-b);
+  const Z=xs.map(()=>ys.map(()=>NaN));
+  const idx={}; rows.forEach(r=>idx[r[key]+'_'+r.pct]=r.aad);
+  xs.forEach((x,i)=>ys.forEach((y,j)=>{Z[i][j]=idx[x+'_'+y];}));
+  return {xvals:xs,yvals:ys,Z};
+}
+
+const PCTS=[0,0.08,0.5,1,2.5,5,8,10];
+const CAL=pivot(GRID.calendar,'bpd');
+const DOL=pivot(GRID.dollar,'bpd');
+const CAL_D='#c4521f',CAL_H='#f59a6a',DOL_D='#1f5fb0',DOL_H='#7fb2ff';
+const PLATEAU=[[8,0.08],[13,0.08],[26,0.08],[78,0.08],[390,0.08]]; // robust honest plateau: calendar, 0.08% clean
+const zt=lo=>[lo[0],lo[0]+(lo[1]-lo[0])/3,lo[0]+2*(lo[1]-lo[0])/3,lo[1]].map(v=>(+v).toFixed(1));
+const XL=0.8, XH=400, ZMINB=0.15, ZMAXB=1.80;
+
+function render(az){
+  const cal=document.getElementById('cal'), dol=document.getElementById('dol'), both=document.getElementById('both');
+  cal.innerHTML=''; dol.innerHTML=''; both.innerHTML='';
+  drawSurface(cal,{xvals:CAL.xvals.map(v=>Math.round(v)),yvals:PCTS,Z:CAL.Z,
+    xlogMin:Math.min(...CAL.xvals)*0.8,xlogMax:Math.max(...CAL.xvals)*1.2,
+    zmin:0.15,zmax:1.40,az,tilt:state.tilt,th:0.4,color:CAL_D,colorHi:CAL_H,fillOpacity:0.92,mesh:true,meshColor:css('--ink2','#888'),
+    markMin:true,w:470,h:400,xtitle:'barras/día',ytitle:'% removido',ztitle:'AAD (pp) [clamp 1.4]',zticks:zt([0.2,1.4]),
+    labelFmt:x=>String(x),markPts:PLATEAU});
+  drawSurface(dol,{xvals:DOL.xvals,yvals:PCTS,Z:DOL.Z,
+    xlogMin:Math.min(...DOL.xvals)*0.7,xlogMax:Math.max(...DOL.xvals)*1.4,
+    zmin:0.15,zmax:2.20,az,tilt:state.tilt,th:0.4,color:DOL_D,colorHi:DOL_H,fillOpacity:0.92,mesh:true,meshColor:css('--ink2','#888'),
+    markMin:true,w:470,h:400,xtitle:'barras/día',ytitle:'% removido',ztitle:'AAD (pp) [clamp 2.2]',zticks:zt([0.2,2.2]),
+    labelFmt:x=>String(Math.round(x))});
+  drawSurface(both,{xvals:CAL.xvals,yvals:PCTS,Z:CAL.Z,xlogMin:XL,xlogMax:XH,
+    zmin:ZMINB,zmax:ZMAXB,az,tilt:state.tilt,th:0.4,color:CAL_D,colorHi:CAL_H,fillOpacity:0.85,mesh:true,meshColor:css('--ink2','#888'),
+    markMin:true,w:760,h:470,xtitle:'barras/día (log)',ytitle:'% removido',ztitle:'AAD (pp) [clamp 1.8]',zticks:zt([0.2,1.8]),
+    labelFmt:x=>String(Math.round(x)),markPts:PLATEAU});
+  drawSurface(both,{xvals:DOL.xvals,yvals:PCTS,Z:DOL.Z,xlogMin:XL,xlogMax:XH,
+    zmin:ZMINB,zmax:ZMAXB,az,tilt:state.tilt,th:0.4,color:DOL_D,colorHi:DOL_H,fillOpacity:0.28,mesh:true,meshColor:css('--dollar','#2a78d6'),
+    markMin:false,w:760,h:470,labelFmt:x=>''});
+}
+
+// static readout (set once)
+(function readout(){
+  const aMin=o=>{let m=Infinity,mi=-1,mj=-1;o.Z.forEach((r,ix)=>r.forEach((v,iy)=>{if(isFinite(v)&&v<m){m=v;mi=ix;mj=iy;}}));return {m,mi,mj};};
+  const cm=aMin(CAL), dm=aMin(DOL);
+  const cminx=CAL.xvals[cm.mi], cminy=PCTS[cm.mj], dminx=DOL.xvals[dm.mi], dminy=PCTS[dm.mj];
+  document.getElementById('readout').innerHTML=
+   `<p><span class="tag calendar">Calendar</span> mínimo del plano: <b>${cm.m.toFixed(2)} pp</b> en ${Math.round(cminx)} barras/día (30-min) × ${cminy}% removido. Extremo grueso, no-monótono en cleaning (1%→0.21, 2.5%→0.40, 5%→0.25, 8%→0.58, 10%→0.83) → mínimo ruidoso, no robusto; el cleaning pesado (8/10%) <b>revienta</b> 13/d. La calendar explota en el extremo diario: 1/d → 2.00–2.71, y 5/d con cleaning pesado (2.5%→1.11, 5%→1.32, 8%→0.86, 10%→0.70).</p>`+
+   `<p><span class="tag dollar">Dollar</span> mínimo del plano: <b>${dm.m.toFixed(2)} pp</b> en ~${Math.round(dminx)} barras/día × ${dminy}% removido (el fondo de la ∪, ahora con cleaning 10%). La dollar tiene un U afilado: 7.8/d→0.86, 12.4/d→0.31, 24/d→0.80, 35/d→1.1, 79/d→2.0, 133/d→5.0; y a 12.4/d el cleaning <b>monótono</b>: 0%→0.38, 1%→0.37, 2.5%→0.31, 5%→0.32, 8%→0.40, 10%→0.15 (mín global). A 1/d (1.18/d) llega a 1.37–2.28 — <b>menos que la calendar diaria</b>.</p>`+
+   `<p><b>Calendar vs dollar celda a celda (8 bpd emparejados × 8 % = 64 celdas): calendar gana 48/64.</b> Dollar gana en 3 zonas: (a) <b>13/d</b> (0%, 0.08%, 2.5%, 8%, 10%) — su fondo ∪ a 12.4/d pisa a la calendar 13/d, y a 8/10% la calendar se desploma (0.58, 0.83) mientras dollar baja (0.40, 0.15); (b) <b>5/d high-clean</b> (2.5%, 5%, 8%, 10%) — la calendar 5/d rompe con cleaning pesado; (c) <b>1/d</b> (7 de 8 %) — barras diarias, el muestreo volume-time del dollar calibra mejor la RV diaria. En el centro del plano (8–130/d, cleaning moderado) la calendar domina.</p>`+
+   `<p><b>Estructura 3D real (lo robusto, &gt;ruido):</b> la "meseta" del calendar <b>sólo existe a cleaning fijo 0.08%</b>. En 2D, limpiar saltos <b>ayuda en 13/d</b> (0.62→0.21), <b>no hace nada en 78–390/d</b> (~0.53 plano), <b>perjudica a 3-min</b> (130/d: 0.60→0.73) y <b>desploma 5/d</b> con cleaning pesado. <b>El cleaning 8/10% es destructivo en calendar</b> (13/d, 78/d, 130/d suben) pero <b>constructivo en dollar 12.4/d</b> (10%→0.15). El cleaning gana donde los saltos se concentran en pocas barras (grueso) y pierde donde se diluyen (fino).</p>`+
+   `<p><span class="tag opt">Ruido MC</span> &nbsp;Cada celda es un estimate a n_sim=2000 con ruido ~±0.1–0.15 pp (verificado: vec vs loop convergen a 1/√n, gap 0.154→0.069 de 2k→8k sims). La meseta calendar (~0.4–0.6) es comparable a ese ruido → <b>no declarar el mínimo 0.21 como "mejor modelo"</b>; es cherry-pick sobre ruido. <b>IS vs OOS:</b> el orden de train NO persiste en test — sólo 1/10 del top-10 train queda en el top-10 test (Spearman ρ=0.56 global: la estructura burda se mantiene, el rango fino no); y el mejor OOS (dollar 12.4/d 10%=0.15) <b>no es estadísticamente distinto</b> del 2º (z=0.14, p~0.89; 109/127 CIs se solapan). La elección 15-min + 0.08% BNS está justificada por método, no por AAD mínimo. p_stay: calendar ≈ 0.368 plano; dollar sube con bpd (0.377→0.43).</p>`;
+  // count cells below AAD=0.4 (the well-calibrated region), per construction
+  const cLow=GRID.calendar.filter(r=>r.aad<0.4).length;
+  const dLow=GRID.dollar.filter(r=>r.aad<0.4).length;
+  document.getElementById('count').innerHTML=
+   `<p style="border-left:3px solid var(--opt);padding-left:10px"><b>Celdas con AAD &lt; 0.4 pp (región bien calibrada):</b> `+
+   `<span class="tag calendar">Calendar</span> ${cLow}/64 · <span class="tag dollar">Dollar</span> ${dLow}/64 → <b>dollar gana en contar</b>. `+
+   `Calendar: 13/d {1%, 2.5%, 5%} + 26/d {1%, 5%} (requiere cleaning ≥1%; más profundo, min 0.21; 8/10% lo sube sobre 0.4). `+
+   `Dollar: 12.4/d {0%, 0.08%, 1%, 2.5%, 5%, 10%} (su fondo ∪; 6 pcts vs 5; min 0.15 al 10%). `+
+   `A 26/d sólo calendar baja de 0.4; a 12.4/d dollar baja en 6 pcts vs calendar 3. En el empalmado, los vértices verdes son estas (11: 5 naranjas + 6 azules).</p>`;
+  document.getElementById('noteline').innerHTML=
+   `Calendar bpd (días de trading): ${CAL.xvals.map(v=>Math.round(v)).join(', ')} · %: ${PCTS.join(', ')}. Dollar bpd (días de trading, ~1.34× las unidades día-calendario del handout): ${DOL.xvals.map(v=>Math.round(v)).join(', ')}. `+
+   `z: calendar 0.15–1.40 (clamp; 1/d satura), dollar 0.15–2.20 (clamp; 133/d satura), empalmado 0.15–1.80 (clamp). 128 celdas (8 bpd × 8 pct × 2 constr), Gibbs 5000/2000, n_sim=2000, vec. %removal = top-|r|: 0, 0.08, 0.5, 1, 2.5, 5, 8, 10. AAD reportado = OOS (test split post-CUTOFF); IS (train) calculado aparte en scripts/grid_is_oos.py. Coarse calendar (8/5/1 bpd) por groupby-día (390 1-min → N chunks) — resample plano no alinea para minutos que no dividen 1440.`;
+})();
+
+// ---- turntable: auto-spin + drag-to-rotate, one shared azimuth ----
+const state={az:0,tilt:0,playing:true,speed:0.55,last:0};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+render(state.az);
+const svgs=[...document.querySelectorAll('svg.chart')];
+let drag=null;
+function svgX(e,svg){const r=svg.getBoundingClientRect();return (e.clientX-r.left)/r.width*+svg.viewBox.baseVal.width;}
+function svgY(e,svg){const r=svg.getBoundingClientRect();return (e.clientY-r.top)/r.height*+svg.viewBox.baseVal.height;}
+svgs.forEach(svg=>{
+  svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);drag={svg,x0:svgX(e,svg),y0:svgY(e,svg),az0:state.az,tilt0:state.tilt};state.playing=false;document.getElementById('play').textContent='▶ Girar';});
+  svg.addEventListener('pointermove',e=>{if(!drag||drag.svg!==svg)return;
+    const x=svgX(e,svg),y=svgY(e,svg);
+    state.az=drag.az0+(x-drag.x0)/svg.viewBox.baseVal.width*Math.PI*2;
+    state.tilt=clamp(drag.tilt0-(y-drag.y0)/svg.viewBox.baseVal.height*1.6,-0.5,1);
+    render(state.az);});
+  svg.addEventListener('pointerup',()=>{drag=null;});
+  svg.addEventListener('pointercancel',()=>{drag=null;});
+});
+document.getElementById('play').addEventListener('click',function(){state.playing=!state.playing;this.textContent=state.playing?'⏸ Pausar':'▶ Girar';if(state.playing)state.last=0;loop();});
+document.getElementById('spd').addEventListener('input',e=>state.speed=+e.target.value);
+function loop(t){
+  if(!state.playing)return;
+  if(state.last){state.az+=state.speed*(t-state.last)/1000;render(state.az);}
+  state.last=t;
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

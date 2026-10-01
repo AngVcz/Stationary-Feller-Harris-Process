@@ -1,0 +1,233 @@
+<!— sf-harris-ssm.html — SSM SF-Harris: estado latente y emisión —>
+<style>
+  :root {
+    --ground: #faf9f5;
+    --ground-soft: #f3f1ea;
+    --ink: #1b1b20;
+    --ink-soft: #3a3a44;
+    --muted: #6b6b78;
+    --accent: #2a4d7f;
+    --accent-soft: #e7eef6;
+    --rule: #e2dfd6;
+    --crit: #8a3a2a;
+    --crit-soft: #f6ece7;
+    --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, "Source Serif Pro", Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #141419;
+      --ground-soft: #1d1d24;
+      --ink: #e9e9ef;
+      --ink-soft: #cfced6;
+      --muted: #9a9aa6;
+      --accent: #8ab2dc;
+      --accent-soft: #1f2735;
+      --rule: #2c2c35;
+      --crit: #d99a82;
+      --crit-soft: #2a201c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #141419; --ground-soft: #1d1d24; --ink: #e9e9ef; --ink-soft: #cfced6;
+    --muted: #9a9aa6; --accent: #8ab2dc; --accent-soft: #1f2735; --rule: #2c2c35;
+    --crit: #d99a82; --crit-soft: #2a201c;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--ground); }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--serif); font-size: 18px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 56px 28px 96px; }
+  .eyebrow {
+    font-family: var(--sans); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1 { font-size: 34px; line-height: 1.18; font-weight: 700; margin: 0 0 10px; letter-spacing: -0.01em; }
+  .lede { font-size: 19.5px; line-height: 1.5; color: var(--ink-soft); margin: 0 0 36px; font-style: italic; }
+  h2 {
+    font-family: var(--serif); font-size: 23px; font-weight: 700; line-height: 1.25;
+    margin: 44px 0 6px; letter-spacing: -0.005em; color: var(--ink);
+    padding-top: 28px; border-top: 1px solid var(--rule);
+  }
+  h2 .num { color: var(--muted); font-weight: 400; margin-right: 10px; font-variant-numeric: tabular-nums; }
+  h3 { font-family: var(--serif); font-size: 18.5px; font-weight: 700; margin: 26px 0 4px; color: var(--ink); }
+  p { margin: 10px 0; }
+  .lead-sym { color: var(--accent); font-style: italic; }
+  code, .ref {
+    font-family: var(--mono); font-size: 0.84em;
+    background: var(--ground-soft); padding: 1px 6px; border-radius: 4px;
+    color: var(--ink-soft); white-space: nowrap;
+  }
+  .eq {
+    display: flex; justify-content: center; flex-wrap: wrap;
+    margin: 22px 0; padding: 20px 16px; background: var(--ground-soft);
+    border-left: 3px solid var(--accent); border-radius: 2px;
+    overflow-x: auto;
+  }
+  .eq math { font-size: 19px; }
+  .eq-cap {
+    font-family: var(--sans); font-size: 12.5px; color: var(--muted);
+    text-align: center; width: 100%; margin-top: 12px; letter-spacing: 0.02em;
+  }
+  .callout {
+    margin: 30px 0; padding: 20px 22px; background: var(--accent-soft);
+    border-radius: 4px; border-left: 3px solid var(--accent);
+  }
+  .callout .label {
+    font-family: var(--sans); font-size: 11.5px; font-weight: 700;
+    letter-spacing: 0.13em; text-transform: uppercase; color: var(--accent);
+    margin-bottom: 8px; display: block;
+  }
+  .note {
+    margin: 26px 0; padding: 18px 20px; background: var(--crit-soft);
+    border-radius: 4px; border-left: 3px solid var(--crit); font-size: 16.5px;
+  }
+  .note .label {
+    font-family: var(--sans); font-size: 11.5px; font-weight: 700;
+    letter-spacing: 0.13em; text-transform: uppercase; color: var(--crit);
+    margin-bottom: 6px; display: block;
+  }
+  ul { margin: 12px 0; padding-left: 22px; }
+  li { margin: 9px 0; }
+  li::marker { color: var(--accent); }
+  .summary { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--rule); }
+  .summary p { font-size: 17px; color: var(--ink-soft); }
+  footer {
+    margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--rule);
+    font-family: var(--sans); font-size: 12.5px; color: var(--muted);
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .kw { color: var(--accent); font-weight: 600; }
+  math i, math mi { font-style: italic; }
+  math mi.n { font-style: normal; }
+</style>
+<div class="wrap">
+  <p class="eyebrow">Modelo estocástico de volatilidad · Anzarut (2024)</p>
+  <h1>El SSM SF-Harris: estado latente y emisión</h1>
+  <p class="lede">τ* es la volatilidad latente, Markov con kernel de transición «stay/jump». La emisión observa realized volatility, no retornos. Esto es por qué.</p>
+
+  <h2><span class="num">1</span>τ* es la volatilidad latente y es Markov</h2>
+  <p>Sí. El estado latente es <math><msub><mi>x</mi><mi>t</mi></msub><mo>=</mo><mi>log</mi><mo>⁡</mo><msup><mi>τ</mi><mi>t</mi></msup><mo>*</mo></math> (log-varianza instantánea), y sigue una <span class="kw">cadena de Harris</span> — Markov recurrente sobre la recta. El kernel de transición es una mezcla: con probabilidad <math><msub><mi>p</mi><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>y</mi></mrow></msub><mo>=</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>α</mi></mrow></msup></math> el estado <em>se queda</em> (masa de Dirac en el valor actual); con probabilidad <math><mn>1</mn><mo>−</mo><msub><mi>p</mi><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>y</mi></mrow></msub></math> <em>salta</em> a un nuevo nivel extraído de la invariante <math><mi>Q</mi><mo>(</mo><mi>μ</mi><mo>,</mo><mi>σ</mi><mo>)</mo></math>.</p>
+
+  <div class="eq">
+    <math display="block">
+      <mi>P</mi><mo>(</mo><msub><mi>x</mi><mrow><mi>t</mi><mo>+</mo><mn class="n">1</mn></mrow></msub><mo>∣</mo><msub><mi>x</mi><mi>t</mi></msub><mo>)</mo>
+      <mo>=</mo>
+      <msup><mi>e</mi><mrow><mo>−</mo><mi>α</mi></mrow></msup>
+      <mi>δ</mi><mo>(</mo><msub><mi>x</mi><mrow><mi>t</mi><mo>+</mo><mn class="n">1</mn></mrow></msub><mo>=</mo><msub><mi>x</mi><mi>t</mi></msub><mo>)</mo>
+      <mo>+</mo>
+      <mo>(</mo><mn class="n">1</mn><mo>−</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>α</mi></mrow></msup><mo>)</mo>
+      <mi>Q</mi><mo>(</mo><msub><mi>x</mi><mrow><mi>t</mi><mo>+</mo><mn class="n">1</mn></mrow></msub><mo>)</mo>
+    </math>
+    <div class="eq-cap">Kernel de transición SF-Harris — <span class="ref">anzarut_replication.py:421</span></div>
+  </div>
+
+  <p>El muestreador de Gibbs (<span class="ref">gibbs_gig_harris :302</span>) recupera la posterior de <math><mo>(</mo><mi>α</mi><mo>,</mo><mi>μ</mi><mo>,</mo><mi>σ</mi><mo>)</mo></math> e identifica el camino de saltos <math><msub><mi>z</mi><mi>i</mi></msub></math> vía un umbral <math><mi>ε</mi></math>. El «denoising de <math><msup><mi>τ</mi><mi>t</mi></msup><mo>*</mo></math>» es exactamente este suavizado bayesiano del estado latente. Resumen: latente = <math><mi>log</mi><mo>⁡</mo><msup><mi>τ</mi><mi>t</mi></msup><mo>*</mo></math>, Markov, kernel stay/jump, invariante <math><mi>Q</mi></math>. ✔</p>
+
+  <h2><span class="num">2</span>La emisión NO usa retornos — usa realized volatility</h2>
+  <p>Aquí la precisión importa: <strong>en el SSM la observable es <math><mi>log</mi><mo>⁡</mo><msub><mi>RV</mi><mi>t</mi></msub></math>, no los retornos.</strong> La emisión (Cap. 3) es aditiva gaussiana en log-espacio:</p>
+
+  <div class="eq">
+    <math display="block">
+      <msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><mi>log</mi><mo>⁡</mo><mo>(</mo><msub><mi>RV</mi><mi>t</mi></msub><mo>)</mo><mo>=</mo><mi>log</mi><mo>⁡</mo><msup><mi>τ</mi><mi>t</mi></msup><mo>*</mo><mo>+</mo><msub><mi>ε</mi><mi>t</mi></msub><mo>,</mo>
+      <mspace width="0.6em"/><msub><mi>ε</mi><mi>t</mi></msub><mo>~</mo><mi>N</mi><mo>(</mo><mn class="n">0</mn><mo>,</mo><msubsup><mi>σ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow><mn class="n">2</mn></msubsup><mo>)</mo><mo>,</mo>
+      <mspace width="0.6em"/><msub><mi>σ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow></msub><mo>≈</mo><mn class="n">1.04</mn>
+    </math>
+    <div class="eq-cap">Emisión del SSM — observable = log realized variance</div>
+  </div>
+
+  <p>La Tabla 3 se califica <strong>sobre <math><mi>log</mi><mo>⁡</mo><msub><mi>RV</mi><mi>t</mi></msub></math></strong>: <span class="ref">compute_coverage(test_adj, sim_a_adj)</span> con <span class="ref">test_adj = log_rv_adj_final[split:]</span> (<span class="ref">:704</span>). El Gibbs ingiere <span class="ref">log_rv</span> (<span class="ref">:302/:319</span>). El observable de la emisión <strong>es</strong> realized volatility.</p>
+
+  <div class="note">
+    <span class="label">Dónde aparecen los retornos (no como emisión)</span>
+    <ul>
+      <li><strong>Materia prima para construir <math><mi>RV</mi></math>:</strong> <math><msub><mi>RV</mi><mi>t</mi></msub><mo>=</mo><msub><mo>∑</mo><mrow><mi>i</mi><mi>n</mi><mi>t</mi><mi>r</mi><mi>a</mi><mi>d</mi></mrow></msub><msubsup><mi>r</mi><mrow><mn class="n">15</mn><mi>m</mi></mrow><mn class="n">2</mn></msubsup></math> — los retornos de 15 min son el insumo micro; <math><mi>RV</mi></math> es el estadístico suficiente que se vuelve la observación.</li>
+      <li><strong>Blanco de cobertura en la descomposición 9.4→2.0:</strong> en <span class="ref">coverage_decomposition.py</span>, la predictiva se pasa a escala de retorno <math><msub><mi>r</mi><mi>t</mi></msub><mo>=</mo><msqrt><msub><mi>RV</mi><mi>t</mi></msub></msqrt><mo>·</mo><msub><mi>z</mi><mi>t</mi></msub></math> y se califica contra el retorno close-to-close. Ahí sí se miden retornos — pero es la prueba de descomposición, no la emisión del SSM.</li>
+    </ul>
+  </div>
+
+  <h2><span class="num">3</span>¿Cómo se calcula <math><msub><mi>RV</mi><mi>t</mi></msub></math>?</h2>
+  <p>La receta exacta, paso a paso, sobre los datos de IBM a 15 min:</p>
+
+  <h3>Paso 1 — Retornos log de 15 min</h3>
+  <p>De los precios de cierre se remuestrean barras de 15 min y se toman log-retornos (<span class="ref">compute_15min_returns :47</span>):</p>
+  <div class="eq">
+    <math display="block">
+      <msub><mi>r</mi><mi>i</mi></msub><mo>=</mo><mi>log</mi><mo>⁡</mo><msub><mi>P</mi><mi>i</mi></msub><mo>−</mo><mi>log</mi><mo>⁡</mo><msub><mi>P</mi><mrow><mi>i</mi><mo>−</mo><mn class="n">1</mn></mrow></msub>
+    </math>
+  </div>
+
+  <h3>Paso 2 — Limpieza de saltos (antes de sumar)</h3>
+  <p>Los saltos discretos inflarían <math><mi>RV</mi></math>, así que se quitan primero. La medida de salto usa <em>bipower variation</em> (<span class="ref">detect_and_remove_jumps :95</span>): se marca el 0,1 % superior de intervalos por</p>
+  <div class="eq">
+    <math display="block">
+      <msub><mi>J</mi><mi>i</mi></msub><mo>=</mo><mi>max</mi><mo>⁡</mo><mo>(</mo><msubsup><mi>r</mi><mi>i</mi><mn class="n">2</mn></msubsup><mo>−</mo><mfrac><mi>π</mi><mn class="n">2</mn></mfrac><mo>⁤</mo><mo>|</mo><msub><mi>r</mi><mi>i</mi></msub><mo>|</mo><mo>·</mo><mo>|</mo><msub><mi>r</mi><mrow><mi>i</mi><mo>−</mo><mn class="n">1</mn></mrow></msub><mo>|</mo><mo>,</mo><mn class="n">0</mn><mo>)</mo>
+    </math>
+    <div class="eq-cap">Medida de salto RV − BPV (robusta a saltos) — <span class="ref">fit_jump_thresholds :63</span></div>
+  </div>
+  <p>esos intervalos se <strong>eliminan</strong>. La <math><msub><mi>RV</mi><mi>t</mi></msub></math> se calcula sobre los retornos <em>limpios</em> → varianza del camino continuo, sin saltos.</p>
+
+  <h3>Paso 3 — Realized variance diaria (sin ajustar)</h3>
+  <p>Se agrupan los retornos limpios por día y se suman los cuadrados (<span class="ref">compute_daily_rv :152</span>) — el estimador canónico de Andersen-Bollerslev:</p>
+  <div class="eq">
+    <math display="block">
+      <msubsup><mi>RV</mi><mi>t</mi><mrow><mi>u</mi><mi>n</mi><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup><mo>=</mo><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mi><mi>d</mi><mi>i</mi><mi>a</mi><mo> </mo><mi>t</mi></mrow></munder><msubsup><mi>r</mi><mi>i</mi><mn class="n">2</mn></msubsup>
+    </math>
+    <div class="eq-cap">~26 observaciones/día a 15 min → <msub><mi>RV</mi><mi>t</mi></msub> es estimador bajo en ruido de <msub><mi>τ</mi><mi>t</mi></msub></div>
+  </div>
+
+  <h3>Paso 4 — Ajuste de periodicidad (la versión que entra al Gibbs)</h3>
+  <p>La volatilidad intradía tiene forma de U (más alta en apertura/cierre) — un componente estacional determinista que <em>no</em> es parte del latente <math><msub><mi>τ</mi><mi>t</mi></msub></math>. Se estima la forma-U promedio y se divide cada retorno por su raíz (<span class="ref">estimate_periodicity :166</span>, <span class="ref">adjust_for_periodicity :195</span>):</p>
+  <div class="eq">
+    <math display="block">
+      <mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mi>E</mi><mo>⁡</mo><mo>[</mo><mfrac><mrow><msubsup><mi>RV</mi><mrow><mn class="n">15</mn><mi>m</mi></mrow><mi>i</mi></msubsup></mrow><mrow><msub><mi>RV</mi><mrow><mi>d</mi><mi>a</mi><mi>i</mi><mi>l</mi><mi>y</mi></mrow></msub><mo> </mo><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></mfrac><mo>]</mo><mo>,</mo><mspace width="0.5em"/><mi>E</mi><mo>⁡</mo><mo>[</mo><mi>f</mi><mo>]</mo><mo>=</mo><mn class="n">1</mn>
+    </math>
+  </div>
+  <div class="eq">
+    <math display="block">
+      <msubsup><mi>r</mi><mi>i</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup><mo>=</mo><mfrac><msub><mi>r</mi><mi>i</mi></msub><msqrt><mi>f</mi><mo>(</mo><msub><mi>t</mi><mi>i</mi></msub><mo>)</mo></msqrt></mfrac><mo>,</mo><mspace width="0.5em"/><msubsup><mi>RV</mi><mi>t</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup><mo>=</mo><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>d</mi><mi>i</mi><mi>a</mi><mo> </mo><mi>t</mi></mrow></munder><msup><mrow><mo>(</mo><msubsup><mi>r</mi><mi>i</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup><mo>)</mo></mrow><mn class="n">2</mn></msup>
+    </math>
+    <div class="eq-cap">Ajuste de periodicidad — divide la forma-U; <msubsup><mi>RV</mi><mi>t</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup> es lo que el Gibbs ingiere</div>
+  </div>
+
+  <h3>Paso 5 — Log y emisión</h3>
+  <p>El modelo vive en log-espacio, así que la observable final es <math><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><mi>log</mi><mo>⁡</mo><msubsup><mi>RV</mi><mi>t</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup></math> — eso es <span class="ref">log_rv_adj_final[:split]</span> que se pasa a <span class="ref">gibbs_gig_harris :302</span>. En log, la emisión es la aditiva gaussiana de la sección 2: <math><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><mi>log</mi><mo>⁡</mo><msubsup><mi>τ</mi><mi>t</mi><mo>*</mo></msubsup><mo>+</mo><msub><mi>ε</mi><mi>t</mi></msub></math>.</p>
+
+  <div class="callout">
+    <span class="label">Cadena completa</span>
+    <p style="margin:0">precios → <math><msub><mi>r</mi><mrow><mn class="n">15</mn><mi>m</mi></mrow></msub></math> log-retornos → limpiar saltos → <math><msubsup><mi>r</mi><mi>i</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>/</mo><msqrt><mi>f</mi></msqrt></math> → <math><msubsup><mi>RV</mi><mi>t</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup><mo>=</mo><mo>∑</mo><msup><mi>r</mi><mn class="n">2</mn></msup></math> diaria → <math><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><mi>log</mi><mo>⁡</mo><msubsup><mi>RV</mi><mi>t</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow></msubsup></math> → Gibbs. <strong>El Gibbs sólo ve <math><msub><mi>Y</mi><mi>t</mi></msub></math></strong>; toda la construcción previa es el estimador suficientemente limpio del latente <math><msub><mi>τ</mi><mi>t</mi></msub></math>.</p>
+  </div>
+
+  <h2><span class="num">4</span>¿Por qué RV y no retornos como emisión?</h2>
+
+  <h3>El latente es una varianza → la observación debe ser un estimador de varianza</h3>
+  <p>Un retorno único <math><msub><mi>r</mi><mi>t</mi></msub><mo>~</mo><mi>N</mi><mo>(</mo><mn class="n">0</mn><mo>,</mo><msub><mi>τ</mi><mi>t</mi></msub><mo>)</mo></math> es <strong>un solo draw</strong> de la gaussiana de varianza <math><msub><mi>τ</mi><mi>t</mi></msub></math>; está dominado por el ruido <math><msub><mi>z</mi><mi>t</mi></msub></math>, y <math><msubsup><mi>r</mi><mi>t</mi><mn class="n">2</mn></msubsup></math> es un estimador pésimo de <math><msub><mi>τ</mi><mi>t</mi></msub></math> (una sola realización). En cambio <math><msub><mi>RV</mi><mi>t</mi></msub><mo>=</mo><mo>∑</mo><msup><mi>r</mi><mn class="n">2</mn></msup></math> promedia ~26 draws intradía y colapsa a <math><msub><mi>τ</mi><mi>t</mi></msub><mo>+</mo><mtext>ruido chico</mtext></math> (<math><msub><mi>σ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow></msub><mo>≈</mo><mn class="n">1.04</mn></math>). Usar un retorno como emisión enterraría la señal bajo <math><msub><mi>z</mi><mi>t</mi></msub></math>.</p>
+  <p>El propio <math><msub><mi>σ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow></msub></math> lo cuantifica: a 15 min (26 obs/día) es chico → SSM bien condicionado; a escala diaria (1 obs/día) <math><msubsup><mi>r</mi><mi>t</mi><mn class="n">2</mn></msubsup></math> es ruidosísimo (<math><mi>σ</mi><mo>≈</mo><mn class="n">2.27</mn></math>) → el modelo colapsa (los 12 pp diarios). Ese fallo es la prueba empírica de por qué se necesita <math><mi>RV</mi></math> intradía.</p>
+
+  <h3>Linealidad / trazabilidad</h3>
+  <div class="eq">
+    <math display="block">
+      <mi>log</mi><mo>⁡</mo><msub><mi>RV</mi><mi>t</mi></msub><mo>≈</mo><mi>log</mi><mo>⁡</mo><msub><mi>τ</mi><mi>t</mi></msub><mo>+</mo><mi>Gaussiano</mi>
+    </math>
+    <div class="eq-cap">Emisión aditiva gaussiana en log-espacio → Gibbs conjugado</div>
+  </div>
+  <p><math><mi>log</mi><mo>⁡</mo><msub><mi>RV</mi><mi>t</mi></msub><mo>≈</mo><mi>log</mi><mo>⁡</mo><msub><mi>τ</mi><mi>t</mi></msub><mo>+</mo><mtext>Gaussiano</mtext></math> es una observación <strong>aditiva gaussiana</strong> en log-espacio → hace el Gibbs conjugado (Normal-Inverse-Gamma para <math><mo>(</mo><mi>μ</mi><mo>,</mo><mi>σ</mi><mo>)</mo></math> + Gamma para <math><mi>α</mi></math> funcionan justo porque la emisión es aditiva). Una emisión por retornos <math><msub><mi>r</mi><mi>t</mi></msub><mo>=</mo><msqrt><msub><mi>τ</mi><mi>t</mi></msub></msqrt><mo>·</mo><msub><mi>z</mi><mi>t</mi></msub></math> es <strong>multiplicativa/no lineal</strong> en <math><msub><mi>τ</mi><mi>t</mi></msub></math>; es el modelo SV clásico (Taylor/Shephard), que requiere trucos como la mezcla de Kim o cuasi-Monte-Carlo. La elección de Anzarut mueve la no-linealidad al estadístico suficiente <math><mo>∑</mo><msup><mi>r</mi><mn class="n">2</mn></msup></math> y deja un SSM aditivo-limpio.</p>
+
+  <h3>Consistencia con el estado</h3>
+  <p><math><msup><mi>τ</mi><mi>t</mi></msup><mo>*</mo></math> es varianza, así que su emisión natural es la cantidad del mismo orden (varianza realizada), no su raíz (retorno). La escala logarítmica además estabiliza la varianza y simetriza la distribución, lo que alimenta el <math><mi>Q</mi></math> empírico/GIG.</p>
+
+  <div class="callout">
+    <span class="label">Resumen</span>
+    <p style="margin:0"><math><msup><mi>τ</mi><mi>t</mi></msup><mo>*</mo></math> es la varianza latente, Markov con kernel stay/jump e invariante <math><mi>Q</mi></math>. La emisión observa <math><mi>log</mi><mo>⁡</mo><msub><mi>RV</mi><mi>t</mi></msub></math> — no retornos — por linealidad/tractabilidad y señal-ruido. Los retornos son el insumo que construye <math><mi>RV</mi></math> (<math><mo>∑</mo><msup><mi>r</mi><mn class="n">2</mn></msup></math>) y, por separado, el blanco de la prueba de cobertura en escala-retorno; pero la emisión del SSM es <math><mi>RV</mi></math>.</p>
+  </div>
+
+  <footer>
+    <span>SF-Harris · servicio social / IIMAS-UNAM · Ángel Vences</span>
+    <span>MathML — renderizado nativo del navegador</span>
+  </footer>
+</div>

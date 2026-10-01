@@ -1,0 +1,198 @@
+============================================================================================
+Walk-forward block recalibration (1:1, causal) vs static fit-once — same post-CUTOFF bars
+Refit: periodicity + Gibbs(alpha/mu/sigma) + Q-emp on each L-day cal window. L in {30,100,252}.
+============================================================================================
+  epsilon threshold: 1e-05, stays: 8/15591 (0.1%), jumps: 15583/15591 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.153, mu=-14.6109, sigma=4.3090
+  Posterior means:
+    alpha:    1.000 (std=0.008)
+    mu:       -14.6104 (std=0.0346)
+    sigma:    4.3089 (std=0.0249)
+    P(stay):  0.3680 (mean)
+    n_jumps:  15583.0/15591 (mean)
+
+## 15min/0.08% (headline)  (15-min? 15min bars, clean 0.08%)
+   STATIC  fit-once pre-CUTOFF: AAD=0.547  n_pred=3885  p_stay=0.368  [5s]
+      L n_blocks  n_pred  AAD_walk  AAD_stat   delta  per-block AAD
+  epsilon threshold: 1e-05, stays: 0/778 (0.0%), jumps: 778/778 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.069, mu=-14.5924, sigma=4.4652
+  Posterior means:
+    alpha:    1.002 (std=0.036)
+    mu:       -14.5902 (std=0.1601)
+    sigma:    4.4616 (std=0.1149)
+    P(stay):  0.3671 (mean)
+    n_jumps:  778.0/778 (mean)
+  epsilon threshold: 1e-05, stays: 1/766 (0.1%), jumps: 765/766 (99.9%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.793, mu=-15.6156, sigma=5.5114
+  Posterior means:
+    alpha:    1.001 (std=0.036)
+    mu:       -15.6129 (std=0.1991)
+    sigma:    5.5069 (std=0.1429)
+    P(stay):  0.3675 (mean)
+    n_jumps:  765.0/766 (mean)
+  epsilon threshold: 1e-05, stays: 0/778 (0.0%), jumps: 778/778 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-14.7422, sigma=4.4121
+  Posterior means:
+    alpha:    1.002 (std=0.036)
+    mu:       -14.7401 (std=0.1582)
+    sigma:    4.4086 (std=0.1135)
+    P(stay):  0.3671 (mean)
+    n_jumps:  778.0/778 (mean)
+  epsilon threshold: 1e-05, stays: 0/778 (0.0%), jumps: 778/778 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-15.5139, sigma=5.2219
+  Posterior means:
+    alpha:    1.002 (std=0.036)
+    mu:       -15.5114 (std=0.1872)
+    sigma:    5.2177 (std=0.1344)
+    P(stay):  0.3671 (mean)
+    n_jumps:  778.0/778 (mean)
+  epsilon threshold: 1e-05, stays: 0/775 (0.0%), jumps: 775/775 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-14.6053, sigma=4.7541
+  Posterior means:
+    alpha:    1.002 (std=0.036)
+    mu:       -14.6031 (std=0.1708)
+    sigma:    4.7503 (std=0.1226)
+    P(stay):  0.3671 (mean)
+    n_jumps:  775.0/775 (mean)
+  epsilon threshold: 1e-05, stays: 0/754 (0.0%), jumps: 754/754 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-14.7329, sigma=4.6482
+  Posterior means:
+    alpha:    1.002 (std=0.036)
+    mu:       -14.7307 (std=0.1693)
+    sigma:    4.6443 (std=0.1215)
+    P(stay):  0.3670 (mean)
+    n_jumps:  754.0/754 (mean)
+     30        6    3902     1.979     0.547  +1.432  0.72 3.98 1.37 8.59 1.99 3.87  [6s]
+  epsilon threshold: 1e-05, stays: 0/2596 (0.0%), jumps: 2596/2596 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.348, mu=-14.6395, sigma=4.6296
+  Posterior means:
+    alpha:    1.001 (std=0.020)
+    mu:       -14.6382 (std=0.0910)
+    sigma:    4.6287 (std=0.0654)
+    P(stay):  0.3675 (mean)
+    n_jumps:  2596.0/2596 (mean)
+  epsilon threshold: 1e-05, stays: 1/2584 (0.0%), jumps: 2583/2584 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-15.2293, sigma=5.0665
+  Posterior means:
+    alpha:    1.001 (std=0.020)
+    mu:       -15.2280 (std=0.0998)
+    sigma:    5.0654 (std=0.0718)
+    P(stay):  0.3677 (mean)
+    n_jumps:  2583.0/2584 (mean)
+    100        2    3908     0.757     0.547  +0.210  1.85 2.62  [4s]
+  epsilon threshold: 1e-05, stays: 2/6509 (0.0%), jumps: 6507/6509 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.328, mu=-14.6028, sigma=4.0115
+  Posterior means:
+    alpha:    1.000 (std=0.012)
+    mu:       -14.6021 (std=0.0498)
+    sigma:    4.0113 (std=0.0358)
+    P(stay):  0.3678 (mean)
+    n_jumps:  6507.0/6509 (mean)
+    252        1    3911     1.130     0.547  +0.583  1.13  [6s]
+  epsilon threshold: 1e-05, stays: 0/7722 (0.0%), jumps: 7722/7722 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.684, mu=-13.9462, sigma=4.0883
+  Posterior means:
+    alpha:    1.000 (std=0.011)
+    mu:       -13.9456 (std=0.0466)
+    sigma:    4.0880 (std=0.0335)
+    P(stay):  0.3677 (mean)
+    n_jumps:  7722.0/7722 (mean)
+
+## 30min/1% (argmin cal)  (15-min? 30min bars, clean 1.0%)
+   STATIC  fit-once pre-CUTOFF: AAD=0.208  n_pred=1924  p_stay=0.368  [2s]
+      L n_blocks  n_pred  AAD_walk  AAD_stat   delta  per-block AAD
+  epsilon threshold: 1e-05, stays: 0/385 (0.0%), jumps: 385/385 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.540, mu=-13.8237, sigma=3.1766
+  Posterior means:
+    alpha:    1.004 (std=0.051)
+    mu:       -13.8216 (std=0.1617)
+    sigma:    3.1712 (std=0.1157)
+    P(stay):  0.3664 (mean)
+    n_jumps:  385.0/385 (mean)
+  epsilon threshold: 1e-05, stays: 0/379 (0.0%), jumps: 379/379 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-14.5985, sigma=4.2182
+  Posterior means:
+    alpha:    1.004 (std=0.051)
+    mu:       -14.5958 (std=0.2164)
+    sigma:    4.2109 (std=0.1549)
+    P(stay):  0.3664 (mean)
+    n_jumps:  379.0/379 (mean)
+  epsilon threshold: 1e-05, stays: 0/385 (0.0%), jumps: 385/385 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.017, mu=-14.0548, sigma=4.1675
+  Posterior means:
+    alpha:    1.004 (std=0.051)
+    mu:       -14.0521 (std=0.2121)
+    sigma:    4.1604 (std=0.1518)
+    P(stay):  0.3664 (mean)
+    n_jumps:  385.0/385 (mean)
+  epsilon threshold: 1e-05, stays: 0/385 (0.0%), jumps: 385/385 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-14.3236, sigma=2.9431
+  Posterior means:
+    alpha:    1.004 (std=0.051)
+    mu:       -14.3217 (std=0.1498)
+    sigma:    2.9381 (std=0.1072)
+    P(stay):  0.3664 (mean)
+    n_jumps:  385.0/385 (mean)
+  epsilon threshold: 1e-05, stays: 0/384 (0.0%), jumps: 384/384 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=3.390, mu=-13.9201, sigma=4.0170
+  Posterior means:
+    alpha:    1.004 (std=0.051)
+    mu:       -13.9175 (std=0.2047)
+    sigma:    4.0102 (std=0.1465)
+    P(stay):  0.3664 (mean)
+    n_jumps:  384.0/384 (mean)
+  epsilon threshold: 1e-05, stays: 0/373 (0.0%), jumps: 373/373 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.894, mu=-13.9496, sigma=3.9140
+  Posterior means:
+    alpha:    1.004 (std=0.052)
+    mu:       -13.9470 (std=0.2024)
+    sigma:    3.9071 (std=0.1448)
+    P(stay):  0.3664 (mean)
+    n_jumps:  373.0/373 (mean)
+     30        6    1922     1.183     0.208  +0.975  2.36 1.75 3.76 12.41 2.82 4.74  [2s]
+  epsilon threshold: 1e-05, stays: 0/1286 (0.0%), jumps: 1286/1286 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=2.700, mu=-13.9918, sigma=4.3606
+  Posterior means:
+    alpha:    1.002 (std=0.028)
+    mu:       -13.9902 (std=0.1217)
+    sigma:    4.3586 (std=0.0874)
+    P(stay):  0.3673 (mean)
+    n_jumps:  1286.0/1286 (mean)
+  epsilon threshold: 1e-05, stays: 0/1280 (0.0%), jumps: 1280/1280 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-14.3130, sigma=3.9108
+  Posterior means:
+    alpha:    1.002 (std=0.028)
+    mu:       -14.3115 (std=0.1094)
+    sigma:    3.9090 (std=0.0786)
+    P(stay):  0.3673 (mean)
+    n_jumps:  1280.0/1280 (mean)
+    100        2    1935     0.771     0.208  +0.563  2.43 4.44  [1s]
+  epsilon threshold: 1e-05, stays: 0/3224 (0.0%), jumps: 3224/3224 (100.0%)
+  Running Gibbs sampler: 5000 iterations, 2000 burn-in
+  Initial: alpha=4.605, mu=-13.8935, sigma=3.9329
+  Posterior means:
+    alpha:    1.001 (std=0.018)
+    mu:       -13.8925 (std=0.0693)
+    sigma:    3.9323 (std=0.0499)
+    P(stay):  0.3676 (mean)
+    n_jumps:  3224.0/3224 (mean)
+    252        1    1937     1.240     0.208  +1.032  1.24  [1s]
