@@ -9,3 +9,13 @@ build/
 *.xlsx
 data/*.npz
 data/*.pkl
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# Office lock files
+~$*
