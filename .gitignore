@@ -19,3 +19,7 @@ data/*.pkl
 
 # Office lock files
 ~$*
+
+# presentaciones superseded (sólo se conservan en disco)
+presentacion/SF-Harris_Revived.pptx
+presentacion/SF-Harris_presentacion*.pptx

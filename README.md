@@ -11,11 +11,13 @@ src/            — Código fuente: proceso SF-Harris, filtros Kalman, resamplin
 scripts/        — Estudios numéricos: replicación de tablas, backtests, diagnósticos
 tests/          — Tests unitarios (pytest)
 notebooks/      — Notebook final con resultados sobre activos mexicanos
-demos/          — Demos HTML interactivas (módulos 1-3)
-report/         — Reporte LaTeX (borrador)
-docs/           — Documentación y hallazgos
-data/           — Datos procesados (CSV)
+demos/          — Demos HTML interactivos (módulos 1-3 y experimentos; sf-harris_demos.html es la demo principal)
+docs/           — Documentación y hallazgos en texto
+results/        — Salidas de experimentos: jsons y logs
 figures/        — Figuras generadas
+data/           — Datos procesados (CSV)
+report/         — Reporte LaTeX (borrador)
+presentacion/   — Presentación del servicio social (SF-Harris_SS.pptx)
 ```
 
 ## Cómo ejecutar
